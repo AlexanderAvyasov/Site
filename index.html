@@ -1310,7 +1310,7 @@ async function submitWaitlist(source) {
   let success = false;
 
   // Try Google Sheets
-  if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
+  if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbye6YJ6WoPzbV_FtUEqVciChaAXN7kVv-srrNAkrgzK1kXkrLj19a26tScMiejDyo1_/exec') {
     try {
       const res = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
