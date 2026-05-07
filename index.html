@@ -1491,5 +1491,12 @@ document.querySelectorAll('.flow-step, .sol-point, .rm-card, .feat-card, .social
   el.addEventListener('touchcancel', () => el.style.transform = '', { passive: true });
 });
 </script>
+<script>
+document.querySelectorAll('.btn-open-app, .footer-open-app').forEach(btn => {
+  btn.addEventListener('click', () => {
+    window.location.href = 'geoearn.html';
+  });
+});
+</script>
 </body>
 </html>
