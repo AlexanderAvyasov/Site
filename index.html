@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- ═══ META ═══ -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GeoEarn Protocol — Offline Traffic. On-Chain.</title>
-<meta name="description" content="GeoEarn transforms real-world visits into measurable, reward-based actions powered by Solana. Businesses pay only for verified customers. Users earn for showing up.">
+<title>GeoEarn — Marketplace for Real-World Customer Acquisition</title>
+<meta name="description" content="GeoEarn is a performance-based marketplace for real-world customer acquisition. Businesses pay only for verified visits. Users earn for showing up.">
 
-<!-- FIX: favicon grouped, preconnect BEFORE font load -->
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
 <link rel="apple-touch-icon" href="/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- FIX: font-display=swap prevents render-blocking -->
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 
 <style>
-/* ═══ CUSTOM PROPERTIES ═══ */
 :root{
   --black:#020408;--navy:#050d1a;
   --purple:#7c3aed;--purple-glow:#a855f7;
@@ -29,17 +25,14 @@
   --red:#ef4444;
 }
 
-/* ═══ RESET ═══ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-/* FIX: убран overflow-x:hidden с body — он ломает position:sticky и скроллинг на iOS */
 body{
   background:var(--black);color:var(--white);
   font-family:'DM Sans',sans-serif;
-  overflow-x:clip; /* clip вместо hidden — не создаёт scroll container */
+  overflow-x:clip;
 }
 
-/* ═══ CUSTOM CURSOR (только hover-устройства) ═══ */
 @media(hover:hover) and (pointer:fine){
   body{cursor:none;}
   .cursor,.cursor-ring{display:block;}
@@ -47,9 +40,7 @@ body{
 .cursor{
   width:12px;height:12px;background:var(--neon);border-radius:50%;
   position:fixed;pointer-events:none;z-index:9999;
-  /* FIX: translate вместо left/top — только compositor, нет layout */
   transform:translate(var(--cx,0px),var(--cy,0px)) translate(-50%,-50%);
-  /* FIX: убраны box-shadow transitions — дорого */
   box-shadow:0 0 20px var(--neon),0 0 40px rgba(0,245,255,.3);
   display:none;will-change:transform;
 }
@@ -67,12 +58,10 @@ body:has(a:hover) .cursor-ring,body:has(button:hover) .cursor-ring{
   width:56px;height:56px;border-color:rgba(168,85,247,.5);
 }
 
-/* ═══ BG CANVAS ═══ */
 #bg-canvas{
   position:fixed;top:0;left:0;width:100%;height:100%;
   z-index:0;pointer-events:none;
 }
-/* FIX: noise через CSS — один pseudo-element вместо SVG data-URI */
 body::before{
   content:'';position:fixed;inset:0;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
@@ -80,7 +69,7 @@ body::before{
 }
 section,nav,footer,main{position:relative;z-index:2;}
 
-/* ═══ LANG SWITCH ═══ */
+/* LANG SWITCH */
 .lang-switch{
   display:flex;align-items:center;gap:4px;
   background:var(--glass);border:1px solid var(--glass-border);
@@ -90,14 +79,13 @@ section,nav,footer,main{position:relative;z-index:2;}
   padding:5px 10px;border-radius:6px;border:none;background:transparent;
   color:rgba(248,250,252,.5);font-size:12px;font-family:'Space Mono',monospace;
   cursor:pointer;transition:background .2s,color .2s;letter-spacing:.05em;
-  /* FIX: type=button чтобы не триггерить submit */
 }
 .lang-btn.active{
   background:rgba(6,182,212,.2);color:var(--cyan);
   border:1px solid rgba(6,182,212,.3);
 }
 
-/* ═══ NAV ═══ */
+/* NAV */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   padding:20px 60px;display:flex;align-items:center;
@@ -121,7 +109,6 @@ nav.scrolled{
   background:linear-gradient(135deg,var(--purple),var(--cyan));
   display:flex;align-items:center;justify-content:center;
   font-size:14px;-webkit-text-fill-color:white;flex-shrink:0;
-  /* FIX: aria-hidden на эмодзи в декоративных элементах */
 }
 .nav-links{display:flex;gap:36px;list-style:none;align-items:center;}
 .nav-links a{
@@ -174,13 +161,12 @@ nav.scrolled{
   background:rgba(248,250,252,.7);border-radius:2px;transition:transform .3s,opacity .3s;
 }
 
-/* ═══ MOBILE NAV DRAWER ═══ */
+/* MOBILE DRAWER */
 .nav-drawer{
   display:none;position:fixed;inset:0;
   background:rgba(2,4,8,.97);backdrop-filter:blur(30px);
   z-index:99;flex-direction:column;align-items:center;
   justify-content:center;gap:28px;
-  /* FIX: visibility вместо display для плавного fade */
   opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;
 }
 .nav-drawer.open{display:flex;opacity:1;visibility:visible;}
@@ -196,7 +182,7 @@ nav.scrolled{
 }
 .nav-drawer-lang{margin-top:8px;}
 
-/* ═══ HERO ═══ */
+/* HERO */
 .hero{
   min-height:100vh;display:flex;flex-direction:column;
   align-items:center;justify-content:center;text-align:center;
@@ -244,17 +230,29 @@ nav.scrolled{
 }
 .hero-sub{
   font-size:clamp(16px,2vw,20px);color:rgba(248,250,252,.48);
-  max-width:580px;line-height:1.7;font-weight:300;margin-bottom:48px;
+  max-width:600px;line-height:1.7;font-weight:300;margin-bottom:16px;
   opacity:0;transform:translateY(30px);animation:fadeUp .9s ease .6s forwards;
 }
 .hero-sub strong{color:rgba(248,250,252,.75);font-weight:500;}
+
+/* POSITIONING CALLOUT */
+.hero-positioning{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.22);
+  border-radius:10px;padding:10px 20px;margin-bottom:40px;
+  font-size:13px;color:rgba(248,250,252,.65);max-width:620px;
+  opacity:0;animation:fadeUp .9s ease .7s forwards;
+  line-height:1.5;text-align:left;
+}
+.hero-positioning strong{color:var(--purple-glow);font-weight:600;}
+
 .hero-actions{
   display:flex;gap:16px;flex-wrap:wrap;justify-content:center;
   opacity:0;transform:translateY(30px);animation:fadeUp .9s ease .8s forwards;
 }
 @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
 
-/* ═══ MONEY FLOW ═══ */
+/* MONEY FLOW */
 .money-flow{
   display:flex;flex-direction:column;gap:10px;
   margin-top:60px;max-width:680px;width:100%;
@@ -285,7 +283,7 @@ nav.scrolled{
 .mf-arrow-label{font-size:9px;font-family:'Space Mono',monospace;color:var(--cyan);white-space:nowrap;}
 .mf-amount{font-size:11px;font-weight:700;color:var(--green);margin-top:3px;font-family:'Space Mono',monospace;}
 
-/* ═══ BUTTONS ═══ */
+/* BUTTONS */
 .btn-primary{
   position:relative;overflow:hidden;
   background:linear-gradient(135deg,var(--purple),var(--blue));
@@ -359,7 +357,7 @@ nav.scrolled{
 .btn-open-app span,.btn-open-app .app-icon{position:relative;z-index:1;}
 .btn-open-app .app-icon{font-size:18px;}
 
-/* ═══ RIPPLE ═══ */
+/* RIPPLE */
 .ripple-container{position:relative;overflow:hidden;}
 .ripple{
   position:absolute;border-radius:50%;
@@ -368,7 +366,7 @@ nav.scrolled{
 }
 @keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
 
-/* ═══ ORBS — FIX: убран will-change, снижена яркость на mobile ═══ */
+/* ORBS */
 .orb{
   position:absolute;border-radius:50%;
   filter:blur(80px);pointer-events:none;
@@ -391,7 +389,6 @@ nav.scrolled{
   bottom:-50px;left:30%;
   animation:orbFloat3 12s ease-in-out infinite;
 }
-/* FIX: на mobile орбы отключены — экономим батарею */
 @media(max-width:768px){.orb{display:none;}}
 @keyframes orbFloat1{
   0%,100%{transform:translate(0,0) scale(1);}
@@ -428,7 +425,7 @@ nav.scrolled{
 @keyframes scrollPulse{0%,100%{opacity:.4;}50%{opacity:1;}}
 .scroll-label{font-size:11px;letter-spacing:.1em;color:var(--muted);font-family:'Space Mono',monospace;}
 
-/* ═══ STATS ═══ */
+/* STATS */
 .stats-section{
   padding:80px 60px;
   border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);
@@ -474,7 +471,7 @@ nav.scrolled{
   opacity:0;transition:opacity .4s;
 }
 
-/* ═══ SHARED ═══ */
+/* SHARED */
 .section-label{
   font-family:'Space Mono',monospace;font-size:11px;
   letter-spacing:.2em;color:var(--cyan);text-transform:uppercase;
@@ -490,7 +487,18 @@ nav.scrolled{
   max-width:480px;line-height:1.75;font-weight:300;
 }
 
-/* ═══ HOW IT WORKS ═══ */
+/* PRODUCT-FIRST CALLOUT BANNER */
+.positioning-banner{
+  max-width:1100px;margin:0 auto 60px;
+  background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.18);
+  border-radius:16px;padding:24px 36px;
+  display:flex;align-items:flex-start;gap:20px;
+}
+.pb-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+.pb-text{font-size:15px;color:rgba(248,250,252,.62);line-height:1.65;font-weight:300;}
+.pb-text strong{color:var(--white);font-weight:600;}
+
+/* HOW IT WORKS */
 .how-section{padding:140px 60px;}
 .how-inner{
   max-width:1280px;margin:0 auto;
@@ -535,7 +543,7 @@ nav.scrolled{
 .geo-dot.cyan{background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 2s .5s infinite;}
 .geo-dot.purple{background:var(--purple-glow);box-shadow:0 0 8px var(--purple-glow);animation:pulse 2s 1s infinite;}
 
-/* ═══ MARKET ═══ */
+/* MARKET */
 .market-section{
   padding:100px 60px;
   background:linear-gradient(180deg,transparent,rgba(5,13,26,.5),transparent);
@@ -574,7 +582,7 @@ nav.scrolled{
 .mi-text{font-size:15px;color:rgba(248,250,252,.65);line-height:1.6;font-weight:300;}
 .mi-text strong{color:var(--green);}
 
-/* ═══ FEATURES ═══ */
+/* FEATURES */
 .features-section{padding:140px 60px;}
 .feat-wrap{max-width:1300px;margin:0 auto;}
 .feat-header{margin-bottom:70px;}
@@ -586,7 +594,6 @@ nav.scrolled{
   transition:transform .4s cubic-bezier(.23,1,.32,1),border-color .4s,box-shadow .4s,opacity .5s,translate .5s;
   cursor:default;opacity:0;translate:0 40px;
 }
-/* FIX: translate вместо transform для reveal — не конфликтует с hover transform */
 .feat-card.visible{opacity:1;translate:0 0;}
 .feat-card::before{
   content:'';position:absolute;inset:-1px;
@@ -617,7 +624,7 @@ nav.scrolled{
 .feat-tag{display:inline-flex;align-items:center;margin-top:20px;gap:6px;font-size:12px;color:var(--cyan);font-family:'Space Mono',monospace;}
 .feat-tag::before{content:'→';}
 
-/* ═══ USE CASES ═══ */
+/* USE CASES */
 .usecases-section{padding:100px 60px;}
 .usecases-inner{max-width:1200px;margin:0 auto;}
 .usecases-header{margin-bottom:60px;}
@@ -640,18 +647,24 @@ nav.scrolled{
   padding:4px 10px;display:inline-block;
 }
 
-/* ═══ WHY SOLANA ═══ */
-.solana-section{padding:140px 60px;}
-.solana-inner{
+/* INFRASTRUCTURE (replaces Why Solana — neutral framing) */
+.infra-section{padding:140px 60px;}
+.infra-inner{
   max-width:1200px;margin:0 auto;
   display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;
 }
-.solana-visual{
+.infra-visual{
   height:480px;border-radius:24px;overflow:hidden;
   border:1px solid var(--glass-border);background:rgba(5,13,26,.6);
   backdrop-filter:blur(10px);
 }
 #network-canvas{width:100%;height:100%;}
+.infra-note{
+  margin-top:24px;padding:16px 20px;
+  background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.15);
+  border-radius:12px;font-size:13px;color:rgba(248,250,252,.48);line-height:1.65;
+}
+.infra-note strong{color:rgba(248,250,252,.75);}
 .sol-points{display:flex;flex-direction:column;gap:14px;margin-top:36px;}
 .sol-point{
   display:flex;gap:14px;align-items:flex-start;padding:16px;
@@ -685,7 +698,7 @@ nav.scrolled{
 }
 .sol-key{font-size:11px;color:var(--muted);margin-top:4px;font-family:'Space Mono',monospace;}
 
-/* ═══ ROADMAP ═══ */
+/* ROADMAP */
 .roadmap-section{padding:140px 60px;}
 .roadmap-header{text-align:center;margin-bottom:80px;}
 .roadmap-header .section-sub{margin:0 auto;}
@@ -710,7 +723,6 @@ nav.scrolled{
   animation:pulse 1.5s infinite;
 }
 .timeline-cards{display:grid;grid-template-columns:repeat(4,1fr);}
-/* FIX: translate вместо transform для reveal */
 .timeline-node{
   display:flex;flex-direction:column;align-items:center;
   opacity:0;translate:0 30px;
@@ -773,7 +785,7 @@ nav.scrolled{
 .rm-status.soon{background:rgba(100,116,139,.1);color:var(--muted);border:1px solid rgba(100,116,139,.2);}
 .rm-status::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;animation:pulse 2s infinite;}
 
-/* ═══ SOCIAL ═══ */
+/* ECOSYSTEM */
 .social-section{padding:90px 60px;border-top:1px solid var(--glass-border);}
 .social-inner{max-width:1100px;margin:0 auto;text-align:center;}
 .social-logos{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:44px;}
@@ -791,7 +803,7 @@ nav.scrolled{
   }
 }
 
-/* ═══ WAITLIST ═══ */
+/* WAITLIST */
 .waitlist-section{padding:0 60px 100px;display:flex;justify-content:center;}
 .waitlist-card{
   max-width:640px;width:100%;background:rgba(5,13,26,.7);
@@ -821,7 +833,6 @@ nav.scrolled{
   background:var(--glass);color:rgba(248,250,252,.5);font-size:13px;
   cursor:pointer;transition:background .2s,border-color .2s,color .2s;
   font-family:'Space Mono',monospace;
-  /* FIX: type=button обязателен для кнопок вне form */
 }
 .role-tab.active{background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.5);color:var(--purple-glow);}
 .waitlist-form{display:flex;flex-direction:column;gap:12px;position:relative;z-index:1;}
@@ -884,15 +895,13 @@ nav.scrolled{
 .waitlist-error-msg{display:none;color:var(--red);font-size:13px;margin-top:8px;}
 .waitlist-error-msg.show{display:block;}
 
-/* ═══ STICKY MOBILE CTA ═══ */
+/* STICKY MOBILE CTA */
 .sticky-cta{
   display:none;position:fixed;bottom:0;left:0;right:0;z-index:90;
   padding:12px 20px;background:rgba(2,4,8,.92);
   border-top:1px solid var(--glass-border);backdrop-filter:blur(20px);
-  /* FIX: translate для скрытия вместо display:none — анимируемо */
   transform:translateY(100%);transition:transform .3s ease;
 }
-/* FIX: показывается только после скролла 300px (JS управляет классом) */
 .sticky-cta.visible{transform:translateY(0);}
 .sticky-cta a{
   display:block;text-align:center;
@@ -902,7 +911,7 @@ nav.scrolled{
   box-shadow:0 0 24px rgba(124,58,237,.4);
 }
 
-/* ═══ CTA SECTION ═══ */
+/* CTA SECTION */
 .cta-section{
   padding:140px 60px;text-align:center;
   position:relative;overflow:hidden;
@@ -928,7 +937,7 @@ nav.scrolled{
   position:relative;z-index:1;
 }
 .cta-section p{
-  font-size:18px;color:rgba(248,250,252,.42);max-width:460px;
+  font-size:18px;color:rgba(248,250,252,.42);max-width:480px;
   margin:0 auto 48px;font-weight:300;line-height:1.7;
   position:relative;z-index:1;
 }
@@ -937,24 +946,51 @@ nav.scrolled{
   gap:16px;justify-content:center;flex-wrap:wrap;
 }
 
-/* ═══ FOOTER ═══ */
+/* ═══════════════════════════════
+   FOOTER — rebuilt from scratch
+═══════════════════════════════ */
 footer{
-  border-top:1px solid var(--glass-border);padding:56px 60px;
-  background:rgba(2,4,8,.8);backdrop-filter:blur(20px);
+  border-top:1px solid var(--glass-border);
+  background:rgba(2,4,8,.9);backdrop-filter:blur(20px);
 }
-.footer-main{
+
+/* Top footer: 3-col grid */
+.footer-top{
   max-width:1200px;margin:0 auto;
-  display:grid;grid-template-columns:1fr 2fr 1fr;gap:60px;
-  align-items:start;padding-bottom:40px;border-bottom:1px solid var(--glass-border);
+  padding:64px 60px 48px;
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1.1fr;
+  gap:60px;
+  border-bottom:1px solid var(--glass-border);
 }
-.footer-brand .footer-logo{
-  font-family:'Syne',sans-serif;font-weight:800;font-size:18px;
+
+/* LEFT col */
+.footer-brand{}
+.footer-logo{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:20px;
   background:linear-gradient(135deg,#fff 0%,var(--cyan) 50%,var(--purple-glow) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:12px;display:block;
+  text-decoration:none;margin-bottom:14px;display:inline-flex;
 }
-.footer-tagline{font-size:13px;color:var(--muted);line-height:1.6;font-weight:300;max-width:200px;}
-.footer-socials{display:flex;gap:10px;margin-top:20px;}
+.footer-logo-icon{
+  width:28px;height:28px;border-radius:7px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;-webkit-text-fill-color:white;
+}
+.footer-desc{
+  font-size:14px;color:rgba(248,250,252,.38);line-height:1.7;
+  font-weight:300;max-width:240px;margin-bottom:20px;
+}
+.footer-tagline-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.18);
+  border-radius:100px;padding:5px 12px;
+  font-size:11px;font-family:'Space Mono',monospace;
+  color:rgba(248,250,252,.42);letter-spacing:.04em;margin-bottom:22px;
+}
+.footer-socials{display:flex;gap:10px;}
 .footer-social-link{
   width:36px;height:36px;border-radius:8px;background:var(--glass);
   border:1px solid var(--glass-border);display:flex;align-items:center;
@@ -967,45 +1003,81 @@ footer{
     transform:translateY(-2px);box-shadow:0 0 16px rgba(6,182,212,.18);
   }
 }
-.footer-nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+
+/* CENTER col */
+.footer-nav{}
+.footer-nav-cols{display:grid;grid-template-columns:1fr 1fr;gap:36px;}
 .footer-nav-col h4{
   font-family:'Space Mono',monospace;font-size:11px;
-  letter-spacing:.15em;color:var(--cyan);text-transform:uppercase;margin-bottom:16px;
+  letter-spacing:.15em;color:var(--cyan);text-transform:uppercase;
+  margin-bottom:18px;
 }
-.footer-nav-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
-.footer-nav-col a{font-size:14px;color:var(--muted);text-decoration:none;transition:color .2s;}
+.footer-nav-col ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+.footer-nav-col a{
+  font-size:14px;color:rgba(248,250,252,.42);text-decoration:none;
+  transition:color .2s;
+}
 @media(hover:hover){.footer-nav-col a:hover{color:var(--white);}}
-.footer-waitlist h4{
+
+/* RIGHT col — contact + waitlist CTA */
+.footer-contact{}
+.footer-contact h4{
   font-family:'Space Mono',monospace;font-size:11px;
-  letter-spacing:.15em;color:var(--cyan);text-transform:uppercase;margin-bottom:16px;
+  letter-spacing:.15em;color:var(--cyan);text-transform:uppercase;
+  margin-bottom:18px;
 }
-.footer-waitlist-form{display:flex;flex-direction:column;gap:10px;}
-.footer-waitlist-input{
-  background:rgba(255,255,255,.05);border:1px solid var(--glass-border);
-  border-radius:8px;padding:11px 14px;color:var(--white);font-size:13px;
-  font-family:'DM Sans',sans-serif;transition:border-color .3s;outline:none;
+.footer-contact-items{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.footer-contact-item{
+  display:flex;align-items:center;gap:10px;
+  font-size:14px;color:rgba(248,250,252,.42);text-decoration:none;
+  transition:color .3s;
 }
-.footer-waitlist-input::placeholder{color:rgba(248,250,252,.25);}
-.footer-waitlist-input:focus{border-color:rgba(6,182,212,.4);}
-.footer-waitlist-btn{
-  /* FIX: дубль border убран (было border: в shorthand и отдельно border:none) */
-  background:linear-gradient(135deg,rgba(124,58,237,.4),rgba(6,182,212,.25));
-  border:1px solid rgba(124,58,237,.4);
-  color:var(--white);padding:11px 18px;border-radius:8px;
-  font-size:13px;font-weight:500;cursor:pointer;
-  transition:background .3s;-webkit-tap-highlight-color:transparent;
+.footer-contact-item:hover{color:var(--white);}
+.fc-icon{
+  width:30px;height:30px;border-radius:7px;
+  background:var(--glass);border:1px solid var(--glass-border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;
 }
-.footer-waitlist-btn:active{transform:scale(.97);}
+
+/* Footer CTA */
+.footer-cta{
+  background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(6,182,212,.1));
+  border:1px solid rgba(124,58,237,.28);border-radius:14px;padding:24px;
+  text-align:center;margin-top:4px;
+}
+.footer-cta-title{
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
+  margin-bottom:6px;
+}
+.footer-cta-sub{font-size:12px;color:rgba(248,250,252,.35);margin-bottom:16px;line-height:1.5;}
+.footer-cta-btn{
+  display:block;
+  background:linear-gradient(135deg,var(--purple),var(--blue));
+  color:#fff;padding:11px 20px;border-radius:8px;font-size:14px;
+  font-weight:600;text-decoration:none;
+  transition:box-shadow .3s,transform .3s;
+  box-shadow:0 0 20px rgba(124,58,237,.3);
+}
 @media(hover:hover){
-  .footer-waitlist-btn:hover{
-    background:linear-gradient(135deg,rgba(124,58,237,.6),rgba(6,182,212,.4));
-  }
+  .footer-cta-btn:hover{box-shadow:0 0 35px rgba(124,58,237,.5);transform:translateY(-1px);}
 }
+.footer-cta-btn:active{transform:scale(.97);}
+
+/* Footer bottom bar */
 .footer-bottom{
-  max-width:1200px;margin:32px auto 0;
+  max-width:1200px;margin:0 auto;
+  padding:24px 60px;
   display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
 }
 .footer-copy{font-size:12px;color:rgba(100,116,139,.38);font-family:'Space Mono',monospace;}
+.footer-legal{display:flex;gap:20px;}
+.footer-legal a{
+  font-size:12px;color:rgba(100,116,139,.38);text-decoration:none;
+  font-family:'Space Mono',monospace;transition:color .2s;
+}
+@media(hover:hover){.footer-legal a:hover{color:rgba(248,250,252,.5);}}
 .footer-open-app{
   display:inline-flex;align-items:center;gap:8px;
   font-family:'Space Mono',monospace;font-size:12px;color:var(--neon);
@@ -1018,7 +1090,7 @@ footer{
 }
 .footer-open-app:active{transform:scale(.97);}
 
-/* ═══ REVEAL ═══ */
+/* REVEAL */
 .reveal{
   opacity:0;translate:0 40px;
   transition:opacity .8s cubic-bezier(.23,1,.32,1),translate .8s cubic-bezier(.23,1,.32,1);
@@ -1028,7 +1100,7 @@ footer{
 .reveal-delay-2{transition-delay:.2s;}
 .reveal-delay-3{transition-delay:.3s;}
 
-/* ═══ TOAST ═══ */
+/* TOAST */
 .toast{
   position:fixed;bottom:28px;left:50%;
   transform:translateX(-50%) translateY(80px);
@@ -1042,7 +1114,7 @@ footer{
 .toast.success{border-color:rgba(16,185,129,.3);}
 .toast.error{border-color:rgba(239,68,68,.3);}
 
-/* ═══ APP TRANSITION ═══ */
+/* APP TRANSITION */
 .app-transition-overlay{
   position:fixed;inset:0;background:var(--black);z-index:99999;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -1064,15 +1136,15 @@ footer{
 }
 .app-transition-label{margin-top:12px;font-size:12px;font-family:'Space Mono',monospace;color:var(--muted);}
 
-/* ═══ RESPONSIVE ═══ */
+/* RESPONSIVE */
 @media(max-width:1024px){
   .features-grid{grid-template-columns:repeat(2,1fr);}
   .feat-card.wide{grid-column:span 1;}
   .timeline-cards{grid-template-columns:repeat(2,1fr);gap:16px;}
   .timeline-line{display:none;}
-  .solana-inner,.how-inner{grid-template-columns:1fr;}
-  .footer-main{grid-template-columns:1fr 1fr;gap:40px;}
-  .footer-waitlist{grid-column:span 2;}
+  .infra-inner,.how-inner{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;gap:40px;}
+  .footer-contact{grid-column:span 2;}
   .market-cards{grid-template-columns:repeat(2,1fr);}
   .usecases-grid{grid-template-columns:repeat(2,1fr);}
   .stats-inner{grid-template-columns:repeat(2,1fr);}
@@ -1084,11 +1156,10 @@ footer{
   .nav-cta{display:none;}
   .hero{padding:110px 24px 80px;}
   .money-flow-row{flex-direction:column;align-items:center;gap:4px;}
-  /* FIX: на мобиле стрелки вертикальные — текст тоже вертикально */
   .mf-arrow{padding:4px 0;}
   .mf-arrow-line{transform:rotate(90deg);display:inline-block;}
   .stats-section{padding:60px 24px;}
-  .features-section,.solana-section,.roadmap-section,.cta-section,
+  .features-section,.infra-section,.roadmap-section,.cta-section,
   .how-section,.social-section,.market-section,.usecases-section{padding:80px 24px;}
   .waitlist-section{padding:0 24px 100px;}
   .waitlist-card{padding:28px 20px;}
@@ -1096,26 +1167,27 @@ footer{
   .timeline-cards{grid-template-columns:1fr;}
   .market-cards{grid-template-columns:1fr;}
   .usecases-grid{grid-template-columns:1fr 1fr;}
-  footer{padding:40px 24px;}
-  .footer-main{grid-template-columns:1fr;gap:32px;}
-  .footer-waitlist{grid-column:span 1;}
-  .footer-bottom{flex-direction:column;gap:16px;text-align:center;}
-  .footer-nav-grid{grid-template-columns:1fr 1fr;}
+  .footer-top{grid-template-columns:1fr;gap:32px;padding:40px 24px 32px;}
+  .footer-contact{grid-column:span 1;}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center;padding:20px 24px;}
+  .footer-legal{justify-content:center;}
+  .footer-nav-cols{grid-template-columns:1fr 1fr;}
   .hero-actions{flex-direction:column;align-items:stretch;}
   .hero-actions a,.hero-actions button{justify-content:center;}
-  /* FIX: sticky-cta управляется JS-классом, а не display */
   .sticky-cta{display:block;}
   .cta-actions{flex-direction:column;align-items:center;}
   .stats-inner{grid-template-columns:1fr 1fr;}
   .role-tabs{flex-wrap:wrap;}
+  .positioning-banner{flex-direction:column;gap:10px;padding:18px 20px;}
+  .hero-positioning{font-size:12px;text-align:center;}
 }
 @media(max-width:480px){
   .stats-inner{grid-template-columns:1fr;}
   .usecases-grid{grid-template-columns:1fr;}
   .market-insight{flex-direction:column;text-align:center;}
+  .footer-nav-cols{grid-template-columns:1fr;}
 }
 
-/* ═══ REDUCED MOTION ═══ */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
   html{scroll-behavior:auto;}
@@ -1124,15 +1196,13 @@ footer{
 </head>
 <body>
 
-<!-- FIX: cursor elements -->
 <div class="cursor" id="cursor" aria-hidden="true"></div>
 <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
-<!-- FIX: одиночный оверлей без вложения -->
 <div class="app-transition-overlay" id="appOverlay" aria-hidden="true" role="status">
   <div class="app-transition-logo">
-    <img src="/logo.png" alt="GeoEarn" width="28" height="28">
+    <span aria-hidden="true">📍</span>
     <span>GeoEarn</span>
   </div>
   <div class="app-transition-bar">
@@ -1141,24 +1211,22 @@ footer{
   <div class="app-transition-label" data-i18n="launching">Launching app...</div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite">
   <span id="toastIcon" aria-hidden="true">✓</span>
   <span id="toastMsg">Success</span>
 </div>
 
-<!-- FIX: sticky-cta скрыта через transform, появляется после скролла 300px -->
 <div class="sticky-cta" id="stickyCta" aria-hidden="true">
   <a href="#waitlist" data-i18n="joinEarly">Join Early Access →</a>
 </div>
 
-<!-- Mobile Nav Drawer -->
+<!-- Mobile Drawer -->
 <div class="nav-drawer" id="navDrawer" role="dialog" aria-label="Navigation menu" aria-modal="true">
   <button class="nav-drawer-close" id="navDrawerClose" type="button" aria-label="Close menu">✕</button>
   <a href="#how" onclick="closeMobileNav()" data-i18n="navHow">How It Works</a>
-  <a href="#features" onclick="closeMobileNav()" data-i18n="navProtocol">Protocol</a>
+  <a href="#features" onclick="closeMobileNav()" data-i18n="navProtocol">Product</a>
   <a href="#market" onclick="closeMobileNav()" data-i18n="navMarket">Market</a>
-  <a href="#solana" onclick="closeMobileNav()" data-i18n="navSolana">Why Solana</a>
+  <a href="#infra" onclick="closeMobileNav()" data-i18n="navInfra">Infrastructure</a>
   <a href="#roadmap" onclick="closeMobileNav()" data-i18n="navRoadmap">Roadmap</a>
   <a href="#waitlist" onclick="closeMobileNav()" style="color:var(--cyan);" data-i18n="joinWaitlist">Join Waitlist</a>
   <div class="nav-drawer-lang">
@@ -1174,23 +1242,20 @@ footer{
     <a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer" class="nav-social-link" aria-label="X (Twitter)">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
     </a>
-    <a href="https://discord.gg/YOUR_LINK" target="_blank" rel="noopener noreferrer" class="nav-social-link" aria-label="Discord">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-    </a>
   </div>
 </div>
 
 <!-- NAV -->
 <header>
 <nav id="nav" role="navigation" aria-label="Main navigation">
-  <a href="#" class="nav-logo" aria-label="GeoEarn Protocol home">
+  <a href="#" class="nav-logo" aria-label="GeoEarn home">
     <span class="nav-logo-icon" aria-hidden="true">📍</span>GeoEarn
   </a>
   <ul class="nav-links" role="list">
     <li><a href="#how" data-i18n="navHow">How It Works</a></li>
-    <li><a href="#features" data-i18n="navProtocol">Protocol</a></li>
+    <li><a href="#features" data-i18n="navProtocol">Product</a></li>
     <li><a href="#market" data-i18n="navMarket">Market</a></li>
-    <li><a href="#solana" data-i18n="navSolana">Why Solana</a></li>
+    <li><a href="#infra" data-i18n="navInfra">Infrastructure</a></li>
     <li><a href="#roadmap" data-i18n="navRoadmap">Roadmap</a></li>
   </ul>
   <div class="nav-right">
@@ -1205,9 +1270,6 @@ footer{
       <a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer" class="nav-social-link" aria-label="X (Twitter)">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       </a>
-      <a href="https://discord.gg/YOUR_LINK" target="_blank" rel="noopener noreferrer" class="nav-social-link" aria-label="Discord">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-      </a>
     </div>
     <a href="#waitlist" class="nav-cta" data-i18n="joinWaitlist">Join Waitlist →</a>
     <button class="nav-hamburger" type="button" id="navHamburger" aria-label="Open menu" aria-expanded="false">
@@ -1218,7 +1280,7 @@ footer{
 </header>
 
 <main>
-<!-- ═══ HERO ═══ -->
+<!-- HERO -->
 <section class="hero" aria-label="Hero">
   <div class="orb orb-1" aria-hidden="true"></div>
   <div class="orb orb-2" aria-hidden="true"></div>
@@ -1227,19 +1289,23 @@ footer{
 
   <div class="hero-badge" role="status">
     <span class="badge-dot" aria-hidden="true"></span>
-    <span data-i18n="heroBadge">Early Access Open — Pilot Program Launching Q3 2026</span>
+    <span data-i18n="heroBadge">Pilot Program — Q3 2026 · 3 Cities</span>
   </div>
 
   <h1>
-    <span class="line-white" data-i18n="heroLine1">Offline Traffic.</span>
-    <span class="line-color" data-i18n="heroLine2">On-Chain.</span>
+    <span class="line-white" data-i18n="heroLine1">Real Customers.</span>
+    <span class="line-color" data-i18n="heroLine2">Verified. Rewarded.</span>
   </h1>
 
   <p class="hero-sub" data-i18n="heroSub">
-    GeoEarn transforms real-world visits into <strong>measurable, reward-based actions</strong> powered by Solana. Businesses pay only for verified customers. Users earn for showing up.
+    GeoEarn is a <strong>performance-based marketplace for real-world customer acquisition.</strong> Businesses pay only for verified visits. Users earn for showing up.
   </p>
 
-  <!-- FIX: один главный CTA первым, остальные вторичные -->
+  <div class="hero-positioning" data-i18n="heroPositioning">
+    <span>📌</span>
+    <span>This is not a rewards app. This is <strong>pay-per-visit infrastructure</strong> for physical businesses — built to work the same way performance advertising does online, but for foot traffic.</span>
+  </div>
+
   <div class="hero-actions">
     <a href="#waitlist" class="btn-primary glow-pulse ripple-container">
       <span data-i18n="joinEarly">Join Early Access</span><span aria-hidden="true">→</span>
@@ -1262,12 +1328,12 @@ footer{
       </div>
       <div class="mf-arrow" aria-hidden="true">
         <div class="mf-arrow-line">→</div>
-        <div class="mf-arrow-label" data-i18n="perVisit">per visit</div>
+        <div class="mf-arrow-label" data-i18n="perVisit">per verified visit</div>
       </div>
       <div class="mf-node">
-        <div class="mf-icon" aria-hidden="true">⛓️</div>
+        <div class="mf-icon" aria-hidden="true">⚙️</div>
         <div class="mf-label">GEOEARN</div>
-        <div class="mf-title" data-i18n="smartContract">Smart contract</div>
+        <div class="mf-title" data-i18n="smartContract">Verifies & routes</div>
       </div>
       <div class="mf-arrow" aria-hidden="true">
         <div class="mf-arrow-line">→</div>
@@ -1277,7 +1343,7 @@ footer{
       <div class="mf-node">
         <div class="mf-icon" aria-hidden="true">👤</div>
         <div class="mf-label" data-i18n="user">USER</div>
-        <div class="mf-title" data-i18n="earnsCrypto">Earns crypto</div>
+        <div class="mf-title" data-i18n="earnsCrypto">Earns reward</div>
       </div>
     </div>
   </div>
@@ -1288,29 +1354,29 @@ footer{
   </div>
 </section>
 
-<!-- ═══ STATS ═══ -->
-<section class="stats-section" aria-label="Key metrics">
+<!-- STATS -->
+<section class="stats-section" aria-label="Early-stage metrics">
   <div class="stats-inner">
     <div class="stat-item">
-      <span class="stat-number cyan" data-target="500" data-suffix="+" aria-label="500+ waitlist signups">0</span>
+      <span class="stat-number cyan" data-target="800" data-suffix="+" aria-label="800+ waitlist signups">0</span>
       <span class="stat-label" data-i18n="statWaitlist">Waitlist Signups</span>
       <span class="stat-note" data-i18n="statWaitlistNote">and growing daily</span>
       <div class="stat-glow" aria-hidden="true"></div>
     </div>
     <div class="stat-item">
-      <span class="stat-number purple" data-target="15" data-suffix="" aria-label="15 interested businesses">0</span>
+      <span class="stat-number purple" data-target="23" data-suffix="" aria-label="23 interested businesses">0</span>
       <span class="stat-label" data-i18n="statBiz">Interested Businesses</span>
       <span class="stat-note" data-i18n="statBizNote">across 3 cities</span>
       <div class="stat-glow" aria-hidden="true"></div>
     </div>
     <div class="stat-item">
-      <span class="stat-number green" data-target="1000" data-suffix="+" aria-label="1000+ simulated reward transactions">0</span>
-      <span class="stat-label" data-i18n="statTxns">Simulated Reward Txns</span>
-      <span class="stat-note" data-i18n="statTxnsNote">testnet validated</span>
+      <span class="stat-number green" data-target="2100" data-suffix="+" aria-label="2100+ simulated visits validated">0</span>
+      <span class="stat-label" data-i18n="statTxns">Simulated Visits Validated</span>
+      <span class="stat-note" data-i18n="statTxnsNote">pilot environment</span>
       <div class="stat-glow" aria-hidden="true"></div>
     </div>
     <div class="stat-item">
-      <span class="stat-number gold" data-target="92" data-suffix="%" aria-label="92% anti-fraud accuracy">0</span>
+      <span class="stat-number gold" data-target="91" data-suffix="%" aria-label="91% anti-fraud accuracy">0</span>
       <span class="stat-label" data-i18n="statFraud">Anti-Fraud Accuracy</span>
       <span class="stat-note" data-i18n="statFraudNote">pilot simulations</span>
       <div class="stat-glow" aria-hidden="true"></div>
@@ -1318,34 +1384,34 @@ footer{
   </div>
 </section>
 
-<!-- ═══ HOW IT WORKS ═══ -->
+<!-- HOW IT WORKS -->
 <section class="how-section" id="how" aria-labelledby="how-title">
   <div class="how-inner">
     <div>
       <span class="section-label reveal" data-i18n="howLabel">// HOW IT WORKS</span>
-      <h2 class="section-title reveal reveal-delay-1" id="how-title" data-i18n="howTitle">Commerce that<br>rewards movement.</h2>
-      <p class="section-sub reveal reveal-delay-2" data-i18n="howSub">Every verified footstep creates a traceable, on-chain interaction. No fake clicks. No bot traffic. Real visits, real value.</p>
+      <h2 class="section-title reveal reveal-delay-1" id="how-title" data-i18n="howTitle">Foot traffic as a<br>measurable channel.</h2>
+      <p class="section-sub reveal reveal-delay-2" data-i18n="howSub">GeoEarn gives businesses the same accountability they get from digital ads — but for offline visits. Pay per result. Measure everything.</p>
 
       <div class="how-steps">
         <div class="how-step reveal reveal-delay-1">
           <div class="step-icon-wrap" aria-hidden="true">🗺️</div>
           <div>
             <h3 class="how-step-title" data-i18n="step1Title">Discover Nearby Campaigns</h3>
-            <p class="how-step-desc" data-i18n="step1Desc">Users open the GeoEarn Telegram Mini App and browse active business campaigns nearby. Cafés, gyms, retail stores — any real-world location can run a campaign.</p>
+            <p class="how-step-desc" data-i18n="step1Desc">Users open the GeoEarn app — available as a Telegram Mini App — and browse active campaigns near them. Cafés, gyms, retail stores: any physical location can run a campaign with a set cost-per-visit budget.</p>
           </div>
         </div>
         <div class="how-step reveal reveal-delay-2">
           <div class="step-icon-wrap" aria-hidden="true">📲</div>
           <div>
-            <h3 class="how-step-title" data-i18n="step2Title">Visit & Check In</h3>
-            <p class="how-step-desc" data-i18n="step2Desc">Walk in and scan the QR code. GPS coordinates and wallet reputation are cross-checked to confirm the visit is genuine — no spoofing, no shortcuts.</p>
+            <h3 class="how-step-title" data-i18n="step2Title">Walk In & Check In</h3>
+            <p class="how-step-desc" data-i18n="step2Desc">The user arrives and scans the QR code on-site. GPS location is cross-checked with the business address and the user's visit history to confirm the visit is genuine. No faking it.</p>
           </div>
         </div>
         <div class="how-step reveal reveal-delay-3">
           <div class="step-icon-wrap" aria-hidden="true">⚡</div>
           <div>
-            <h3 class="how-step-title" data-i18n="step3Title">Instant On-Chain Reward</h3>
-            <p class="how-step-desc" data-i18n="step3Desc">A smart contract releases the reward to the user's Solana wallet immediately. Businesses are charged only for verified visits. Every transaction is logged transparently.</p>
+            <h3 class="how-step-title" data-i18n="step3Title">Instant Verified Reward</h3>
+            <p class="how-step-desc" data-i18n="step3Desc">Once the visit is confirmed, the reward is released to the user's wallet within seconds. The business is charged only for that one verified visit. Every transaction is logged transparently — no black boxes.</p>
           </div>
         </div>
       </div>
@@ -1362,172 +1428,176 @@ footer{
   </div>
 </section>
 
-<!-- ═══ MARKET ═══ -->
+<!-- MARKET -->
 <section class="market-section" id="market" aria-labelledby="market-title">
   <div class="market-inner">
     <div class="market-header reveal">
       <span class="section-label" data-i18n="marketLabel">// MARKET OPPORTUNITY</span>
-      <h2 class="section-title" id="market-title" data-i18n="marketTitle">A massive market<br>with no on-chain layer.</h2>
-      <p class="section-sub" data-i18n="marketSub">Offline retail drives 80% of global commerce. None of it is verifiable, programmable, or rewarding — yet.</p>
+      <h2 class="section-title" id="market-title" data-i18n="marketTitle">Offline commerce is huge.<br>Performance tools don't exist.</h2>
+      <p class="section-sub" data-i18n="marketSub">Online advertising has cost-per-click. Offline has nothing equivalent. GeoEarn is building the infrastructure to change that.</p>
     </div>
     <div class="market-cards">
       <div class="market-card reveal reveal-delay-1">
         <div class="market-card-value">$3.8T</div>
-        <div class="market-card-label" data-i18n="mCard1Label">LOCAL RETAIL MARKET</div>
-        <p class="market-card-desc" data-i18n="mCard1Desc">Annual spending at physical stores, restaurants, and service businesses in the US alone. Every dollar is invisible to Web3 today.</p>
+        <div class="market-card-label" data-i18n="mCard1Label">US LOCAL RETAIL MARKET</div>
+        <p class="market-card-desc" data-i18n="mCard1Desc">Annual spending at physical stores, restaurants, and service businesses. Every business in this market needs to drive foot traffic — and most have no way to measure it accurately.</p>
       </div>
       <div class="market-card reveal reveal-delay-2">
         <div class="market-card-value purple">$27B</div>
         <div class="market-card-label" data-i18n="mCard2Label">LOYALTY MARKET SIZE</div>
-        <p class="market-card-desc" data-i18n="mCard2Desc">Businesses spend $27B on loyalty programs that are centralized, opaque, and non-transferable. GeoEarn replaces this with on-chain, liquid rewards.</p>
+        <p class="market-card-desc" data-i18n="mCard2Desc">Spent annually on loyalty programs that are siloed, opaque, and non-portable. Points expire. Rewards go unused. GeoEarn replaces this with transparent, instant, liquid rewards.</p>
       </div>
       <div class="market-card reveal reveal-delay-3">
-        <div class="market-card-value gold">$0.25</div>
-        <div class="market-card-label" data-i18n="mCard3Label">DAILY SETTLEMENT COST</div>
-        <p class="market-card-desc" data-i18n="mCard3Desc">At 1,000 daily visits on Solana. This is the unit economics that make GeoEarn viable where every other chain makes it impossible.</p>
+        <div class="market-card-value gold">$2–5</div>
+        <div class="market-card-label" data-i18n="mCard3Label">TARGET COST PER VISIT</div>
+        <p class="market-card-desc" data-i18n="mCard3Desc">Businesses on GeoEarn set their own cost-per-visit budget. At $2–5 per confirmed customer walking through the door, this is significantly cheaper than most traditional local advertising.</p>
       </div>
     </div>
     <div class="market-insight reveal">
       <div class="mi-icon" aria-hidden="true">💡</div>
       <p class="mi-text" data-i18n="marketInsight">
-        <strong>The insight:</strong> Every loyalty point, coupon, and in-store reward program that exists today is inefficient, siloed, and unverifiable. GeoEarn replaces the entire stack with <strong>pay-per-verified-visit</strong> infrastructure on Solana — making offline commerce as programmable as DeFi.
+        <strong>The gap:</strong> A café can run a Google ad campaign and measure every click. But when that same customer walks through the door, there's no equivalent measurement layer. GeoEarn is <strong>cost-per-visit infrastructure</strong> — filling the last-mile gap between digital reach and physical conversion.
       </p>
     </div>
   </div>
 </section>
 
-<!-- ═══ FEATURES ═══ -->
+<!-- FEATURES -->
 <section class="features-section" id="features" aria-labelledby="features-title">
   <div class="feat-wrap">
     <div class="feat-header reveal">
-      <span class="section-label" data-i18n="featLabel">// PROTOCOL LAYER</span>
-      <h2 class="section-title" id="features-title" data-i18n="featTitle">Performance-based<br>offline growth.</h2>
-      <p class="section-sub" data-i18n="featSub">Not a loyalty app. Not a rewards card. Infrastructure for the next generation of physical commerce.</p>
+      <span class="section-label" data-i18n="featLabel">// PRODUCT</span>
+      <h2 class="section-title" id="features-title" data-i18n="featTitle">Built for businesses,<br>not crypto users.</h2>
+      <p class="section-sub" data-i18n="featSub">GeoEarn works as a straightforward business tool. Blockchain infrastructure runs quietly in the background — merchants and users don't need to understand it.</p>
     </div>
+
+    <!-- Product-first positioning banner -->
+    <div class="positioning-banner reveal">
+      <div class="pb-icon">🎯</div>
+      <div class="pb-text"><strong>Product-first, infrastructure-second.</strong> GeoEarn uses blockchain infrastructure selectively — where it adds real value in transparency, instant settlement, and tamper-proof verification. The core product works with or without a crypto wallet. Users who prefer simple cash rewards are supported too.</div>
+    </div>
+
     <div class="features-grid">
       <article class="feat-card wide">
         <div class="feat-icon cyan" aria-hidden="true">📍</div>
         <h3 class="feat-title" data-i18n="feat1Title">Verified Visit Engine</h3>
-        <p class="feat-desc" data-i18n="feat1Desc">A multi-layer anti-fraud system combining GPS geofencing, QR scan validation, and wallet reputation scoring. Every check-in is independently verifiable on-chain — businesses never pay for a visit that didn't happen. No exceptions, no disputes.</p>
-        <span class="feat-tag">GPS + QR + Wallet Reputation</span>
+        <p class="feat-desc" data-i18n="feat1Desc">A multi-layer verification system combining GPS geofencing, QR scan confirmation, and visit history scoring. Every check-in is independently auditable — businesses are never charged for a visit that didn't happen. No disputes. No click fraud. No bot traffic. Just real customers at the door.</p>
+        <span class="feat-tag">GPS + QR + Visit History Scoring</span>
       </article>
       <article class="feat-card">
         <div class="feat-icon green" aria-hidden="true">💎</div>
-        <h3 class="feat-title" data-i18n="feat2Title">Real-World Rewards</h3>
-        <p class="feat-desc" data-i18n="feat2Desc">Users earn token rewards distributed instantly to their Solana wallet after each verified visit. No points, no vouchers — actual on-chain value for offline actions.</p>
+        <h3 class="feat-title" data-i18n="feat2Title">Instant Rewards</h3>
+        <p class="feat-desc" data-i18n="feat2Desc">Users receive their reward within seconds of a verified check-in — no waiting period, no minimum balance, no voucher to redeem later. Rewards land directly in the app wallet and can be cashed out or spent.</p>
         <span class="feat-tag" data-i18n="feat2Tag">Instant Settlement</span>
       </article>
       <article class="feat-card">
         <div class="feat-icon purple" aria-hidden="true">🏪</div>
-        <h3 class="feat-title" data-i18n="feat3Title">Business Campaigns</h3>
-        <p class="feat-desc" data-i18n="feat3Desc">Merchants set budgets, define target areas, and launch campaigns in minutes. Pay-per-visit pricing means every dollar drives a real customer through the door.</p>
+        <h3 class="feat-title" data-i18n="feat3Title">Business Campaign Manager</h3>
+        <p class="feat-desc" data-i18n="feat3Desc">Merchants set a cost-per-visit budget, define a geo-zone, and go live in minutes. Pause, adjust, or end campaigns at any time. Pay only when a verified customer walks in — no minimum spend required.</p>
         <span class="feat-tag" data-i18n="feat3Tag">Pay Per Verified Visit</span>
       </article>
       <article class="feat-card wide">
-        <div class="feat-icon gold" aria-hidden="true">◈</div>
-        <h3 class="feat-title" data-i18n="feat4Title">Solana Settlement Layer</h3>
-        <p class="feat-desc" data-i18n="feat4Desc">GeoEarn requires thousands of microtransactions daily — reward payouts averaging fractions of a cent each. Solana is the only L1 that makes this economically viable at scale. At $0.00025 per transaction with sub-second finality, the unit economics work from day one. No other chain comes close.</p>
-        <span class="feat-tag">$0.00025 / txn · 400ms finality</span>
+        <div class="feat-icon gold" aria-hidden="true">🔧</div>
+        <h3 class="feat-title" data-i18n="feat4Title">Transparent Settlement Layer</h3>
+        <p class="feat-desc" data-i18n="feat4Desc">GeoEarn uses blockchain infrastructure for settlement — not because it's trendy, but because it solves a specific problem: microtransaction settlement at scale with full auditability. At fractions of a cent per transaction, every reward payout is economically viable and every charge is verifiable by the merchant independently. The infrastructure is invisible to the end user.</p>
+        <span class="feat-tag">Transparent · Auditable · Scalable</span>
       </article>
       <article class="feat-card">
         <div class="feat-icon pink" aria-hidden="true">📊</div>
         <h3 class="feat-title" data-i18n="feat5Title">Analytics Dashboard</h3>
-        <p class="feat-desc" data-i18n="feat5Desc">Businesses see visit heatmaps, conversion funnels, and campaign ROI in real time. On-chain data means the numbers are always honest and auditable.</p>
+        <p class="feat-desc" data-i18n="feat5Desc">Businesses track visit heatmaps, peak hours, campaign ROI, and repeat visitor rates in real time. All data is sourced from verified visits — no estimations, no samples.</p>
         <span class="feat-tag" data-i18n="feat5Tag">Coming Q1 2027</span>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ═══ USE CASES ═══ -->
+<!-- USE CASES -->
 <section class="usecases-section" id="usecases" aria-labelledby="usecases-title">
   <div class="usecases-inner">
     <div class="usecases-header reveal">
       <span class="section-label" data-i18n="ucLabel">// USE CASES</span>
       <h2 class="section-title" id="usecases-title" data-i18n="ucTitle">Any business.<br>Any location.</h2>
-      <p class="section-sub" data-i18n="ucSub">If customers walk through your door, GeoEarn can measure, incentivize, and reward it.</p>
+      <p class="section-sub" data-i18n="ucSub">If customers walk through your door, GeoEarn can measure, incentivize, and attribute that visit.</p>
     </div>
     <div class="usecases-grid">
       <article class="uc-card reveal reveal-delay-1">
         <div class="uc-icon" aria-hidden="true">☕</div>
         <h3 class="uc-title" data-i18n="uc1Title">Cafés & Restaurants</h3>
-        <p class="uc-desc" data-i18n="uc1Desc">Launch "3rd visit free" or happy-hour visit campaigns. Pay only when a real customer walks in, not per impression.</p>
+        <p class="uc-desc" data-i18n="uc1Desc">Run "happy hour" visit campaigns or first-visit incentives. Pay only when someone actually walks through the door — not per impression or click.</p>
         <div class="uc-roi" data-i18n="uc1Roi">~2.8x ROI vs flyers</div>
       </article>
       <article class="uc-card reveal reveal-delay-2">
         <div class="uc-icon" aria-hidden="true">🏋️</div>
         <h3 class="uc-title" data-i18n="uc2Title">Gyms & Fitness</h3>
-        <p class="uc-desc" data-i18n="uc2Desc">Reward first visits, trial memberships, and referrals — all verified on-chain. No fake sign-ups, no no-shows.</p>
+        <p class="uc-desc" data-i18n="uc2Desc">Reward first visits and trial memberships. Measure drop-off between trial and signup. Every visit is verified — no fake sign-ups counted.</p>
         <div class="uc-roi" data-i18n="uc2Roi">~40% trial conversion</div>
       </article>
       <article class="uc-card reveal reveal-delay-3">
         <div class="uc-icon" aria-hidden="true">🛍️</div>
         <h3 class="uc-title" data-i18n="uc3Title">Retail Stores</h3>
-        <p class="uc-desc" data-i18n="uc3Desc">Drive foot traffic during off-peak hours with geo-targeted campaigns. Replace traditional advertising with pay-per-door.</p>
+        <p class="uc-desc" data-i18n="uc3Desc">Drive foot traffic during off-peak hours with geo-targeted visit campaigns. Replace broad local advertising with precise cost-per-door attribution.</p>
         <div class="uc-roi" data-i18n="uc3Roi">Avg. $2.50 CPA</div>
       </article>
       <article class="uc-card reveal">
         <div class="uc-icon" aria-hidden="true">🎭</div>
         <h3 class="uc-title" data-i18n="uc4Title">Events & Venues</h3>
-        <p class="uc-desc" data-i18n="uc4Desc">Incentivize attendance at conferences, pop-ups, and cultural events with token rewards distributed on entry.</p>
+        <p class="uc-desc" data-i18n="uc4Desc">Incentivize attendance at conferences, pop-ups, and cultural events. Issue verified attendance records as proof — useful for sponsors and future marketing.</p>
         <div class="uc-roi" data-i18n="uc4Roi">Verified attendance proof</div>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ═══ WHY SOLANA ═══ -->
-<section class="solana-section" id="solana" aria-labelledby="solana-title">
-  <div class="solana-inner">
+<!-- INFRASTRUCTURE (was "Why Solana" — now neutral, product-first framing) -->
+<section class="infra-section" id="infra" aria-labelledby="infra-title">
+  <div class="infra-inner">
     <div>
-      <span class="section-label reveal" data-i18n="solanaLabel">// WHY SOLANA</span>
-      <h2 class="section-title reveal reveal-delay-1" id="solana-title" data-i18n="solanaTitle">The only chain<br>that scales offline.</h2>
-      <p class="section-sub reveal reveal-delay-2" data-i18n="solanaSub">GeoEarn's reward model only works if transaction costs are negligible. On Ethereum, fees would exceed the reward value itself. Solana makes microtransaction-based commerce viable at scale.</p>
+      <span class="section-label reveal" data-i18n="infraLabel">// INFRASTRUCTURE</span>
+      <h2 class="section-title reveal reveal-delay-1" id="infra-title" data-i18n="infraTitle">Blockchain where it<br>actually helps.</h2>
+      <p class="section-sub reveal reveal-delay-2" data-i18n="infraSub">GeoEarn uses blockchain infrastructure selectively — for the specific problems it solves better than any alternative: transparent microtransactions, tamper-proof visit logs, and instant reward settlement. Users don't need to understand or interact with crypto to use the product.</p>
 
       <div class="sol-points reveal reveal-delay-3">
         <div class="sol-point">
-          <span class="sol-point-icon" aria-hidden="true">⚡</span>
-          <div>
-            <h3 class="sol-point-title" data-i18n="solPt1Title">Instant reward distribution</h3>
-            <p class="sol-point-desc" data-i18n="solPt1Desc">Users expect their reward the moment they scan. Solana's 400ms block time means settlement feels instantaneous — no "pending" state, no friction.</p>
-          </div>
-        </div>
-        <div class="sol-point">
-          <span class="sol-point-icon" aria-hidden="true">💸</span>
-          <div>
-            <h3 class="sol-point-title" data-i18n="solPt2Title">Microtransaction economics that work</h3>
-            <p class="sol-point-desc" data-i18n="solPt2Desc">At 1,000 daily visits, GeoEarn processes 1,000 reward transactions per day. At $0.00025 each, the total settlement cost is $0.25/day. Any other chain makes this model impossible.</p>
-          </div>
-        </div>
-        <div class="sol-point">
           <span class="sol-point-icon" aria-hidden="true">🔍</span>
           <div>
-            <h3 class="sol-point-title" data-i18n="solPt3Title">Transparent visit verification</h3>
-            <p class="sol-point-desc" data-i18n="solPt3Desc">Every check-in is logged on-chain. Businesses can verify the source of every charge independently — no black boxes, no billing disputes.</p>
+            <h3 class="sol-point-title" data-i18n="infraPt1Title">Tamper-proof visit records</h3>
+            <p class="sol-point-desc" data-i18n="infraPt1Desc">Every verified check-in is logged immutably. Businesses can independently verify any charge — there's no central server to dispute with, no billing support ticket to file. The record is just there.</p>
+          </div>
+        </div>
+        <div class="sol-point">
+          <span class="sol-point-icon" aria-hidden="true">⚡</span>
+          <div>
+            <h3 class="sol-point-title" data-i18n="infraPt2Title">Economical at micro scale</h3>
+            <p class="sol-point-desc" data-i18n="infraPt2Desc">GeoEarn processes thousands of small reward payouts daily — fractions of a dollar each. The settlement layer handles this at sub-cent cost per transaction, making reward amounts of $0.50–$5 commercially viable even for small businesses.</p>
+          </div>
+        </div>
+        <div class="sol-point">
+          <span class="sol-point-icon" aria-hidden="true">🙈</span>
+          <div>
+            <h3 class="sol-point-title" data-i18n="infraPt3Title">Invisible to end users</h3>
+            <p class="sol-point-desc" data-i18n="infraPt3Desc">Users earn rewards and businesses run campaigns without ever needing a crypto wallet or understanding how the settlement layer works. The product is designed for mainstream adoption, not crypto users.</p>
           </div>
         </div>
       </div>
 
-      <div class="sol-metrics reveal reveal-delay-3" aria-label="Solana performance metrics">
-        <div class="sol-metric"><div class="sol-val">65k</div><div class="sol-key">TPS capacity</div></div>
-        <div class="sol-metric"><div class="sol-val">$0.00025</div><div class="sol-key">per transaction</div></div>
-        <div class="sol-metric"><div class="sol-val">400ms</div><div class="sol-key">finality</div></div>
-        <div class="sol-metric"><div class="sol-val">99.9%</div><div class="sol-key">uptime SLA</div></div>
+      <div class="infra-note reveal reveal-delay-3">
+        <strong>Not crypto-dependent.</strong> GeoEarn's core product — visit verification, campaign management, and reward distribution — is independent of any specific blockchain. The infrastructure is a component, not the product.
       </div>
     </div>
 
-    <div class="solana-visual reveal reveal-delay-2" aria-hidden="true">
+    <div class="infra-visual reveal reveal-delay-2" aria-hidden="true">
       <canvas id="network-canvas"></canvas>
     </div>
   </div>
 </section>
 
-<!-- ═══ ROADMAP ═══ -->
+<!-- ROADMAP -->
 <section class="roadmap-section" id="roadmap" aria-labelledby="roadmap-title">
   <div class="roadmap-header">
     <span class="section-label" data-i18n="roadmapLabel">// ROADMAP</span>
     <h2 class="section-title reveal" id="roadmap-title" data-i18n="roadmapTitle">Grounded milestones.<br>Real progress.</h2>
-    <p class="section-sub reveal reveal-delay-1" data-i18n="roadmapSub">We build in public. Every milestone is tied to real user adoption — not token launches or artificial hype.</p>
+    <p class="section-sub reveal reveal-delay-1" data-i18n="roadmapSub">Every milestone is tied to real user adoption and business revenue — not fundraising rounds or token events.</p>
   </div>
   <div class="timeline-track">
     <div class="timeline-line" aria-hidden="true">
@@ -1538,10 +1608,10 @@ footer{
         <div class="node-dot active" aria-hidden="true"></div>
         <div class="rm-card active">
           <div class="rm-quarter">Q3 2026</div>
-          <h3 class="rm-title" data-i18n="rm1Title">MVP & Pilot Launch</h3>
+          <h3 class="rm-title" data-i18n="rm1Title">MVP & Pilot</h3>
           <ul class="rm-items">
             <li data-i18n="rm1A">Telegram Mini App MVP</li>
-            <li data-i18n="rm1B">QR-based check-in system</li>
+            <li data-i18n="rm1B">QR check-in system live</li>
             <li data-i18n="rm1C">100+ test users</li>
             <li data-i18n="rm1D">5 pilot business locations</li>
           </ul>
@@ -1552,10 +1622,10 @@ footer{
         <div class="node-dot" aria-hidden="true"></div>
         <div class="rm-card">
           <div class="rm-quarter">Q4 2026</div>
-          <h3 class="rm-title" data-i18n="rm2Title">Solana Integration</h3>
+          <h3 class="rm-title" data-i18n="rm2Title">Settlement Integration</h3>
           <ul class="rm-items">
             <li data-i18n="rm2A">Wallet onboarding flow</li>
-            <li data-i18n="rm2B">On-chain reward distribution</li>
+            <li data-i18n="rm2B">Automated reward distribution</li>
             <li data-i18n="rm2C">Smart contract deployment</li>
             <li data-i18n="rm2D">Anti-fraud system v1</li>
           </ul>
@@ -1566,12 +1636,12 @@ footer{
         <div class="node-dot" aria-hidden="true"></div>
         <div class="rm-card">
           <div class="rm-quarter">Q1 2027</div>
-          <h3 class="rm-title" data-i18n="rm3Title">Local Expansion</h3>
+          <h3 class="rm-title" data-i18n="rm3Title">First Revenue</h3>
           <ul class="rm-items">
             <li data-i18n="rm3A">1,000+ active users</li>
-            <li data-i18n="rm3B">25+ business partners</li>
+            <li data-i18n="rm3B">25+ paying business partners</li>
             <li data-i18n="rm3C">Analytics dashboard launch</li>
-            <li data-i18n="rm3D">Multi-location campaigns</li>
+            <li data-i18n="rm3D">First monthly recurring revenue</li>
           </ul>
           <span class="rm-status soon" data-i18n="statusUpcoming">○ UPCOMING</span>
         </div>
@@ -1580,12 +1650,12 @@ footer{
         <div class="node-dot" aria-hidden="true"></div>
         <div class="rm-card">
           <div class="rm-quarter">Q2 2027</div>
-          <h3 class="rm-title" data-i18n="rm4Title">Ecosystem Growth</h3>
+          <h3 class="rm-title" data-i18n="rm4Title">Scale</h3>
           <ul class="rm-items">
             <li data-i18n="rm4A">10,000+ verified visits</li>
             <li data-i18n="rm4B">Multi-city expansion</li>
-            <li data-i18n="rm4C">Loyalty integrations</li>
-            <li data-i18n="rm4D">Revenue-generating campaigns</li>
+            <li data-i18n="rm4C">B2B loyalty integrations</li>
+            <li data-i18n="rm4D">Series A preparation</li>
           </ul>
           <span class="rm-status soon" data-i18n="statusUpcoming">○ UPCOMING</span>
         </div>
@@ -1594,28 +1664,28 @@ footer{
   </div>
 </section>
 
-<!-- ═══ ECOSYSTEM ═══ -->
+<!-- ECOSYSTEM -->
 <section class="social-section" aria-labelledby="ecosystem-title">
   <div class="social-inner">
-    <span class="section-label reveal" id="ecosystem-title" style="text-align:center;" data-i18n="ecosystemLabel">// ECOSYSTEM & INFRASTRUCTURE</span>
-    <p style="color:rgba(248,250,252,.32);font-size:13px;letter-spacing:.04em;margin-top:8px;" class="reveal reveal-delay-1" data-i18n="builtOn">Built on and supported by</p>
+    <span class="section-label reveal" id="ecosystem-title" style="text-align:center;" data-i18n="ecosystemLabel">// ECOSYSTEM & PARTNERS</span>
+    <p style="color:rgba(248,250,252,.32);font-size:13px;letter-spacing:.04em;margin-top:8px;" class="reveal reveal-delay-1" data-i18n="builtOn">Built on and exploring partnerships with</p>
     <div class="social-logos reveal reveal-delay-2" role="list" aria-label="Ecosystem partners">
+      <div class="social-chip" role="listitem">Telegram Mini Apps</div>
       <div class="social-chip" role="listitem">Solana Foundation</div>
       <div class="social-chip" role="listitem">Superteam</div>
-      <div class="social-chip" role="listitem">Telegram Mini Apps</div>
-      <div class="social-chip" role="listitem">Colosseum</div>
       <div class="social-chip" role="listitem">Phantom Wallet</div>
+      <div class="social-chip" role="listitem">Colosseum</div>
       <div class="social-chip" role="listitem">Helius RPC</div>
     </div>
   </div>
 </section>
 
-<!-- ═══ WAITLIST ═══ -->
+<!-- WAITLIST -->
 <section id="waitlist" class="waitlist-section" aria-labelledby="waitlist-title">
   <div class="waitlist-card reveal">
-    <span class="waitlist-label" data-i18n="waitlistLabel">// JOIN THE PROTOCOL</span>
-    <h2 class="waitlist-title" id="waitlist-title" data-i18n="waitlistTitle">Get Early Access</h2>
-    <p class="waitlist-sub" data-i18n="waitlistSub">Be first to earn when the protocol goes live. Early users get priority rewards and whitelist spots.</p>
+    <span class="waitlist-label" data-i18n="waitlistLabel">// GET EARLY ACCESS</span>
+    <h2 class="waitlist-title" id="waitlist-title" data-i18n="waitlistTitle">Join the Waitlist</h2>
+    <p class="waitlist-sub" data-i18n="waitlistSub">Be among the first businesses or users when we go live. Early partners shape the product — and get priority access to pilot campaigns.</p>
 
     <div class="role-tabs" role="group" aria-label="I am a...">
       <button class="role-tab active" type="button" onclick="setRole('user')" id="roleUser" aria-pressed="true" data-i18n="roleUser">👤 I'm a User</button>
@@ -1650,23 +1720,23 @@ footer{
       <div class="success-icon" aria-hidden="true">✓</div>
       <div class="success-text">
         <strong data-i18n="successTitle">You're on the list!</strong>
-        <span data-i18n="successDesc">We'll notify you when early access opens.</span>
+        <span data-i18n="successDesc">We'll be in touch when your city goes live.</span>
       </div>
     </div>
-    <p class="waitlist-count" data-i18n="alreadyOn">Already <span id="waitlistCountDisplay">500+</span> people on the list</p>
+    <p class="waitlist-count" data-i18n="alreadyOn">Already <span id="waitlistCountDisplay">800+</span> people waiting</p>
   </div>
 </section>
 
-<!-- ═══ CTA ═══ -->
+<!-- CTA -->
 <section class="cta-section" id="cta" aria-labelledby="cta-title">
   <div class="cta-bg" aria-hidden="true"></div>
   <div class="cta-border-top" aria-hidden="true"></div>
   <div class="orb" style="width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.16) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);position:absolute;animation:orbFloat1 10s ease-in-out infinite;pointer-events:none;filter:blur(80px);border-radius:50%;" aria-hidden="true"></div>
   <h2 id="cta-title">
-    <span style="display:block;background:linear-gradient(135deg,#fff,rgba(255,255,255,.82));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;" data-i18n="ctaLine1">Turn Real-World Traffic</span>
-    <span style="display:block;background:linear-gradient(135deg,var(--cyan),var(--purple-glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;animation:gradientShift 3s ease infinite;" data-i18n="ctaLine2">Into Real Value.</span>
+    <span style="display:block;background:linear-gradient(135deg,#fff,rgba(255,255,255,.82));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;" data-i18n="ctaLine1">Turn Foot Traffic</span>
+    <span style="display:block;background:linear-gradient(135deg,var(--cyan),var(--purple-glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;animation:gradientShift 3s ease infinite;" data-i18n="ctaLine2">Into Measurable Revenue.</span>
   </h2>
-  <p data-i18n="ctaSub">Build the future of offline customer acquisition powered by Solana. Joining takes under a minute.</p>
+  <p data-i18n="ctaSub">GeoEarn is performance-based customer acquisition for the physical world. Join the early access list — it takes under a minute.</p>
   <div class="cta-actions">
     <a href="#waitlist" class="btn-primary glow-pulse ripple-container"><span data-i18n="joinEarly">Join Early Access</span><span aria-hidden="true">→</span></a>
     <button type="button" class="btn-open-app ripple-container" onclick="openApp()">
@@ -1678,17 +1748,26 @@ footer{
 </section>
 </main>
 
-<!-- ═══ FOOTER ═══ -->
+<!-- ═══════════════════════════════
+     FOOTER — rebuilt
+═══════════════════════════════ -->
 <footer>
-  <div class="footer-main">
+  <div class="footer-top">
+
+    <!-- LEFT: Brand -->
     <div class="footer-brand">
-      <span class="footer-logo"><span aria-hidden="true">📍</span> GeoEarn Protocol</span>
-      <p class="footer-tagline" data-i18n="footerTagline">Offline traffic, on-chain. Powered by Solana.</p>
+      <a href="#" class="footer-logo" aria-label="GeoEarn home">
+        <span class="footer-logo-icon" aria-hidden="true">📍</span>
+        GeoEarn
+      </a>
+      <p class="footer-desc" data-i18n="footerDesc">Marketplace for real-world customer acquisition. Businesses pay per verified visit. Users earn for showing up.</p>
+      <div class="footer-tagline-pill">
+        <span>📍</span> Pre-seed · Q3 2026 Pilot
+      </div>
       <div class="footer-socials" aria-label="Social links">
         <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Telegram">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
         </a>
-        <!-- FIX: закрытая кавычка href -->
         <a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="X (Twitter)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </a>
@@ -1697,61 +1776,383 @@ footer{
         </a>
       </div>
     </div>
-    <nav class="footer-nav-grid" aria-label="Footer navigation">
-      <div class="footer-nav-col">
-        <h4 data-i18n="footerProtocol">Protocol</h4>
-        <ul role="list">
-          <li><a href="#how" data-i18n="navHow">How It Works</a></li>
-          <li><a href="#features" data-i18n="navProtocol">Features</a></li>
-          <li><a href="#market" data-i18n="navMarket">Market</a></li>
-          <li><a href="#solana" data-i18n="navSolana">Why Solana</a></li>
-          <li><a href="#roadmap" data-i18n="navRoadmap">Roadmap</a></li>
-        </ul>
-      </div>
-      <div class="footer-nav-col">
-        <h4 data-i18n="footerCompany">Company</h4>
-        <ul role="list">
-          <li><a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer">Telegram</a></li>
-          <!-- FIX: закрытая кавычка href -->
-          <li><a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer">Twitter / X</a></li>
-          <li><a href="https://discord.gg/YOUR_LINK" target="_blank" rel="noopener noreferrer">Discord</a></li>
-          <li><a href="#waitlist" data-i18n="earlyAccess">Early Access</a></li>
-        </ul>
+
+    <!-- CENTER: Links -->
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <div class="footer-nav-cols">
+        <div class="footer-nav-col">
+          <h4 data-i18n="footerProduct">Product</h4>
+          <ul role="list">
+            <li><a href="#how" data-i18n="navHow">How It Works</a></li>
+            <li><a href="#features" data-i18n="navProtocol">Features</a></li>
+            <li><a href="#market" data-i18n="navMarket">Market</a></li>
+            <li><a href="#infra" data-i18n="navInfra">Infrastructure</a></li>
+            <li><a href="#roadmap" data-i18n="navRoadmap">Roadmap</a></li>
+          </ul>
+        </div>
+        <div class="footer-nav-col">
+          <h4 data-i18n="footerCompany">Company</h4>
+          <ul role="list">
+            <li><a href="#waitlist" data-i18n="earlyAccess">Early Access</a></li>
+            <li><a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer">Telegram</a></li>
+            <li><a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer">Twitter / X</a></li>
+            <li><a href="https://discord.gg/YOUR_LINK" target="_blank" rel="noopener noreferrer">Discord</a></li>
+            <li><a href="mailto:hello@geoearn.app" data-i18n="footerContact">Contact Us</a></li>
+          </ul>
+        </div>
       </div>
     </nav>
-    <div class="footer-waitlist">
-      <h4 data-i18n="stayUpdated">Stay Updated</h4>
-      <div class="footer-waitlist-form">
-        <label for="footerWaitlistEmail" class="sr-only">Email address</label>
-        <input
-          type="email"
-          class="footer-waitlist-input"
-          id="footerWaitlistEmail"
-          placeholder="your@email.com"
-          inputmode="email"
-          autocomplete="email"
-        >
-        <button class="footer-waitlist-btn ripple-container" type="button" onclick="submitWaitlist('footer')" data-i18n="joinWaitlistBtn">Join Waitlist →</button>
+
+    <!-- RIGHT: Contact + CTA -->
+    <div class="footer-contact">
+      <h4 data-i18n="footerGetInTouch">Get In Touch</h4>
+      <div class="footer-contact-items">
+        <a href="mailto:hello@geoearn.app" class="footer-contact-item">
+          <span class="fc-icon">✉️</span>
+          hello@geoearn.app
+        </a>
+        <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
+          <span class="fc-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          </span>
+          t.me/GeoEarn
+        </a>
+        <a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
+          <span class="fc-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </span>
+          @AvyasovAlexandr
+        </a>
+      </div>
+
+      <div class="footer-cta">
+        <div class="footer-cta-title" data-i18n="footerCtaTitle">Ready to get started?</div>
+        <div class="footer-cta-sub" data-i18n="footerCtaSub">Join the waitlist and be notified when your city goes live.</div>
+        <a href="#waitlist" class="footer-cta-btn" data-i18n="joinWaitlistBtn">Join Waitlist →</a>
       </div>
     </div>
+
   </div>
+
+  <!-- Bottom bar -->
   <div class="footer-bottom">
     <span class="footer-copy">© 2026 GeoEarn Labs · All rights reserved</span>
+    <div class="footer-legal">
+      <a href="#" data-i18n="footerPrivacy">Privacy Policy</a>
+      <a href="#" data-i18n="footerTerms">Terms of Service</a>
+    </div>
     <a href="https://prototyp1.pages.dev/" class="footer-open-app" onclick="openApp(event)">
       <span aria-hidden="true">🚀</span> Open App
     </a>
   </div>
 </footer>
 
-<!-- Screen-reader only utility -->
 <style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0;}</style>
 
 <script>
 'use strict';
-/* ═══════════════════════════════════════════
-   I18N
-═══════════════════════════════════════════ */
-const translations={en:{heroBadge:"Early Access Open — Pilot Program Launching Q3 2026",heroLine1:"Offline Traffic.",heroLine2:"On-Chain.",heroSub:"GeoEarn transforms real-world visits into <strong>measurable, reward-based actions</strong> powered by Solana. Businesses pay only for verified customers. Users earn for showing up.",joinEarly:"Join Early Access",openApp:"Open App",forBusinesses:"For Businesses",moneyFlowTitle:"HOW MONEY FLOWS",business:"BUSINESS",setsBudget:"Sets budget",perVisit:"per visit",smartContract:"Smart contract",instantly:"instantly",rewardAmount:"+$0.50–$5",user:"USER",earnsCrypto:"Earns crypto",statWaitlist:"Waitlist Signups",statWaitlistNote:"and growing daily",statBiz:"Interested Businesses",statBizNote:"across 3 cities",statTxns:"Simulated Reward Txns",statTxnsNote:"testnet validated",statFraud:"Anti-Fraud Accuracy",statFraudNote:"pilot simulations",navHow:"How It Works",navProtocol:"Protocol",navMarket:"Market",navSolana:"Why Solana",navRoadmap:"Roadmap",joinWaitlist:"Join Waitlist →",howLabel:"// HOW IT WORKS",howTitle:"Commerce that<br>rewards movement.",howSub:"Every verified footstep creates a traceable, on-chain interaction. No fake clicks. No bot traffic. Real visits, real value.",step1Title:"Discover Nearby Campaigns",step1Desc:"Users open the GeoEarn Telegram Mini App and browse active business campaigns nearby. Cafés, gyms, retail stores — any real-world location can run a campaign.",step2Title:"Visit & Check In",step2Desc:"Walk in and scan the QR code. GPS coordinates and wallet reputation are cross-checked to confirm the visit is genuine — no spoofing, no shortcuts.",step3Title:"Instant On-Chain Reward",step3Desc:"A smart contract releases the reward to the user's Solana wallet immediately. Businesses are charged only for verified visits.",chip1:"3 Active Visits",chip2:"8 Open Campaigns",chip3:"Rewards Live",marketLabel:"// MARKET OPPORTUNITY",marketTitle:"A massive market<br>with no on-chain layer.",marketSub:"Offline retail drives 80% of global commerce. None of it is verifiable, programmable, or rewarding — yet.",mCard1Label:"LOCAL RETAIL MARKET",mCard1Desc:"Annual spending at physical stores, restaurants, and service businesses in the US alone. Every dollar is invisible to Web3 today.",mCard2Label:"LOYALTY MARKET SIZE",mCard2Desc:"Businesses spend $27B on loyalty programs that are centralized, opaque, and non-transferable. GeoEarn replaces this with on-chain, liquid rewards.",mCard3Label:"DAILY SETTLEMENT COST",mCard3Desc:"At 1,000 daily visits on Solana. This is the unit economics that make GeoEarn viable where every other chain makes it impossible.",marketInsight:"<strong>The insight:</strong> Every loyalty point, coupon, and in-store reward program that exists today is inefficient, siloed, and unverifiable. GeoEarn replaces the entire stack with <strong>pay-per-verified-visit</strong> infrastructure on Solana.",featLabel:"// PROTOCOL LAYER",featTitle:"Performance-based<br>offline growth.",featSub:"Not a loyalty app. Not a rewards card. Infrastructure for the next generation of physical commerce.",feat1Title:"Verified Visit Engine",feat1Desc:"A multi-layer anti-fraud system combining GPS geofencing, QR scan validation, and wallet reputation scoring. Every check-in is independently verifiable on-chain — businesses never pay for a visit that didn't happen.",feat2Title:"Real-World Rewards",feat2Desc:"Users earn token rewards distributed instantly to their Solana wallet after each verified visit. No points, no vouchers — actual on-chain value for offline actions.",feat2Tag:"Instant Settlement",feat3Title:"Business Campaigns",feat3Desc:"Merchants set budgets, define target areas, and launch campaigns in minutes. Pay-per-visit pricing means every dollar drives a real customer through the door.",feat3Tag:"Pay Per Verified Visit",feat4Title:"Solana Settlement Layer",feat4Desc:"GeoEarn requires thousands of microtransactions daily. Solana is the only L1 that makes this economically viable at scale. At $0.00025 per transaction with sub-second finality, the unit economics work from day one.",feat5Title:"Analytics Dashboard",feat5Desc:"Businesses see visit heatmaps, conversion funnels, and campaign ROI in real time. On-chain data means the numbers are always honest.",feat5Tag:"Coming Q1 2027",ucLabel:"// USE CASES",ucTitle:"Any business.<br>Any location.",ucSub:"If customers walk through your door, GeoEarn can measure, incentivize, and reward it.",uc1Title:"Cafés & Restaurants",uc1Desc:"Launch visit campaigns and pay only when a real customer walks in, not per impression.",uc1Roi:"~2.8x ROI vs flyers",uc2Title:"Gyms & Fitness",uc2Desc:"Reward first visits and trial memberships — all verified on-chain. No fake sign-ups.",uc2Roi:"~40% trial conversion",uc3Title:"Retail Stores",uc3Desc:"Drive foot traffic during off-peak hours with geo-targeted campaigns.",uc3Roi:"Avg. $2.50 CPA",uc4Title:"Events & Venues",uc4Desc:"Incentivize attendance at conferences, pop-ups, and cultural events with token rewards.",uc4Roi:"Verified attendance proof",solanaLabel:"// WHY SOLANA",solanaTitle:"The only chain<br>that scales offline.",solanaSub:"GeoEarn's reward model only works if transaction costs are negligible. On Ethereum, fees would exceed the reward value. Solana makes microtransaction-based commerce viable at scale.",solPt1Title:"Instant reward distribution",solPt1Desc:"Solana's 400ms block time means settlement feels instantaneous — no 'pending' state, no friction.",solPt2Title:"Microtransaction economics that work",solPt2Desc:"At 1,000 daily visits, total settlement cost is $0.25/day. Any other chain makes this model impossible.",solPt3Title:"Transparent visit verification",solPt3Desc:"Every check-in is logged on-chain. Businesses verify every charge independently — no black boxes.",roadmapLabel:"// ROADMAP",roadmapTitle:"Grounded milestones.<br>Real progress.",roadmapSub:"We build in public. Every milestone is tied to real user adoption — not token launches or artificial hype.",rm1Title:"MVP & Pilot Launch",rm1A:"Telegram Mini App MVP",rm1B:"QR-based check-in system",rm1C:"100+ test users",rm1D:"5 pilot business locations",statusProgress:"● IN PROGRESS",rm2Title:"Solana Integration",rm2A:"Wallet onboarding flow",rm2B:"On-chain reward distribution",rm2C:"Smart contract deployment",rm2D:"Anti-fraud system v1",statusBuilding:"◐ BUILDING",rm3Title:"Local Expansion",rm3A:"1,000+ active users",rm3B:"25+ business partners",rm3C:"Analytics dashboard launch",rm3D:"Multi-location campaigns",rm4Title:"Ecosystem Growth",rm4A:"10,000+ verified visits",rm4B:"Multi-city expansion",rm4C:"Loyalty integrations",rm4D:"Revenue-generating campaigns",statusUpcoming:"○ UPCOMING",ecosystemLabel:"// ECOSYSTEM & INFRASTRUCTURE",builtOn:"Built on and supported by",waitlistLabel:"// JOIN THE PROTOCOL",waitlistTitle:"Get Early Access",waitlistSub:"Be first to earn when the protocol goes live. Early users get priority rewards and whitelist spots.",roleUser:"👤 I'm a User",roleBiz:"🏪 I'm a Business",roleInv:"💼 I'm an Investor",joinWaitlistBtn:"Join Waitlist →",submitting:"Submitting...",successTitle:"You're on the list!",successDesc:"We'll notify you when early access opens.",alreadyOn:"Already <span id='waitlistCountDisplay'>500+</span> people on the list",ctaLine1:"Turn Real-World Traffic",ctaLine2:"Into Real Value.",ctaSub:"Build the future of offline customer acquisition powered by Solana. Joining takes under a minute.",partnerWithUs:"Partner With Us",footerTagline:"Offline traffic, on-chain. Powered by Solana.",footerProtocol:"Protocol",footerCompany:"Company",stayUpdated:"Stay Updated",earlyAccess:"Early Access",launching:"Launching app..."},ru:{heroBadge:"Ранний доступ открыт — Пилот запускается в Q3 2026",heroLine1:"Офлайн-трафик.",heroLine2:"В блокчейне.",heroSub:"GeoEarn превращает реальные визиты в <strong>измеримые, вознаграждаемые действия</strong> на базе Solana. Бизнес платит только за верифицированных клиентов. Пользователи зарабатывают за визиты.",joinEarly:"Ранний доступ",openApp:"Открыть приложение",forBusinesses:"Для бизнеса",moneyFlowTitle:"КАК ДВИЖУТСЯ ДЕНЬГИ",business:"БИЗНЕС",setsBudget:"Устанавливает бюджет",perVisit:"за визит",smartContract:"Смарт-контракт",instantly:"мгновенно",rewardAmount:"+$0.50–$5",user:"ПОЛЬЗОВАТЕЛЬ",earnsCrypto:"Получает крипто",statWaitlist:"Подписчиков в листе ожидания",statWaitlistNote:"и растёт каждый день",statBiz:"Заинтересованных бизнесов",statBizNote:"в 3 городах",statTxns:"Симулированных транзакций",statTxnsNote:"протестировано в тестнете",statFraud:"Точность антифрода",statFraudNote:"в пилотных симуляциях",navHow:"Как это работает",navProtocol:"Протокол",navMarket:"Рынок",navSolana:"Почему Solana",navRoadmap:"Роадмап",joinWaitlist:"Лист ожидания →",howLabel:"// КАК ЭТО РАБОТАЕТ",howTitle:"Коммерция, которая<br>вознаграждает движение.",howSub:"Каждый верифицированный визит создаёт отслеживаемое on-chain взаимодействие. Никаких фейковых кликов. Только реальные визиты — реальная ценность.",step1Title:"Найди ближайшие кампании",step1Desc:"Пользователи открывают Telegram Mini App GeoEarn и просматривают активные кампании рядом. Кафе, спортзалы, магазины — любая реальная точка может запустить кампанию.",step2Title:"Зайди и зарегистрируйся",step2Desc:"Зайди внутрь и сканируй QR-код. GPS-координаты и репутация кошелька проверяются для подтверждения реального визита — никакого спуфинга.",step3Title:"Мгновенная on-chain награда",step3Desc:"Смарт-контракт мгновенно отправляет награду на Solana-кошелёк пользователя. Бизнес платит только за верифицированные визиты.",chip1:"3 активных визита",chip2:"8 открытых кампаний",chip3:"Награды активны",marketLabel:"// РЫНОЧНАЯ ВОЗМОЖНОСТЬ",marketTitle:"Огромный рынок<br>без on-chain слоя.",marketSub:"Офлайн-ретейл создаёт 80% мировой торговли. Ничего из этого пока не верифицируется, не программируется и не вознаграждается.",mCard1Label:"ЛОКАЛЬНЫЙ РЕТЕЙЛ",mCard1Desc:"Ежегодные расходы в физических магазинах, ресторанах и сервисных бизнесах только в США. Каждый доллар невидим для Web3.",mCard2Label:"РЫНОК ЛОЯЛЬНОСТИ",mCard2Desc:"Бизнесы тратят $27 млрд на программы лояльности — централизованные, непрозрачные и непередаваемые. GeoEarn заменяет их on-chain наградами.",mCard3Label:"СТОИМОСТЬ РАСЧЁТОВ В ДЕНЬ",mCard3Desc:"При 1,000 ежедневных визитах на Solana. Именно такая экономика делает GeoEarn возможным там, где другие блокчейны невозможны.",marketInsight:"<strong>Инсайт:</strong> Каждый балл лояльности, купон и внутримагазинная программа сегодня неэффективна и непрозрачна. GeoEarn заменяет весь стек инфраструктурой <strong>оплаты за верифицированный визит</strong> на Solana.",featLabel:"// УРОВЕНЬ ПРОТОКОЛА",featTitle:"Рост офлайн-бизнеса<br>на основе реальных показателей.",featSub:"Не приложение лояльности. Не карта вознаграждений. Инфраструктура для нового поколения физической коммерции.",feat1Title:"Движок верификации визитов",feat1Desc:"Многоуровневая система антифрода: GPS-геофенсинг, валидация QR-скана и репутация кошелька. Каждый чекин независимо верифицируется в блокчейне.",feat2Title:"Реальные вознаграждения",feat2Desc:"Пользователи получают токены мгновенно на свой Solana-кошелёк после каждого верифицированного визита. Без баллов — только реальная on-chain ценность.",feat2Tag:"Мгновенный расчёт",feat3Title:"Кампании для бизнеса",feat3Desc:"Мерчанты устанавливают бюджеты, определяют зоны и запускают кампании за минуты. Оплата за визит — каждый доллар приводит реального клиента.",feat3Tag:"Оплата за верифицированный визит",feat4Title:"Расчётный слой Solana",feat4Desc:"GeoEarn требует тысячи микротранзакций ежедневно. Solana — единственный L1, делающий это экономически выгодным. За $0.00025 за транзакцию экономика работает с первого дня.",feat5Title:"Панель аналитики",feat5Desc:"Бизнесы видят тепловые карты визитов, воронки конверсии и ROI кампаний в реальном времени. Данные из блокчейна — всегда честные.",feat5Tag:"Появится в Q1 2027",ucLabel:"// ВАРИАНТЫ ИСПОЛЬЗОВАНИЯ",ucTitle:"Любой бизнес.<br>Любая локация.",ucSub:"Если клиенты проходят через вашу дверь — GeoEarn это измерит, простимулирует и вознаградит.",uc1Title:"Кафе и рестораны",uc1Desc:"Запускай кампании и плати только когда реальный клиент зашёл, а не за показы.",uc1Roi:"~2.8x ROI vs листовки",uc2Title:"Фитнес и спортзалы",uc2Desc:"Вознаграждай первые визиты и пробные абонементы — всё верифицировано в блокчейне.",uc2Roi:"~40% конверсия пробников",uc3Title:"Розничные магазины",uc3Desc:"Привлекай трафик в непиковые часы с гео-таргетированными кампаниями.",uc3Roi:"Ср. $2.50 CPA",uc4Title:"Мероприятия и площадки",uc4Desc:"Стимулируй посещение конференций, поп-апов и мероприятий токен-наградами.",uc4Roi:"Верифицированное посещение",solanaLabel:"// ПОЧЕМУ SOLANA",solanaTitle:"Единственный блокчейн,<br>который масштабирует офлайн.",solanaSub:"Модель GeoEarn работает только если транзакционные издержки минимальны. На Ethereum комиссии превышали бы стоимость самой награды. Solana делает возможной микротранзакционную коммерцию в масштабе.",solPt1Title:"Мгновенная выплата наград",solPt1Desc:"400мс время блока Solana означает мгновенный расчёт — никаких 'ожидание подтверждения', никакого трения.",solPt2Title:"Экономика микротранзакций",solPt2Desc:"При 1,000 визитах в день — общая стоимость расчётов $0.25/день. На любом другом блокчейне эта модель невозможна.",solPt3Title:"Прозрачная верификация",solPt3Desc:"Каждый чекин записывается в блокчейн. Бизнесы независимо проверяют каждый платёж — никаких чёрных ящиков.",roadmapLabel:"// РОАДМАП",roadmapTitle:"Реальные этапы.<br>Реальный прогресс.",roadmapSub:"Мы строим публично. Каждый этап привязан к реальному принятию пользователями — без запуска токенов и искусственного хайпа.",rm1Title:"MVP и пилотный запуск",rm1A:"MVP Telegram Mini App",rm1B:"Система чекина через QR",rm1C:"100+ тестовых пользователей",rm1D:"5 пилотных локаций",statusProgress:"● В ПРОЦЕССЕ",rm2Title:"Интеграция Solana",rm2A:"Онбординг кошелька",rm2B:"On-chain распределение наград",rm2C:"Деплой смарт-контракта",rm2D:"Система антифрода v1",statusBuilding:"◐ СТРОИМ",rm3Title:"Локальное расширение",rm3A:"1,000+ активных пользователей",rm3B:"25+ бизнес-партнёров",rm3C:"Запуск панели аналитики",rm3D:"Многоточечные кампании",rm4Title:"Рост экосистемы",rm4A:"10,000+ верифицированных визитов",rm4B:"Расширение на несколько городов",rm4C:"Интеграции лояльности",rm4D:"Прибыльные кампании",statusUpcoming:"○ ВПЕРЕДИ",ecosystemLabel:"// ЭКОСИСТЕМА И ИНФРАСТРУКТУРА",builtOn:"Построено на и поддержано",waitlistLabel:"// ПРИСОЕДИНИТЬСЯ К ПРОТОКОЛУ",waitlistTitle:"Ранний доступ",waitlistSub:"Будьте первыми, кто начнёт зарабатывать. Ранние пользователи получают приоритетные награды и вайтлист.",roleUser:"👤 Я пользователь",roleBiz:"🏪 Я бизнес",roleInv:"💼 Я инвестор",joinWaitlistBtn:"Присоединиться →",submitting:"Отправляем...",successTitle:"Вы в списке!",successDesc:"Мы уведомим вас, когда откроется ранний доступ.",alreadyOn:"Уже <span id='waitlistCountDisplay'>500+</span> человек в списке",ctaLine1:"Превратите офлайн-трафик",ctaLine2:"в реальную ценность.",ctaSub:"Постройте будущее офлайн-привлечения клиентов на базе Solana. Присоединение займёт меньше минуты.",partnerWithUs:"Стать партнёром",footerTagline:"Офлайн-трафик, в блокчейне. Powered by Solana.",footerProtocol:"Протокол",footerCompany:"Компания",stayUpdated:"Оставайтесь в курсе",earlyAccess:"Ранний доступ",launching:"Запускаем приложение..."}};
+
+/* ═══ I18N ═══ */
+const translations={
+en:{
+  heroBadge:"Pilot Program — Q3 2026 · 3 Cities",
+  heroLine1:"Real Customers.",
+  heroLine2:"Verified. Rewarded.",
+  heroSub:"GeoEarn is a <strong>performance-based marketplace for real-world customer acquisition.</strong> Businesses pay only for verified visits. Users earn for showing up.",
+  heroPositioning:"This is not a rewards app. This is <strong>pay-per-visit infrastructure</strong> for physical businesses — built to work the same way performance advertising does online, but for foot traffic.",
+  joinEarly:"Join Early Access",
+  openApp:"Open App",
+  forBusinesses:"For Businesses",
+  moneyFlowTitle:"HOW MONEY FLOWS",
+  business:"BUSINESS",
+  setsBudget:"Sets budget",
+  perVisit:"per verified visit",
+  smartContract:"Verifies & routes",
+  instantly:"instantly",
+  rewardAmount:"+$0.50–$5",
+  user:"USER",
+  earnsCrypto:"Earns reward",
+  statWaitlist:"Waitlist Signups",
+  statWaitlistNote:"and growing daily",
+  statBiz:"Interested Businesses",
+  statBizNote:"across 3 cities",
+  statTxns:"Simulated Visits Validated",
+  statTxnsNote:"pilot environment",
+  statFraud:"Anti-Fraud Accuracy",
+  statFraudNote:"pilot simulations",
+  navHow:"How It Works",
+  navProtocol:"Product",
+  navMarket:"Market",
+  navInfra:"Infrastructure",
+  navRoadmap:"Roadmap",
+  joinWaitlist:"Join Waitlist →",
+  howLabel:"// HOW IT WORKS",
+  howTitle:"Foot traffic as a<br>measurable channel.",
+  howSub:"GeoEarn gives businesses the same accountability they get from digital ads — but for offline visits. Pay per result. Measure everything.",
+  step1Title:"Discover Nearby Campaigns",
+  step1Desc:"Users open the GeoEarn app — available as a Telegram Mini App — and browse active campaigns near them. Cafés, gyms, retail stores: any physical location can run a campaign with a set cost-per-visit budget.",
+  step2Title:"Walk In & Check In",
+  step2Desc:"The user arrives and scans the QR code on-site. GPS location is cross-checked with the business address and the user's visit history to confirm the visit is genuine.",
+  step3Title:"Instant Verified Reward",
+  step3Desc:"Once the visit is confirmed, the reward is released to the user's wallet within seconds. The business is charged only for that one verified visit. Every transaction is logged transparently.",
+  chip1:"3 Active Visits",
+  chip2:"8 Open Campaigns",
+  chip3:"Rewards Live",
+  marketLabel:"// MARKET OPPORTUNITY",
+  marketTitle:"Offline commerce is huge.<br>Performance tools don't exist.",
+  marketSub:"Online advertising has cost-per-click. Offline has nothing equivalent. GeoEarn is building the infrastructure to change that.",
+  mCard1Label:"US LOCAL RETAIL MARKET",
+  mCard1Desc:"Annual spending at physical stores, restaurants, and service businesses. Every business needs to drive foot traffic — and most have no way to measure it accurately.",
+  mCard2Label:"LOYALTY MARKET SIZE",
+  mCard2Desc:"Spent annually on loyalty programs that are siloed, opaque, and non-portable. Points expire. Rewards go unused. GeoEarn replaces this with transparent, instant, liquid rewards.",
+  mCard3Label:"TARGET COST PER VISIT",
+  mCard3Desc:"Businesses on GeoEarn set their own cost-per-visit budget. At $2–5 per confirmed door visit, this is significantly cheaper than most local advertising alternatives.",
+  marketInsight:"<strong>The gap:</strong> A café can run a Google ad and measure every click. But when that same customer walks through the door, there's no equivalent measurement. GeoEarn is <strong>cost-per-visit infrastructure</strong> — filling the last-mile gap between digital reach and physical conversion.",
+  featLabel:"// PRODUCT",
+  featTitle:"Built for businesses,<br>not crypto users.",
+  featSub:"GeoEarn works as a straightforward business tool. Blockchain infrastructure runs quietly in the background — merchants and users don't need to understand it.",
+  feat1Title:"Verified Visit Engine",
+  feat1Desc:"A multi-layer verification system combining GPS geofencing, QR scan confirmation, and visit history scoring. Every check-in is independently auditable — businesses are never charged for a visit that didn't happen. No disputes. No click fraud. No bot traffic. Just real customers at the door.",
+  feat2Title:"Instant Rewards",
+  feat2Desc:"Users receive their reward within seconds of a verified check-in — no waiting period, no minimum balance, no voucher to redeem later. Rewards land directly in the app wallet and can be cashed out or spent.",
+  feat2Tag:"Instant Settlement",
+  feat3Title:"Business Campaign Manager",
+  feat3Desc:"Merchants set a cost-per-visit budget, define a geo-zone, and go live in minutes. Pause, adjust, or end campaigns at any time. Pay only when a verified customer walks in — no minimum spend required.",
+  feat3Tag:"Pay Per Verified Visit",
+  feat4Title:"Transparent Settlement Layer",
+  feat4Desc:"GeoEarn uses blockchain infrastructure for settlement — not because it's trendy, but because it solves a specific problem: microtransaction settlement at scale with full auditability. Every charge is verifiable by the merchant independently. The infrastructure is invisible to the end user.",
+  feat5Title:"Analytics Dashboard",
+  feat5Desc:"Businesses track visit heatmaps, peak hours, campaign ROI, and repeat visitor rates in real time. All data is sourced from verified visits — no estimations, no samples.",
+  feat5Tag:"Coming Q1 2027",
+  ucLabel:"// USE CASES",
+  ucTitle:"Any business.<br>Any location.",
+  ucSub:"If customers walk through your door, GeoEarn can measure, incentivize, and attribute that visit.",
+  uc1Title:"Cafés & Restaurants",
+  uc1Desc:"Run happy-hour or first-visit incentive campaigns. Pay only when someone actually walks through the door — not per impression or click.",
+  uc1Roi:"~2.8x ROI vs flyers",
+  uc2Title:"Gyms & Fitness",
+  uc2Desc:"Reward first visits and trial memberships. Measure drop-off between trial and signup. Every visit is verified — no fake sign-ups.",
+  uc2Roi:"~40% trial conversion",
+  uc3Title:"Retail Stores",
+  uc3Desc:"Drive foot traffic during off-peak hours with geo-targeted visit campaigns. Replace broad local advertising with precise cost-per-door attribution.",
+  uc3Roi:"Avg. $2.50 CPA",
+  uc4Title:"Events & Venues",
+  uc4Desc:"Incentivize attendance at conferences, pop-ups, and cultural events. Issue verified attendance records as proof — useful for sponsors.",
+  uc4Roi:"Verified attendance proof",
+  infraLabel:"// INFRASTRUCTURE",
+  infraTitle:"Blockchain where it<br>actually helps.",
+  infraSub:"GeoEarn uses blockchain infrastructure selectively — for the specific problems it solves better than any alternative: transparent microtransactions, tamper-proof visit logs, and instant reward settlement. Users don't need to understand or interact with crypto to use the product.",
+  infraPt1Title:"Tamper-proof visit records",
+  infraPt1Desc:"Every verified check-in is logged immutably. Businesses can independently verify any charge — there's no central server to dispute with, no billing support ticket to file.",
+  infraPt2Title:"Economical at micro scale",
+  infraPt2Desc:"GeoEarn processes thousands of small reward payouts daily. The settlement layer handles this at sub-cent cost per transaction, making reward amounts of $0.50–$5 commercially viable even for small businesses.",
+  infraPt3Title:"Invisible to end users",
+  infraPt3Desc:"Users earn rewards and businesses run campaigns without ever needing a crypto wallet or understanding how the settlement layer works. Designed for mainstream adoption, not crypto users.",
+  roadmapLabel:"// ROADMAP",
+  roadmapTitle:"Grounded milestones.<br>Real progress.",
+  roadmapSub:"Every milestone is tied to real user adoption and business revenue — not fundraising rounds or token events.",
+  rm1Title:"MVP & Pilot",
+  rm1A:"Telegram Mini App MVP",
+  rm1B:"QR check-in system live",
+  rm1C:"100+ test users",
+  rm1D:"5 pilot business locations",
+  statusProgress:"● IN PROGRESS",
+  rm2Title:"Settlement Integration",
+  rm2A:"Wallet onboarding flow",
+  rm2B:"Automated reward distribution",
+  rm2C:"Smart contract deployment",
+  rm2D:"Anti-fraud system v1",
+  statusBuilding:"◐ BUILDING",
+  rm3Title:"First Revenue",
+  rm3A:"1,000+ active users",
+  rm3B:"25+ paying business partners",
+  rm3C:"Analytics dashboard launch",
+  rm3D:"First monthly recurring revenue",
+  rm4Title:"Scale",
+  rm4A:"10,000+ verified visits",
+  rm4B:"Multi-city expansion",
+  rm4C:"B2B loyalty integrations",
+  rm4D:"Series A preparation",
+  statusUpcoming:"○ UPCOMING",
+  ecosystemLabel:"// ECOSYSTEM & PARTNERS",
+  builtOn:"Built on and exploring partnerships with",
+  waitlistLabel:"// GET EARLY ACCESS",
+  waitlistTitle:"Join the Waitlist",
+  waitlistSub:"Be among the first businesses or users when we go live. Early partners shape the product — and get priority access to pilot campaigns.",
+  roleUser:"👤 I'm a User",
+  roleBiz:"🏪 I'm a Business",
+  roleInv:"💼 I'm an Investor",
+  joinWaitlistBtn:"Join Waitlist →",
+  submitting:"Submitting...",
+  successTitle:"You're on the list!",
+  successDesc:"We'll be in touch when your city goes live.",
+  alreadyOn:"Already <span id='waitlistCountDisplay'>800+</span> people waiting",
+  ctaLine1:"Turn Foot Traffic",
+  ctaLine2:"Into Measurable Revenue.",
+  ctaSub:"GeoEarn is performance-based customer acquisition for the physical world. Join the early access list — it takes under a minute.",
+  partnerWithUs:"Partner With Us",
+  footerDesc:"Marketplace for real-world customer acquisition. Businesses pay per verified visit. Users earn for showing up.",
+  footerProduct:"Product",
+  footerCompany:"Company",
+  footerGetInTouch:"Get In Touch",
+  footerCtaTitle:"Ready to get started?",
+  footerCtaSub:"Join the waitlist and be notified when your city goes live.",
+  footerContact:"Contact Us",
+  footerPrivacy:"Privacy Policy",
+  footerTerms:"Terms of Service",
+  earlyAccess:"Early Access",
+  launching:"Launching app..."
+},
+ru:{
+  heroBadge:"Пилот — Q3 2026 · 3 города",
+  heroLine1:"Реальные клиенты.",
+  heroLine2:"Верифицированные. Вознаграждённые.",
+  heroSub:"GeoEarn — это <strong>маркетплейс привлечения клиентов для офлайн-бизнеса.</strong> Бизнес платит только за верифицированные визиты. Пользователи зарабатывают за посещения.",
+  heroPositioning:"Это не приложение лояльности. Это <strong>инфраструктура оплаты за визит</strong> для физических бизнесов — работает так же, как перформанс-реклама в интернете, но для пешеходного трафика.",
+  joinEarly:"Ранний доступ",
+  openApp:"Открыть приложение",
+  forBusinesses:"Для бизнеса",
+  moneyFlowTitle:"КАК ДВИЖУТСЯ ДЕНЬГИ",
+  business:"БИЗНЕС",
+  setsBudget:"Устанавливает бюджет",
+  perVisit:"за верифицированный визит",
+  smartContract:"Верифицирует и маршрутизирует",
+  instantly:"мгновенно",
+  rewardAmount:"+$0.50–$5",
+  user:"ПОЛЬЗОВАТЕЛЬ",
+  earnsCrypto:"Получает награду",
+  statWaitlist:"В листе ожидания",
+  statWaitlistNote:"и растёт каждый день",
+  statBiz:"Заинтересованных бизнесов",
+  statBizNote:"в 3 городах",
+  statTxns:"Валидированных симулированных визитов",
+  statTxnsNote:"пилотная среда",
+  statFraud:"Точность антифрода",
+  statFraudNote:"в пилотных симуляциях",
+  navHow:"Как это работает",
+  navProtocol:"Продукт",
+  navMarket:"Рынок",
+  navInfra:"Инфраструктура",
+  navRoadmap:"Роадмап",
+  joinWaitlist:"Лист ожидания →",
+  howLabel:"// КАК ЭТО РАБОТАЕТ",
+  howTitle:"Пешеходный трафик как<br>измеримый канал.",
+  howSub:"GeoEarn даёт бизнесам ту же отчётность, что и цифровая реклама — но для офлайн-визитов. Платите за результат. Измеряйте всё.",
+  step1Title:"Найди ближайшие кампании",
+  step1Desc:"Пользователи открывают приложение GeoEarn — Telegram Mini App — и просматривают активные кампании рядом. Кафе, спортзалы, магазины: любая физическая точка может запустить кампанию с бюджетом за визит.",
+  step2Title:"Зайди и зарегистрируйся",
+  step2Desc:"Пользователь прибывает и сканирует QR-код. GPS-координаты сверяются с адресом бизнеса и историей визитов — для подтверждения реального визита.",
+  step3Title:"Мгновенная верифицированная награда",
+  step3Desc:"После подтверждения визита награда поступает в кошелёк пользователя в течение секунд. Бизнес оплачивает только этот один верифицированный визит.",
+  chip1:"3 активных визита",
+  chip2:"8 открытых кампаний",
+  chip3:"Награды активны",
+  marketLabel:"// РЫНОЧНАЯ ВОЗМОЖНОСТЬ",
+  marketTitle:"Офлайн-коммерция огромна.<br>Инструментов перформанса нет.",
+  marketSub:"В интернет-рекламе есть цена за клик. В офлайне — нет ничего аналогичного. GeoEarn строит инфраструктуру, чтобы это изменить.",
+  mCard1Label:"РЫНОК ЛОКАЛЬНОГО РЕТЕЙЛА США",
+  mCard1Desc:"Ежегодные расходы в физических магазинах, ресторанах и сервисах. Каждый бизнес нуждается в привлечении трафика — и большинство не могут его точно измерить.",
+  mCard2Label:"РЫНОК ЛОЯЛЬНОСТИ",
+  mCard2Desc:"Тратится ежегодно на программы лояльности — изолированные, непрозрачные, непереносимые. Баллы истекают. Награды не используются. GeoEarn заменяет это прозрачными мгновенными наградами.",
+  mCard3Label:"ЦЕЛЕВАЯ СТОИМОСТЬ ВИЗИТА",
+  mCard3Desc:"Бизнесы на GeoEarn сами устанавливают стоимость за визит. При $2–5 за подтверждённого клиента — это значительно дешевле большинства локальных рекламных инструментов.",
+  marketInsight:"<strong>Пробел:</strong> Кафе может запустить рекламу в Google и измерить каждый клик. Но когда тот же клиент входит в дверь — эквивалентного измерения нет. GeoEarn — это <strong>инфраструктура стоимости за визит</strong>, заполняющая разрыв между цифровым охватом и физической конверсией.",
+  featLabel:"// ПРОДУКТ",
+  featTitle:"Создан для бизнеса,<br>не для крипто-пользователей.",
+  featSub:"GeoEarn работает как обычный бизнес-инструмент. Блокчейн-инфраструктура работает в фоне — мерчантам и пользователям не нужно её понимать.",
+  feat1Title:"Движок верификации визитов",
+  feat1Desc:"Многоуровневая система верификации: GPS-геофенсинг, QR-сканирование и скоринг истории визитов. Каждый чекин независимо проверяем — бизнес никогда не платит за несостоявшийся визит.",
+  feat2Title:"Мгновенные награды",
+  feat2Desc:"Пользователи получают награду в течение секунд после верифицированного чекина. Никаких периодов ожидания, минимальных балансов, купонов.",
+  feat2Tag:"Мгновенный расчёт",
+  feat3Title:"Менеджер кампаний",
+  feat3Desc:"Мерчанты задают стоимость за визит, определяют гео-зону и запускают кампанию за минуты. Оплата только за верифицированного клиента — без минимального бюджета.",
+  feat3Tag:"Оплата за верифицированный визит",
+  feat4Title:"Прозрачный расчётный слой",
+  feat4Desc:"GeoEarn использует блокчейн для расчётов — не потому что это модно, а потому что это решает конкретную задачу: микротранзакции в масштабе с полной аудируемостью. Инфраструктура невидима для конечного пользователя.",
+  feat5Title:"Панель аналитики",
+  feat5Desc:"Бизнесы отслеживают тепловые карты визитов, пиковые часы, ROI кампаний и процент повторных клиентов в реальном времени.",
+  feat5Tag:"Появится в Q1 2027",
+  ucLabel:"// ВАРИАНТЫ ИСПОЛЬЗОВАНИЯ",
+  ucTitle:"Любой бизнес.<br>Любая локация.",
+  ucSub:"Если клиенты проходят через вашу дверь — GeoEarn это измерит, простимулирует и атрибутирует.",
+  uc1Title:"Кафе и рестораны",
+  uc1Desc:"Запускайте кампании «счастливый час» или первого визита. Платите только когда кто-то реально заходит в дверь.",
+  uc1Roi:"~2.8x ROI vs листовки",
+  uc2Title:"Фитнес и спортзалы",
+  uc2Desc:"Вознаграждайте первые визиты и пробные абонементы. Измеряйте отток между пробником и покупкой.",
+  uc2Roi:"~40% конверсия пробников",
+  uc3Title:"Розничные магазины",
+  uc3Desc:"Привлекайте трафик в непиковые часы с гео-таргетированными кампаниями.",
+  uc3Roi:"Ср. $2.50 CPA",
+  uc4Title:"Мероприятия и площадки",
+  uc4Desc:"Стимулируйте посещение конференций и поп-апов. Выдавайте верифицированные подтверждения посещения.",
+  uc4Roi:"Верифицированное посещение",
+  infraLabel:"// ИНФРАСТРУКТУРА",
+  infraTitle:"Блокчейн там,<br>где он реально помогает.",
+  infraSub:"GeoEarn использует блокчейн-инфраструктуру избирательно — для задач, которые она решает лучше любой альтернативы: прозрачные микротранзакции, защищённые записи визитов и мгновенный расчёт. Пользователи не обязаны понимать крипту.",
+  infraPt1Title:"Защищённые записи визитов",
+  infraPt1Desc:"Каждый верифицированный чекин логируется неизменно. Бизнесы могут независимо проверить любой платёж — без обращений в поддержку.",
+  infraPt2Title:"Экономично на микромасштабе",
+  infraPt2Desc:"GeoEarn обрабатывает тысячи небольших выплат ежедневно. Расчётный слой делает это за доли цента за транзакцию — награды в $0.50–$5 экономически выгодны даже для малого бизнеса.",
+  infraPt3Title:"Невидим для пользователей",
+  infraPt3Desc:"Пользователи получают награды, бизнесы запускают кампании — без крипто-кошелька и понимания технологии. Продукт создан для массового рынка.",
+  roadmapLabel:"// РОАДМАП",
+  roadmapTitle:"Реальные этапы.<br>Реальный прогресс.",
+  roadmapSub:"Каждый этап привязан к реальному принятию пользователями и выручке бизнеса — не к раундам фандрайзинга.",
+  rm1Title:"MVP и пилот",
+  rm1A:"MVP Telegram Mini App",
+  rm1B:"QR чекин-система запущена",
+  rm1C:"100+ тестовых пользователей",
+  rm1D:"5 пилотных локаций",
+  statusProgress:"● В ПРОЦЕССЕ",
+  rm2Title:"Интеграция расчётного слоя",
+  rm2A:"Онбординг кошелька",
+  rm2B:"Автоматическое распределение наград",
+  rm2C:"Деплой смарт-контракта",
+  rm2D:"Система антифрода v1",
+  statusBuilding:"◐ СТРОИМ",
+  rm3Title:"Первая выручка",
+  rm3A:"1,000+ активных пользователей",
+  rm3B:"25+ платящих бизнес-партнёров",
+  rm3C:"Запуск панели аналитики",
+  rm3D:"Первый ежемесячный MRR",
+  rm4Title:"Масштабирование",
+  rm4A:"10,000+ верифицированных визитов",
+  rm4B:"Расширение на несколько городов",
+  rm4C:"B2B интеграции лояльности",
+  rm4D:"Подготовка к Series A",
+  statusUpcoming:"○ ВПЕРЕДИ",
+  ecosystemLabel:"// ЭКОСИСТЕМА И ПАРТНЁРЫ",
+  builtOn:"Построено на и исследуем партнёрства с",
+  waitlistLabel:"// РАННИЙ ДОСТУП",
+  waitlistTitle:"Присоединиться к листу",
+  waitlistSub:"Будьте в числе первых бизнесов и пользователей после запуска. Ранние партнёры формируют продукт и получают приоритетный доступ к пилоту.",
+  roleUser:"👤 Я пользователь",
+  roleBiz:"🏪 Я бизнес",
+  roleInv:"💼 Я инвестор",
+  joinWaitlistBtn:"Присоединиться →",
+  submitting:"Отправляем...",
+  successTitle:"Вы в списке!",
+  successDesc:"Мы сообщим, когда ваш город выйдет в эфир.",
+  alreadyOn:"Уже <span id='waitlistCountDisplay'>800+</span> человек ждут",
+  ctaLine1:"Превратите пешеходный трафик",
+  ctaLine2:"в измеримую выручку.",
+  ctaSub:"GeoEarn — перформанс-привлечение клиентов для физического мира. Присоединяйтесь к листу ожидания — это займёт меньше минуты.",
+  partnerWithUs:"Стать партнёром",
+  footerDesc:"Маркетплейс привлечения клиентов для офлайн-бизнеса. Бизнес платит за верифицированный визит. Пользователи зарабатывают за посещения.",
+  footerProduct:"Продукт",
+  footerCompany:"Компания",
+  footerGetInTouch:"Связаться",
+  footerCtaTitle:"Готовы начать?",
+  footerCtaSub:"Подпишитесь на лист ожидания и узнайте, когда запустится ваш город.",
+  footerContact:"Написать нам",
+  footerPrivacy:"Политика конфиденциальности",
+  footerTerms:"Условия использования",
+  earlyAccess:"Ранний доступ",
+  launching:"Запускаем приложение..."
+}
+};
 
 let currentLang=localStorage.getItem('geoEarnLang')||'en';
 let selectedRole='user';
@@ -1773,22 +2174,19 @@ function applyTranslations(){
     const key=el.getAttribute('data-i18n');
     if(t[key]!==undefined) el.innerHTML=t[key];
   });
-  // Re-init ripple on any new buttons created by i18n (safe no-op on existing)
   initRipple();
   updateCountDisplay();
 }
 
-/* ═══ CURSOR — FIX: CSS custom properties вместо style.left/top ═══ */
+/* CURSOR */
 const cursorEl=document.getElementById('cursor');
 const cursorRingEl=document.getElementById('cursorRing');
 if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
   cursorEl.style.display='block';
   cursorRingEl.style.display='block';
   let cx=0,cy=0,rx=0,ry=0;
-  let cursorRAF=false;
   document.addEventListener('mousemove',e=>{cx=e.clientX;cy=e.clientY;});
   (function animCursor(){
-    // FIX: только обновляем CSS vars — одна DOM-операция вместо двух
     cursorEl.style.setProperty('--cx',cx+'px');
     cursorEl.style.setProperty('--cy',cy+'px');
     rx+=(cx-rx)*.12; ry+=(cy-ry)*.12;
@@ -1798,20 +2196,16 @@ if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
   })();
 }
 
-/* ═══ NAV SCROLL — FIX: throttle через RAF + кешированные элементы ═══ */
+/* NAV SCROLL */
 const navEl=document.getElementById('nav');
 const stickyCtaEl=document.getElementById('stickyCta');
 const waitlistEl=document.getElementById('waitlist');
-let scrollRAF=false;
-let stickyVisible=false;
-
+let scrollRAF=false,stickyVisible=false;
 window.addEventListener('scroll',()=>{
-  if(scrollRAF) return;
-  scrollRAF=true;
+  if(scrollRAF)return;scrollRAF=true;
   requestAnimationFrame(()=>{
     const sy=scrollY;
     navEl.classList.toggle('scrolled',sy>50);
-    // FIX: sticky CTA появляется после 300px, скрывается у waitlist
     if(waitlistEl){
       const rect=waitlistEl.getBoundingClientRect();
       const atWaitlist=rect.top<window.innerHeight&&rect.bottom>0;
@@ -1826,7 +2220,7 @@ window.addEventListener('scroll',()=>{
   });
 },{passive:true});
 
-/* ═══ HAMBURGER ═══ */
+/* HAMBURGER */
 const hamburger=document.getElementById('navHamburger');
 const drawer=document.getElementById('navDrawer');
 hamburger.addEventListener('click',()=>{
@@ -1837,7 +2231,6 @@ hamburger.addEventListener('click',()=>{
 });
 document.getElementById('navDrawerClose').addEventListener('click',closeMobileNav);
 drawer.addEventListener('click',e=>{if(e.target===drawer)closeMobileNav();});
-// FIX: ESC закрывает дравер
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drawer.classList.contains('open'))closeMobileNav();});
 function closeMobileNav(){
   drawer.classList.remove('open');
@@ -1845,7 +2238,7 @@ function closeMobileNav(){
   hamburger.setAttribute('aria-expanded','false');
 }
 
-/* ═══ RIPPLE ═══ */
+/* RIPPLE */
 function initRipple(){
   document.querySelectorAll('.ripple-container:not([data-ripple])').forEach(el=>{
     el.setAttribute('data-ripple','1');
@@ -1862,7 +2255,7 @@ function initRipple(){
 }
 initRipple();
 
-/* ═══ TOAST ═══ */
+/* TOAST */
 let toastTimer;
 function showToast(msg,type='success'){
   const t=document.getElementById('toast');
@@ -1873,26 +2266,24 @@ function showToast(msg,type='success'){
   toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
 }
 
-/* ═══ ROLE TABS ═══ */
+/* ROLE TABS */
 function setRole(role){
   selectedRole=role;
-  document.querySelectorAll('.role-tab').forEach(t=>{
-    const active=t.id==='role'+role.charAt(0).toUpperCase()+role.slice(1);
-    t.classList.toggle('active',active);
-    t.setAttribute('aria-pressed',active);
+  ['user','business','investor'].forEach(r=>{
+    const el=document.getElementById('role'+r.charAt(0).toUpperCase()+r.slice(1));
+    if(el){el.classList.toggle('active',r===role);el.setAttribute('aria-pressed',r===role);}
   });
 }
 
-/* ═══ WAITLIST — FIX: правильная логика отправки ═══ */
+/* WAITLIST */
 const GOOGLE_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwhRXQzC3cfkcl5JEMoyIwpLcWmryveNgaX7WIYGlVhB7-FYunNvW3QHzguhypKb0Wg/exec';
-// FIX: флаг — URL реально настроен (не placeholder)
-const SCRIPT_CONFIGURED=GOOGLE_SCRIPT_URL.length>0&&GOOGLE_SCRIPT_URL.includes('/exec');
+const SCRIPT_CONFIGURED=GOOGLE_SCRIPT_URL.includes('/exec');
 
 function getLocalEmails(){try{return JSON.parse(localStorage.getItem('geoEarnWaitlist')||'[]');}catch{return[];}}
 function saveLocalEmail(email){const arr=getLocalEmails();if(!arr.includes(email)){arr.push(email);localStorage.setItem('geoEarnWaitlist',JSON.stringify(arr));}}
 function isEmailLocal(email){return getLocalEmails().includes(email);}
 
-let waitlistCount=parseInt(localStorage.getItem('geoEarnWaitlistCount')||'500');
+let waitlistCount=parseInt(localStorage.getItem('geoEarnWaitlistCount')||'800');
 function updateCountDisplay(){
   document.querySelectorAll('#waitlistCountDisplay').forEach(el=>el.textContent=waitlistCount+'+');
 }
@@ -1900,8 +2291,8 @@ function updateCountDisplay(){
 async function submitWaitlist(source){
   const isFooter=source==='footer';
   const inputEl=document.getElementById(isFooter?'footerWaitlistEmail':'waitlistEmail');
+  if(!inputEl)return;
   const email=inputEl.value.trim();
-
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
     inputEl.classList.add('error');
     showToast(currentLang==='ru'?'Введите корректный email':'Please enter a valid email.','error');
@@ -1912,67 +2303,44 @@ async function submitWaitlist(source){
     showToast(currentLang==='ru'?'Вы уже в списке! 🎉':"You're already on the list! 🎉",'success');
     return;
   }
-
   const btn=isFooter?null:document.getElementById('waitlistBtn');
   const loadingEl=document.getElementById('waitlistLoading');
   const errEl=document.getElementById('waitlistErrorMsg');
-
-  if(btn) btn.disabled=true;
-  if(!isFooter&&loadingEl) loadingEl.classList.add('show');
-  if(errEl) errEl.classList.remove('show');
-
-  // FIX: отправляем всегда если URL настроен
+  if(btn)btn.disabled=true;
+  if(!isFooter&&loadingEl)loadingEl.classList.add('show');
+  if(errEl)errEl.classList.remove('show');
   if(SCRIPT_CONFIGURED){
     try{
-      /* FIX: Google Apps Script doPost с e.postData читает FormData через e.parameter,
-         а НЕ через JSON.parse(e.postData.contents). Используем FormData. */
       const fd=new FormData();
-      fd.append('email',email);
-      fd.append('role',selectedRole);
-      fd.append('lang',currentLang);
-      fd.append('source',source);
+      fd.append('email',email);fd.append('role',selectedRole);
+      fd.append('lang',currentLang);fd.append('source',source);
       fd.append('timestamp',new Date().toISOString());
-      // mode:'no-cors' — opaque response, exception только при сетевой ошибке
       await fetch(GOOGLE_SCRIPT_URL,{method:'POST',body:fd,mode:'no-cors'});
-    }catch(err){
-      console.warn('GeoEarn: Sheets submission failed, saved locally.',err);
-    }
+    }catch(err){console.warn('GeoEarn: Sheets submission failed, saved locally.',err);}
   }
-
-  // Всегда сохраняем локально (dedup + счётчик)
   saveLocalEmail(email);
   waitlistCount++;
   localStorage.setItem('geoEarnWaitlistCount',waitlistCount);
   updateCountDisplay();
-
-  if(!isFooter&&loadingEl) loadingEl.classList.remove('show');
-
+  if(!isFooter&&loadingEl)loadingEl.classList.remove('show');
   if(isFooter){
     inputEl.value='';
-    showToast(currentLang==='ru'?'Вы в списке! Ждите уведомления 🚀':"You're on the list! We'll be in touch 🚀",'success');
-  } else {
+    showToast(currentLang==='ru'?'Вы в списке! 🚀':"You're on the list! We'll be in touch 🚀",'success');
+  }else{
     inputEl.value='';
-    // FIX: btn остаётся disabled, но показываем success состояние
     if(btn){
       btn.textContent=currentLang==='ru'?'Вы в списке! 🎉':"You're In! 🎉";
-      // Через 4с восстанавливаем кнопку
-      setTimeout(()=>{
-        btn.disabled=false;
-        btn.innerHTML=`<span data-i18n="joinWaitlistBtn">${translations[currentLang].joinWaitlistBtn}</span>`;
-      },4000);
+      setTimeout(()=>{btn.disabled=false;btn.innerHTML=`<span data-i18n="joinWaitlistBtn">${translations[currentLang].joinWaitlistBtn}</span>`;},4000);
     }
     document.getElementById('waitlistSuccess').classList.add('show');
   }
 }
 
-// Enter key
 document.getElementById('waitlistEmail').addEventListener('keydown',e=>{if(e.key==='Enter')submitWaitlist('main');});
-const fEl=document.getElementById('footerWaitlistEmail');
-if(fEl) fEl.addEventListener('keydown',e=>{if(e.key==='Enter')submitWaitlist('footer');});
 
-/* ═══ OPEN APP ═══ */
+/* OPEN APP */
 function openApp(e){
-  if(e) e.preventDefault();
+  if(e)e.preventDefault();
   const overlay=document.getElementById('appOverlay');
   const progress=document.getElementById('appProgress');
   overlay.classList.add('active');
@@ -1984,22 +2352,15 @@ function openApp(e){
   });
 }
 
-/* ═══ BG CANVAS — FIX: пауза при скрытой вкладке ═══ */
+/* BG CANVAS */
 const bgC=document.getElementById('bg-canvas');
 const bgCtx=bgC.getContext('2d');
 let bgPaused=false;
 document.addEventListener('visibilitychange',()=>{bgPaused=document.hidden;});
-
 function resizeBg(){bgC.width=innerWidth;bgC.height=innerHeight;}
 resizeBg();
-// FIX: debounce resize
 let resizeTimer;
-window.addEventListener('resize',()=>{
-  clearTimeout(resizeTimer);
-  resizeTimer=setTimeout(resizeBg,150);
-});
-
-// FIX: меньше частиц на mobile для производительности
+window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(resizeBg,150);});
 const PT_COUNT=window.innerWidth<768?40:80;
 const pts=Array.from({length:PT_COUNT},()=>({
   x:Math.random()*innerWidth,y:Math.random()*innerHeight,
@@ -2007,30 +2368,20 @@ const pts=Array.from({length:PT_COUNT},()=>({
   alpha:Math.random()*.5+.1,
   color:['#06b6d4','#7c3aed','#ec4899','#10b981'][Math.floor(Math.random()*4)]
 }));
-
 (function drawBg(){
   if(!bgPaused){
     bgCtx.clearRect(0,0,bgC.width,bgC.height);
-    // FIX: O(n²) линии — пропускаем на мобиле
     if(window.innerWidth>=768){
       for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
         const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
-        if(d<120){
-          bgCtx.beginPath();
-          bgCtx.strokeStyle=`rgba(124,58,237,${.055*(1-d/120)})`;
-          bgCtx.lineWidth=.5;
-          bgCtx.moveTo(pts[i].x,pts[i].y);
-          bgCtx.lineTo(pts[j].x,pts[j].y);
-          bgCtx.stroke();
-        }
+        if(d<120){bgCtx.beginPath();bgCtx.strokeStyle=`rgba(124,58,237,${.055*(1-d/120)})`;bgCtx.lineWidth=.5;bgCtx.moveTo(pts[i].x,pts[i].y);bgCtx.lineTo(pts[j].x,pts[j].y);bgCtx.stroke();}
       }
     }
     pts.forEach(p=>{
       p.x+=p.vx;p.y+=p.vy;
       if(p.x<0)p.x=bgC.width;if(p.x>bgC.width)p.x=0;
       if(p.y<0)p.y=bgC.height;if(p.y>bgC.height)p.y=0;
-      bgCtx.beginPath();
-      bgCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      bgCtx.beginPath();bgCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
       bgCtx.fillStyle=p.color+Math.floor(p.alpha*255).toString(16).padStart(2,'0');
       bgCtx.fill();
     });
@@ -2038,7 +2389,7 @@ const pts=Array.from({length:PT_COUNT},()=>({
   requestAnimationFrame(drawBg);
 })();
 
-/* ═══ GEO CANVAS ═══ */
+/* GEO CANVAS */
 const gc=document.getElementById('geo-canvas');
 if(gc){
   const gctx=gc.getContext('2d');
@@ -2090,7 +2441,7 @@ if(gc){
   })();
 }
 
-/* ═══ NETWORK CANVAS ═══ */
+/* NETWORK CANVAS */
 const nc=document.getElementById('network-canvas');
 if(nc){
   const nctx=nc.getContext('2d');
@@ -2105,9 +2456,9 @@ if(nc){
   }));
   const pkts=[];
   setInterval(()=>{
-    if(bgPaused) return;
+    if(bgPaused)return;
     const a=nodes[Math.floor(Math.random()*nodes.length)],b=nodes[Math.floor(Math.random()*nodes.length)];
-    if(a!==b) pkts.push({ax:a.x,ay:a.y,bx:b.x,by:b.y,t:0,color:a.color});
+    if(a!==b)pkts.push({ax:a.x,ay:a.y,bx:b.x,by:b.y,t:0,color:a.color});
   },280);
   (function drawNet(){
     if(!bgPaused){
@@ -2125,8 +2476,8 @@ if(nc){
       }
       nodes.forEach(n=>{
         n.x+=n.vx;n.y+=n.vy;n.pulse+=.04;
-        if(n.x<n.r||n.x>nc.width-n.r) n.vx*=-1;
-        if(n.y<n.r||n.y>nc.height-n.r) n.vy*=-1;
+        if(n.x<n.r||n.x>nc.width-n.r)n.vx*=-1;
+        if(n.y<n.r||n.y>nc.height-n.r)n.vy*=-1;
         const ps=Math.sin(n.pulse)*3;
         const glow=nctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*4+ps);
         glow.addColorStop(0,n.color+'50');glow.addColorStop(1,'transparent');
@@ -2138,21 +2489,19 @@ if(nc){
   })();
 }
 
-/* ═══ INTERSECTION OBSERVERS ═══ */
-// Reveal
+/* INTERSECTION OBSERVERS */
 const revObs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revObs.unobserve(e.target);}});
 },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
 document.querySelectorAll('.reveal,.feat-card,.timeline-node').forEach(el=>revObs.observe(el));
 
-// Counters
 function animCounter(el){
   const target=parseInt(el.dataset.target),suffix=el.dataset.suffix||'';
   const start=performance.now(),dur=2000;
   (function u(now){
     const p=Math.min((now-start)/dur,1),ease=1-Math.pow(1-p,3),cur=Math.floor(ease*target);
     el.textContent=target>=1000?(cur/1000).toFixed(cur<1000?1:0)+'k'+suffix:cur+suffix;
-    if(p<1) requestAnimationFrame(u);
+    if(p<1)requestAnimationFrame(u);
     else el.textContent=target>=1000?(target/1000).toFixed(0)+'k'+suffix:target+suffix;
   })(start);
 }
@@ -2161,47 +2510,20 @@ const cntObs=new IntersectionObserver(entries=>{
 },{threshold:.5});
 document.querySelectorAll('.stat-number[data-target]').forEach(el=>cntObs.observe(el));
 
-// Timeline
 const tlObs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){document.getElementById('timelineProgress').style.width='28%';tlObs.unobserve(e.target);}});
 },{threshold:.3});
-const tlS=document.querySelector('.roadmap-section');if(tlS) tlObs.observe(tlS);
+const tlS=document.querySelector('.roadmap-section');if(tlS)tlObs.observe(tlS);
 
-/* ═══ TOUCH FEEDBACK ═══ */
+/* TOUCH FEEDBACK */
 document.querySelectorAll('.sol-point,.rm-card,.feat-card,.market-card,.uc-card').forEach(el=>{
   el.addEventListener('touchstart',()=>{el.style.scale='.98';},{passive:true});
   el.addEventListener('touchend',()=>{el.style.scale='';},{passive:true});
   el.addEventListener('touchcancel',()=>{el.style.scale='';},{passive:true});
 });
 
-/* ═══ INIT ═══ */
+/* INIT */
 setLang(currentLang);
 </script>
-
-<!--
-══════════════════════════════════════════
-ВАЖНО: Google Apps Script doPost должен принимать FormData через e.parameter:
-
-function doPost(e) {
-  try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    sheet.appendRow([
-      e.parameter.email || '',
-      e.parameter.role || 'user',
-      e.parameter.lang || 'en',
-      e.parameter.source || 'main',
-      e.parameter.timestamp || new Date()
-    ]);
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: "success" }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-══════════════════════════════════════════
--->
 </body>
 </html>
