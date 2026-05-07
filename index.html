@@ -1170,7 +1170,7 @@
 
   <div class="footer-bottom">
     <span class="footer-copy">© 2026 GeoEarn Labs · All rights reserved</span>
-    <a href="/app/geoearn.html" class="footer-open-app" onclick="openApp(event)">
+    <a href="geoearn.html" class="footer-open-app" onclick="openApp(event)">
       🚀 Open App
     </a>
   </div>
@@ -1253,14 +1253,11 @@ function updateCountDisplay() {
   if (el) el.textContent = waitlistCount + '+';
 }
 
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxd5EXvbYl71NM9Mslzaj5kEEWPmvecQGzuVw9S_R5Mi8E8BAr8juAqLOAJlr9qi6f6/exec';
-
 function submitWaitlist(source) {
   const inputId = source === 'footer' ? 'footerWaitlistEmail' : 'waitlistEmail';
-  const input = document.getElementById(inputId);
   const btnId = source === 'footer' ? null : 'waitlistBtn';
+  const input = document.getElementById(inputId);
   const email = input.value.trim();
-  
 
   // Validate
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -1320,7 +1317,7 @@ function openApp(e) {
   setTimeout(() => { progress.style.width = '70%'; }, 50);
   setTimeout(() => { progress.style.width = '100%'; }, 500);
   setTimeout(() => {
-    window.location.href = '/app/geoearn.html';
+    window.location.href = 'geoearn.html';
   }, 900);
 }
 
