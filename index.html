@@ -1312,12 +1312,16 @@ async function submitWaitlist(source) {
   // Try Google Sheets
   if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbye6YJ6WoPzbV_FtUEqVciChaAXN7kVv-srrNAkrgzK1kXkrLj19a26tScMiejDyo1_/exec') {
     try {
-      const res = await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors', // required for Google Apps Script
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      const formData = new FormData();
+formData.append("email", email);
+formData.append("role", selectedRole);
+formData.append("lang", currentLang);
+formData.append("source", source);
+
+await fetch(GOOGLE_SCRIPT_URL, {
+  method: 'POST',
+  body: formData
+});
       // no-cors returns opaque response — we assume success if no exception
       success = true;
     } catch (err) {
