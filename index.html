@@ -3,2527 +3,1582 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GeoEarn — Marketplace for Real-World Customer Acquisition</title>
+<title>GeoEarn — Pay-Per-Visit Infrastructure</title>
 <meta name="description" content="GeoEarn is a performance-based marketplace for real-world customer acquisition. Businesses pay only for verified visits. Users earn for showing up.">
-
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-<link rel="apple-touch-icon" href="/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
 
 <style>
-:root{
-  --black:#020408;--navy:#050d1a;
-  --purple:#7c3aed;--purple-glow:#a855f7;
-  --blue:#2563eb;--cyan:#06b6d4;
-  --pink:#ec4899;--neon:#00f5ff;
-  --gold:#f59e0b;--green:#10b981;
-  --white:#f8fafc;--muted:#64748b;
-  --glass:rgba(255,255,255,.04);
-  --glass-border:rgba(255,255,255,.08);
-  --red:#ef4444;
+/* ─── DESIGN TOKENS ─── */
+:root {
+  --bg-base:    #090B10;
+  --bg-surface: #0F1318;
+  --bg-raised:  #161B24;
+  --bg-overlay: #1E2530;
+  --border-subtle:  rgba(255,255,255,0.06);
+  --border-default: rgba(255,255,255,0.10);
+  --border-strong:  rgba(255,255,255,0.16);
+  --text-primary:   #F0F2F7;
+  --text-secondary: #8892A8;
+  --text-tertiary:  #4A5168;
+  --geo:      #C6F135;
+  --geo-dim:  rgba(198,241,53,0.10);
+  --geo-glow: rgba(198,241,53,0.20);
+  --success: #22C55E; --success-dim: rgba(34,197,94,0.10);
+  --danger:  #EF4444; --danger-dim:  rgba(239,68,68,0.10);
+  --warning: #F59E0B; --warning-dim: rgba(245,158,11,0.10);
+  --info:    #3B82F6; --info-dim:    rgba(59,130,246,0.10);
+  --ease-out:    cubic-bezier(0.22,1,0.36,1);
+  --ease-in:     cubic-bezier(0.64,0,0.78,0);
+  --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+  --ease-smooth: cubic-bezier(0.4,0,0.2,1);
 }
 
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{
-  background:var(--black);color:var(--white);
-  font-family:'DM Sans',sans-serif;
-  overflow-x:clip;
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-@media(hover:hover) and (pointer:fine){
-  body{cursor:none;}
-  .cursor,.cursor-ring{display:block;}
+/* ─── KEYFRAMES ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-.cursor{
-  width:12px;height:12px;background:var(--neon);border-radius:50%;
-  position:fixed;pointer-events:none;z-index:9999;
-  transform:translate(var(--cx,0px),var(--cy,0px)) translate(-50%,-50%);
-  box-shadow:0 0 20px var(--neon),0 0 40px rgba(0,245,255,.3);
-  display:none;will-change:transform;
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
 }
-.cursor-ring{
-  width:40px;height:40px;border:1px solid rgba(0,245,255,.4);
-  border-radius:50%;position:fixed;pointer-events:none;z-index:9998;
-  transform:translate(var(--rx,0px),var(--ry,0px)) translate(-50%,-50%);
-  transition:width .25s,height .25s,border-color .25s;
-  display:none;will-change:transform;
+@keyframes dotPulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(0.8); }
 }
-body:has(a:hover) .cursor,body:has(button:hover) .cursor{
-  width:20px;height:20px;background:var(--purple-glow);
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-body:has(a:hover) .cursor-ring,body:has(button:hover) .cursor-ring{
-  width:56px;height:56px;border-color:rgba(168,85,247,.5);
+@keyframes navFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
-#bg-canvas{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  z-index:0;pointer-events:none;
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:1;opacity:.35;
-}
-section,nav,footer,main{position:relative;z-index:2;}
-
-/* LANG SWITCH */
-.lang-switch{
-  display:flex;align-items:center;gap:4px;
-  background:var(--glass);border:1px solid var(--glass-border);
-  border-radius:8px;padding:4px;backdrop-filter:blur(10px);
-}
-.lang-btn{
-  padding:5px 10px;border-radius:6px;border:none;background:transparent;
-  color:rgba(248,250,252,.5);font-size:12px;font-family:'Space Mono',monospace;
-  cursor:pointer;transition:background .2s,color .2s;letter-spacing:.05em;
-}
-.lang-btn.active{
-  background:rgba(6,182,212,.2);color:var(--cyan);
-  border:1px solid rgba(6,182,212,.3);
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
 }
 
-/* NAV */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  padding:20px 60px;display:flex;align-items:center;
-  justify-content:space-between;
-  border-bottom:1px solid transparent;
-  transition:background .4s,border-color .4s,backdrop-filter .4s;
+/* ─── REVEAL ─── */
+.reveal {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
 }
-nav.scrolled{
-  background:rgba(2,4,8,.88);backdrop-filter:blur(24px);
-  border-bottom-color:var(--glass-border);
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 80ms; }
+.reveal-delay-2 { transition-delay: 160ms; }
+.reveal-delay-3 { transition-delay: 240ms; }
+.reveal-delay-4 { transition-delay: 320ms; }
+
+/* ─── TYPOGRAPHY ─── */
+.label-sm {
+  font-size: 11px; font-weight: 500; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.8px;
 }
-.nav-logo{
-  font-family:'Syne',sans-serif;font-weight:800;font-size:20px;
-  letter-spacing:-.5px;
-  background:linear-gradient(135deg,#fff 0%,var(--cyan) 50%,var(--purple-glow) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  display:flex;align-items:center;gap:8px;text-decoration:none;
+.title-hero {
+  font-family: 'Syne', sans-serif; font-size: clamp(40px,6vw,72px);
+  font-weight: 800; line-height: 1.05; letter-spacing: -1.5px;
+  color: var(--text-primary);
 }
-.nav-logo-icon{
-  width:28px;height:28px;border-radius:7px;
-  background:linear-gradient(135deg,var(--purple),var(--cyan));
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;-webkit-text-fill-color:white;flex-shrink:0;
+.title-section {
+  font-family: 'Syne', sans-serif; font-size: clamp(28px,4vw,44px);
+  font-weight: 800; line-height: 1.1; letter-spacing: -0.5px;
+  color: var(--text-primary);
 }
-.nav-links{display:flex;gap:36px;list-style:none;align-items:center;}
-.nav-links a{
-  color:rgba(248,250,252,.6);text-decoration:none;font-size:14px;
-  transition:color .3s;position:relative;
+.title-card {
+  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700;
+  color: var(--text-primary); letter-spacing: -0.2px;
 }
-.nav-links a::after{
-  content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,var(--cyan),var(--purple-glow));
-  transform:scaleX(0);transform-origin:left;transition:transform .3s;
+.body-lg { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+.body-md { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+/* ─── CONTAINERS ─── */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 40px; }
+@media (max-width: 768px) { .container { padding: 0 20px; } }
+
+/* ─── ICONS ─── */
+.icon { display: inline-flex; align-items: center; justify-content: center; }
+.icon svg { width: var(--ico-size, 18px); height: var(--ico-size, 18px); stroke-width: var(--ico-stroke, 1.5); }
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 28px;
+  transition: border-color 120ms var(--ease-smooth), transform 120ms var(--ease-smooth);
 }
-.nav-links a:hover{color:var(--white);}
-.nav-links a:hover::after{transform:scaleX(1);}
-.nav-socials{display:flex;align-items:center;gap:12px;}
-.nav-social-link{
-  width:34px;height:34px;border-radius:8px;
-  background:var(--glass);border:1px solid var(--glass-border);
-  display:flex;align-items:center;justify-content:center;
-  color:rgba(248,250,252,.55);text-decoration:none;
-  transition:border-color .3s,color .3s,transform .3s,box-shadow .3s;
-  backdrop-filter:blur(10px);font-size:15px;
+.card:hover { border-color: var(--border-default); transform: translateY(-2px); }
+
+/* ─── BUTTONS ─── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; border-radius: 14px; border: none;
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
+  cursor: pointer; text-decoration: none;
+  -webkit-tap-highlight-color: transparent; user-select: none;
+  transition: transform 120ms var(--ease-spring), opacity 120ms;
+  position: relative; overflow: hidden;
 }
-@media(hover:hover){
-  .nav-social-link:hover{
-    border-color:rgba(6,182,212,.4);color:var(--white);
-    transform:translateY(-1px);box-shadow:0 0 16px rgba(6,182,212,.2);
-  }
+.btn:active { transform: scale(0.97); }
+.btn-primary {
+  background: var(--geo); color: #090B10;
+  padding: 14px 26px;
 }
-.nav-right{display:flex;align-items:center;gap:10px;}
-.nav-cta{
-  background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(6,182,212,.2));
-  border:1px solid rgba(124,58,237,.4);color:var(--white);
-  padding:10px 24px;border-radius:8px;font-size:14px;font-weight:500;
-  text-decoration:none;transition:background .3s,box-shadow .3s,transform .3s;
-  backdrop-filter:blur(10px);display:inline-flex;align-items:center;gap:6px;
+.btn-secondary {
+  background: var(--bg-raised); color: var(--text-primary);
+  border: 0.5px solid var(--border-default);
+  padding: 14px 26px;
 }
-@media(hover:hover){
-  .nav-cta:hover{
-    background:linear-gradient(135deg,rgba(124,58,237,.5),rgba(6,182,212,.35));
-    box-shadow:0 0 30px rgba(124,58,237,.4),0 0 60px rgba(6,182,212,.15);
-    transform:translateY(-1px);
-  }
+.btn-ghost {
+  background: transparent; color: var(--text-secondary);
+  padding: 10px 16px; font-size: 14px;
 }
-.nav-hamburger{
-  display:none;flex-direction:column;gap:5px;cursor:pointer;
-  background:none;border:none;padding:4px;
+.btn-ghost:hover { color: var(--text-primary); }
+.btn svg { --ico-size: 16px; --ico-stroke: 2; flex-shrink: 0; }
+
+/* ─── PILL BADGE ─── */
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 99px;
+  font-size: 11px; font-weight: 500;
 }
-.nav-hamburger span{
-  display:block;width:22px;height:2px;
-  background:rgba(248,250,252,.7);border-radius:2px;transition:transform .3s,opacity .3s;
+.pill-geo   { background: var(--geo-dim); color: var(--geo); border: 0.5px solid rgba(198,241,53,0.2); }
+.pill-info  { background: var(--info-dim); color: var(--info); border: 0.5px solid rgba(59,130,246,0.2); }
+.pill-success { background: var(--success-dim); color: var(--success); border: 0.5px solid rgba(34,197,94,0.2); }
+.pill-warn  { background: var(--warning-dim); color: var(--warning); border: 0.5px solid rgba(245,158,11,0.2); }
+
+/* ─── ICON CONTAINER ─── */
+.ico-wrap {
+  width: 44px; height: 44px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
+.ico-wrap svg { width: 20px; height: 20px; stroke-width: 1.5; }
+.ico-geo     { background: var(--geo-dim); color: var(--geo); border: 0.5px solid rgba(198,241,53,0.2); }
+.ico-info    { background: var(--info-dim); color: var(--info); border: 0.5px solid rgba(59,130,246,0.2); }
+.ico-success { background: var(--success-dim); color: var(--success); border: 0.5px solid rgba(34,197,94,0.2); }
+.ico-warn    { background: var(--warning-dim); color: var(--warning); border: 0.5px solid rgba(245,158,11,0.2); }
+.ico-muted   { background: var(--bg-raised); color: var(--text-secondary); border: 0.5px solid var(--border-default); }
+
+/* ─── LIVE DOT ─── */
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--success); animation: dotPulse 2s ease-in-out infinite;
+}
+
+/* ─── DIVIDER ─── */
+.divider { height: 0.5px; background: var(--border-subtle); }
+
+/* ─────────────────────────────────
+   NAV
+───────────────────────────────── */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  border-bottom: 0.5px solid transparent;
+  transition: background 300ms var(--ease-smooth), border-color 300ms var(--ease-smooth), backdrop-filter 300ms;
+  animation: navFadeIn 400ms var(--ease-out) both;
+}
+#nav.scrolled {
+  background: rgba(9,11,16,0.88);
+  backdrop-filter: blur(20px);
+  border-bottom-color: var(--border-subtle);
+}
+.nav-inner {
+  max-width: 1120px; margin: 0 auto; padding: 0 40px;
+  height: 64px; display: flex; align-items: center; gap: 40px;
+}
+@media (max-width: 768px) { .nav-inner { padding: 0 20px; } }
+
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; flex-shrink: 0;
+  font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700;
+  color: var(--text-primary);
+}
+.nav-logo-mark {
+  width: 30px; height: 30px; border-radius: 9px;
+  background: var(--geo-dim); border: 0.5px solid rgba(198,241,53,0.25);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--geo);
+}
+.nav-logo-mark svg { width: 15px; height: 15px; stroke-width: 2; }
+
+.nav-links {
+  display: flex; gap: 2px; list-style: none; flex: 1;
+}
+.nav-links a {
+  font-size: 14px; color: var(--text-tertiary); text-decoration: none;
+  padding: 6px 12px; border-radius: 8px;
+  transition: color 120ms, background 120ms;
+}
+.nav-links a:hover { color: var(--text-primary); background: var(--bg-surface); }
+@media (max-width: 900px) { .nav-links { display: none; } }
+
+.nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+
+.lang-toggle {
+  display: flex; align-items: center;
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  border-radius: 8px; padding: 3px;
+}
+.lang-btn {
+  padding: 4px 10px; border-radius: 6px; border: none; background: transparent;
+  font-size: 12px; font-weight: 500; color: var(--text-tertiary);
+  cursor: pointer; transition: background 120ms, color 120ms;
+  font-family: 'DM Sans', sans-serif;
+}
+.lang-btn.active { background: var(--bg-raised); color: var(--text-primary); }
+
+.nav-social {
+  display: flex; align-items: center; gap: 6px;
+}
+@media (max-width: 768px) { .nav-social { display: none; } }
+.nav-social-link {
+  width: 34px; height: 34px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-tertiary); text-decoration: none;
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  transition: color 120ms, border-color 120ms;
+}
+.nav-social-link:hover { color: var(--text-primary); border-color: var(--border-default); }
+.nav-social-link svg { width: 15px; height: 15px; }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  align-items: center; justify-content: center;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.hamburger span { width: 16px; height: 1.5px; background: var(--text-secondary); border-radius: 2px; display: block; }
+@media (max-width: 900px) { .hamburger { display: flex; } }
 
 /* MOBILE DRAWER */
-.nav-drawer{
-  display:none;position:fixed;inset:0;
-  background:rgba(2,4,8,.97);backdrop-filter:blur(30px);
-  z-index:99;flex-direction:column;align-items:center;
-  justify-content:center;gap:28px;
-  opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 280px;
+  background: var(--bg-raised); border-left: 0.5px solid var(--border-default);
+  z-index: 200; padding: 24px;
+  transform: translateX(100%);
+  transition: transform 350ms var(--ease-out);
 }
-.nav-drawer.open{display:flex;opacity:1;visibility:visible;}
-.nav-drawer a{
-  font-family:'Syne',sans-serif;font-size:26px;font-weight:700;
-  color:rgba(248,250,252,.6);text-decoration:none;transition:color .2s;
+.drawer.open { transform: translateX(0); }
+.drawer-close {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: var(--bg-overlay); border: 0.5px solid var(--border-default);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary); cursor: pointer; margin-bottom: 32px;
 }
-.nav-drawer a:hover{color:var(--white);}
-.nav-drawer-socials{display:flex;gap:16px;margin-top:16px;}
-.nav-drawer-close{
-  position:absolute;top:24px;right:24px;background:none;border:none;
-  color:var(--muted);font-size:28px;cursor:pointer;line-height:1;
+.drawer-close svg { width: 16px; height: 16px; stroke-width: 2; }
+.drawer-links { display: flex; flex-direction: column; gap: 4px; }
+.drawer-links a {
+  font-size: 15px; color: var(--text-secondary); text-decoration: none;
+  padding: 10px 12px; border-radius: 10px;
+  transition: color 120ms, background 120ms;
 }
-.nav-drawer-lang{margin-top:8px;}
+.drawer-links a:hover { color: var(--text-primary); background: var(--bg-overlay); }
+.drawer-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 199; opacity: 0; pointer-events: none;
+  transition: opacity 350ms var(--ease-smooth);
+}
+.drawer-overlay.visible { opacity: 1; pointer-events: all; }
 
-/* HERO */
-.hero{
-  min-height:100vh;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;text-align:center;
-  padding:140px 40px 100px;position:relative;overflow:hidden;
+/* ─────────────────────────────────
+   HERO
+───────────────────────────────── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 120px 40px 100px;
+  position: relative;
 }
-.hero-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);
-  border-radius:100px;padding:6px 16px 6px 8px;
-  font-size:12px;font-weight:500;color:rgba(248,250,252,.8);
-  letter-spacing:.05em;margin-bottom:36px;
-  opacity:0;transform:translateY(20px);
-  animation:fadeUp .8s ease .2s forwards;
-}
-.badge-dot{
-  width:6px;height:6px;border-radius:50%;background:var(--green);
-  box-shadow:0 0 8px var(--green);animation:pulse 2s ease infinite;
-  flex-shrink:0;
-}
-@keyframes pulse{
-  0%,100%{box-shadow:0 0 8px currentColor;}
-  50%{box-shadow:0 0 18px currentColor,0 0 28px rgba(16,185,129,.3);}
-}
-.hero h1{
-  font-family:'Syne',sans-serif;
-  font-size:clamp(48px,8.5vw,116px);
-  font-weight:800;line-height:.93;letter-spacing:-.03em;
-  max-width:960px;margin-bottom:28px;
-  opacity:0;transform:translateY(40px);
-  animation:fadeUp 1s ease .4s forwards;
-}
-.line-white{
-  display:block;
-  background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.85) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.line-color{
-  display:block;
-  background:linear-gradient(135deg,var(--cyan) 0%,var(--purple-glow) 50%,var(--pink) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  background-size:200% 200%;animation:gradientShift 4s ease infinite;
-}
-@keyframes gradientShift{
-  0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}
-}
-.hero-sub{
-  font-size:clamp(16px,2vw,20px);color:rgba(248,250,252,.48);
-  max-width:600px;line-height:1.7;font-weight:300;margin-bottom:16px;
-  opacity:0;transform:translateY(30px);animation:fadeUp .9s ease .6s forwards;
-}
-.hero-sub strong{color:rgba(248,250,252,.75);font-weight:500;}
+@media (max-width: 768px) { .hero { padding: 100px 20px 80px; } }
 
-/* POSITIONING CALLOUT */
-.hero-positioning{
-  display:inline-flex;align-items:center;gap:10px;
-  background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.22);
-  border-radius:10px;padding:10px 20px;margin-bottom:40px;
-  font-size:13px;color:rgba(248,250,252,.65);max-width:620px;
-  opacity:0;animation:fadeUp .9s ease .7s forwards;
-  line-height:1.5;text-align:left;
+.hero-inner {
+  max-width: 1120px; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
 }
-.hero-positioning strong{color:var(--purple-glow);font-weight:600;}
+@media (max-width: 1024px) { .hero-inner { grid-template-columns: 1fr; gap: 60px; } }
 
-.hero-actions{
-  display:flex;gap:16px;flex-wrap:wrap;justify-content:center;
-  opacity:0;transform:translateY(30px);animation:fadeUp .9s ease .8s forwards;
-}
-@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+.hero-left { display: flex; flex-direction: column; align-items: flex-start; }
 
-/* MONEY FLOW */
-.money-flow{
-  display:flex;flex-direction:column;gap:10px;
-  margin-top:60px;max-width:680px;width:100%;
-  opacity:0;transform:translateY(20px);animation:fadeUp .9s ease 1s forwards;
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 99px;
+  background: var(--bg-surface); border: 0.5px solid var(--border-default);
+  font-size: 12px; color: var(--text-secondary); font-weight: 500;
+  margin-bottom: 32px;
+  animation: fadeUp 400ms var(--ease-out) both;
 }
-.money-flow-title{
-  font-family:'Space Mono',monospace;font-size:10px;
-  letter-spacing:.15em;color:var(--muted);text-align:center;margin-bottom:4px;
-}
-.money-flow-row{display:flex;align-items:center;justify-content:center;}
-.mf-node{
-  background:var(--glass);border:1px solid var(--glass-border);
-  border-radius:12px;padding:14px 20px;text-align:center;
-  backdrop-filter:blur(12px);min-width:120px;
-  transition:border-color .3s,transform .3s;
-}
-@media(hover:hover){
-  .mf-node:hover{border-color:rgba(6,182,212,.35);transform:translateY(-3px);}
-}
-.mf-icon{font-size:18px;margin-bottom:4px;}
-.mf-label{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:.04em;}
-.mf-title{font-size:12px;font-weight:600;margin-top:2px;}
-.mf-arrow{
-  padding:0 8px;display:flex;flex-direction:column;
-  align-items:center;gap:2px;flex-shrink:0;
-}
-.mf-arrow-line{font-size:16px;color:rgba(6,182,212,.5);}
-.mf-arrow-label{font-size:9px;font-family:'Space Mono',monospace;color:var(--cyan);white-space:nowrap;}
-.mf-amount{font-size:11px;font-weight:700;color:var(--green);margin-top:3px;font-family:'Space Mono',monospace;}
+.hero-badge .live-dot { margin-right: 2px; }
 
-/* BUTTONS */
-.btn-primary{
-  position:relative;overflow:hidden;
-  background:linear-gradient(135deg,var(--purple),var(--blue));
-  color:#fff;padding:16px 36px;border-radius:10px;
-  font-size:15px;font-weight:500;border:none;cursor:pointer;
-  text-decoration:none;display:inline-flex;align-items:center;gap:8px;
-  transition:transform .3s,box-shadow .3s;
-  box-shadow:0 0 30px rgba(124,58,237,.4),0 4px 20px rgba(0,0,0,.4);
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(44px,6vw,80px);
+  font-weight: 800; line-height: 1.0; letter-spacing: -2px;
+  color: var(--text-primary); margin-bottom: 24px;
+  animation: fadeUp 400ms 60ms var(--ease-out) both;
 }
-.btn-primary::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,var(--cyan),var(--purple-glow));
-  opacity:0;transition:opacity .3s;
-}
-@media(hover:hover){
-  .btn-primary:hover::before{opacity:1;}
-  .btn-primary:hover{
-    transform:translateY(-2px) scale(1.02);
-    box-shadow:0 0 50px rgba(124,58,237,.6),0 0 100px rgba(6,182,212,.2),0 8px 30px rgba(0,0,0,.4);
-  }
-}
-.btn-primary:active{transform:scale(.97)!important;box-shadow:0 0 20px rgba(124,58,237,.3)!important;}
-.btn-primary span{position:relative;z-index:1;}
-.btn-primary.glow-pulse{animation:glowPulse 2.5s ease-in-out infinite;}
-@keyframes glowPulse{
-  0%,100%{box-shadow:0 0 30px rgba(124,58,237,.4),0 4px 20px rgba(0,0,0,.4);}
-  50%{box-shadow:0 0 60px rgba(124,58,237,.7),0 0 100px rgba(6,182,212,.25),0 4px 20px rgba(0,0,0,.4);}
-}
-.btn-secondary{
-  background:var(--glass);border:1px solid var(--glass-border);
-  color:rgba(248,250,252,.8);padding:16px 36px;border-radius:10px;
-  font-size:15px;font-weight:500;text-decoration:none;cursor:pointer;
-  backdrop-filter:blur(10px);
-  transition:border-color .3s,background .3s,color .3s,transform .3s,box-shadow .3s;
-  display:inline-flex;align-items:center;gap:8px;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-}
-@media(hover:hover){
-  .btn-secondary:hover{
-    border-color:rgba(6,182,212,.4);background:rgba(6,182,212,.06);
-    color:var(--white);transform:translateY(-2px);
-    box-shadow:0 0 30px rgba(6,182,212,.15);
-  }
-}
-.btn-secondary:active{transform:scale(.97)!important;}
-.btn-open-app{
-  position:relative;overflow:hidden;
-  background:linear-gradient(135deg,rgba(0,245,255,.15),rgba(6,182,212,.25));
-  border:1px solid rgba(0,245,255,.4);color:var(--neon);
-  padding:16px 36px;border-radius:10px;font-size:13px;font-weight:600;
-  cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:10px;
-  transition:transform .3s,box-shadow .3s;
-  box-shadow:0 0 24px rgba(0,245,255,.15),0 4px 20px rgba(0,0,0,.3);
-  backdrop-filter:blur(10px);-webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;font-family:'Space Mono',monospace;letter-spacing:.02em;
-}
-.btn-open-app::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(0,245,255,.25),rgba(6,182,212,.4));
-  opacity:0;transition:opacity .3s;
-}
-@media(hover:hover){
-  .btn-open-app:hover::before{opacity:1;}
-  .btn-open-app:hover{
-    transform:translateY(-2px) scale(1.02);
-    box-shadow:0 0 50px rgba(0,245,255,.35),0 8px 30px rgba(0,0,0,.4);
-  }
-}
-.btn-open-app:active{transform:scale(.97)!important;}
-.btn-open-app span,.btn-open-app .app-icon{position:relative;z-index:1;}
-.btn-open-app .app-icon{font-size:18px;}
+.hero-title em { color: var(--geo); font-style: normal; }
 
-/* RIPPLE */
-.ripple-container{position:relative;overflow:hidden;}
-.ripple{
-  position:absolute;border-radius:50%;
-  background:rgba(255,255,255,.25);pointer-events:none;
-  transform:scale(0);animation:rippleAnim .6s linear forwards;z-index:10;
+.hero-sub {
+  font-size: 17px; color: var(--text-secondary); line-height: 1.65;
+  max-width: 520px; margin-bottom: 16px;
+  animation: fadeUp 400ms 120ms var(--ease-out) both;
 }
-@keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
+.hero-sub strong { color: var(--text-primary); font-weight: 500; }
 
-/* ORBS */
-.orb{
-  position:absolute;border-radius:50%;
-  filter:blur(80px);pointer-events:none;
+.hero-positioning {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 14px 16px; border-radius: 14px;
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  margin-bottom: 36px; max-width: 520px;
+  animation: fadeUp 400ms 160ms var(--ease-out) both;
 }
-.orb-1{
-  width:600px;height:600px;
-  background:radial-gradient(circle,rgba(124,58,237,.22) 0%,transparent 70%);
-  top:-100px;left:-150px;
-  animation:orbFloat1 15s ease-in-out infinite;
-}
-.orb-2{
-  width:500px;height:500px;
-  background:radial-gradient(circle,rgba(6,182,212,.18) 0%,transparent 70%);
-  top:50px;right:-100px;
-  animation:orbFloat2 18s ease-in-out infinite;
-}
-.orb-3{
-  width:400px;height:400px;
-  background:radial-gradient(circle,rgba(236,72,153,.12) 0%,transparent 70%);
-  bottom:-50px;left:30%;
-  animation:orbFloat3 12s ease-in-out infinite;
-}
-@media(max-width:768px){.orb{display:none;}}
-@keyframes orbFloat1{
-  0%,100%{transform:translate(0,0) scale(1);}
-  33%{transform:translate(60px,40px) scale(1.05);}
-  66%{transform:translate(-30px,80px) scale(.95);}
-}
-@keyframes orbFloat2{
-  0%,100%{transform:translate(0,0) scale(1);}
-  33%{transform:translate(-80px,60px) scale(1.08);}
-  66%{transform:translate(40px,-40px) scale(.92);}
-}
-@keyframes orbFloat3{
-  0%,100%{transform:translate(0,0) scale(1);}
-  50%{transform:translate(-60px,-30px) scale(1.1);}
-}
-.grid-lines{
-  position:absolute;inset:0;pointer-events:none;
-  background-image:
-    linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
-  background-size:80px 80px;
-  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);
-}
-.scroll-indicator{
-  position:absolute;bottom:40px;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  opacity:0;animation:fadeUp 1s ease 1.5s forwards;
-}
-.scroll-line{
-  width:1px;height:60px;
-  background:linear-gradient(to bottom,rgba(6,182,212,.8),transparent);
-  animation:scrollPulse 2s ease infinite;
-}
-@keyframes scrollPulse{0%,100%{opacity:.4;}50%{opacity:1;}}
-.scroll-label{font-size:11px;letter-spacing:.1em;color:var(--muted);font-family:'Space Mono',monospace;}
+.hero-positioning svg { width: 16px; height: 16px; color: var(--geo); flex-shrink: 0; margin-top: 2px; stroke-width: 2; }
+.hero-positioning p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.hero-positioning p strong { color: var(--text-primary); font-weight: 500; }
 
-/* STATS */
-.stats-section{
-  padding:80px 60px;
-  border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);
-  background:linear-gradient(180deg,rgba(5,13,26,.5) 0%,transparent 100%);
-}
-.stats-inner{
-  max-width:1100px;margin:0 auto;
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:1px;background:var(--glass-border);
-  border:1px solid var(--glass-border);border-radius:20px;overflow:hidden;
-}
-.stat-item{
-  background:rgba(5,13,26,.85);backdrop-filter:blur(20px);
-  padding:40px 30px;text-align:center;
-  position:relative;overflow:hidden;transition:transform .4s;
-}
-.stat-item::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(circle at 50% 0%,rgba(124,58,237,.1) 0%,transparent 60%);
-  opacity:0;transition:opacity .4s;
-}
-@media(hover:hover){
-  .stat-item:hover::before{opacity:1;}
-  .stat-item:hover{transform:translateY(-4px);}
-  .stat-item:hover .stat-glow{opacity:1;}
-}
-.stat-number{
-  font-family:'Syne',sans-serif;
-  font-size:clamp(36px,4.5vw,56px);font-weight:800;letter-spacing:-.02em;
-  background:linear-gradient(135deg,var(--white) 0%,var(--cyan) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  display:block;margin-bottom:8px;line-height:1;
-}
-.stat-number.purple{background:linear-gradient(135deg,var(--white) 0%,var(--purple-glow) 100%);-webkit-background-clip:text;background-clip:text;}
-.stat-number.green{background:linear-gradient(135deg,var(--white) 0%,var(--green) 100%);-webkit-background-clip:text;background-clip:text;}
-.stat-number.gold{background:linear-gradient(135deg,var(--white) 0%,var(--gold) 100%);-webkit-background-clip:text;background-clip:text;}
-.stat-label{font-size:13px;color:var(--muted);letter-spacing:.04em;}
-.stat-note{font-size:10px;color:rgba(100,116,139,.5);margin-top:5px;font-family:'Space Mono',monospace;}
-.stat-glow{
-  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-  width:60%;height:1px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-  opacity:0;transition:opacity .4s;
+.hero-actions {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  animation: fadeUp 400ms 200ms var(--ease-out) both;
 }
 
-/* SHARED */
-.section-label{
-  font-family:'Space Mono',monospace;font-size:11px;
-  letter-spacing:.2em;color:var(--cyan);text-transform:uppercase;
-  margin-bottom:20px;display:block;
+/* HERO RIGHT — money flow diagram */
+.hero-right { position: relative; }
+@media (max-width: 1024px) { .hero-right { display: none; } }
+
+.money-flow-card {
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  border-radius: 24px; padding: 32px;
 }
-.section-title{
-  font-family:'Syne',sans-serif;
-  font-size:clamp(32px,5vw,60px);font-weight:800;
-  letter-spacing:-.025em;line-height:1.05;margin-bottom:16px;
+.mf-title-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px;
 }
-.section-sub{
-  font-size:17px;color:rgba(248,250,252,.42);
-  max-width:480px;line-height:1.75;font-weight:300;
+.mf-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-primary); }
+
+.mf-flow { display: flex; align-items: center; gap: 0; }
+.mf-node {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.mf-node-icon {
+  width: 52px; height: 52px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-raised); border: 0.5px solid var(--border-default);
+  color: var(--text-secondary);
+}
+.mf-node-icon svg { width: 22px; height: 22px; stroke-width: 1.5; }
+.mf-node-label { font-size: 11px; color: var(--text-tertiary); font-weight: 500; letter-spacing: 0.6px; text-transform: uppercase; }
+.mf-node-desc { font-size: 13px; color: var(--text-secondary); text-align: center; }
+
+.mf-arrow {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 0 12px; flex-shrink: 0;
+}
+.mf-arrow-line {
+  width: 40px; height: 1px; background: var(--border-default); position: relative;
+}
+.mf-arrow-line::after {
+  content: ''; position: absolute; right: -1px; top: -3px;
+  border: 3px solid transparent;
+  border-left: 5px solid var(--border-default);
+}
+.mf-arrow-amount {
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+  color: var(--geo); white-space: nowrap;
+}
+.mf-arrow-label { font-size: 10px; color: var(--text-tertiary); white-space: nowrap; }
+
+.mf-stats { display: flex; gap: 10px; margin-top: 24px; }
+.mf-stat {
+  flex: 1; background: var(--bg-raised); border: 0.5px solid var(--border-subtle);
+  border-radius: 14px; padding: 14px; text-align: center;
+}
+.mf-stat-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--text-primary); line-height: 1; }
+.mf-stat-val.geo { color: var(--geo); }
+.mf-stat-label { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; font-weight: 500; }
+
+/* ─────────────────────────────────
+   STATS
+───────────────────────────────── */
+.stats-section {
+  padding: 0 40px 80px;
+}
+@media (max-width: 768px) { .stats-section { padding: 0 20px 60px; } }
+
+.stats-inner {
+  max-width: 1120px; margin: 0 auto;
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  border-radius: 24px; padding: 40px;
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 0;
+}
+@media (max-width: 900px) { .stats-inner { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 480px) { .stats-inner { grid-template-columns: 1fr; } }
+
+.stat-item {
+  padding: 24px; display: flex; flex-direction: column; gap: 6px;
+  border-right: 0.5px solid var(--border-subtle);
+}
+.stat-item:last-child { border-right: none; }
+@media (max-width: 900px) {
+  .stat-item:nth-child(2) { border-right: none; }
+  .stat-item:nth-child(3) { border-top: 0.5px solid var(--border-subtle); }
+  .stat-item:nth-child(4) { border-top: 0.5px solid var(--border-subtle); border-right: none; }
 }
 
-/* PRODUCT-FIRST CALLOUT BANNER */
-.positioning-banner{
-  max-width:1100px;margin:0 auto 60px;
-  background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.18);
-  border-radius:16px;padding:24px 36px;
-  display:flex;align-items:flex-start;gap:20px;
+.stat-num {
+  font-family: 'Syne', sans-serif; font-size: 40px; font-weight: 800;
+  line-height: 1; letter-spacing: -1px; color: var(--text-primary);
 }
-.pb-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
-.pb-text{font-size:15px;color:rgba(248,250,252,.62);line-height:1.65;font-weight:300;}
-.pb-text strong{color:var(--white);font-weight:600;}
+.stat-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+.stat-note { font-size: 12px; color: var(--text-tertiary); }
 
-/* HOW IT WORKS */
-.how-section{padding:140px 60px;}
-.how-inner{
-  max-width:1280px;margin:0 auto;
-  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
-}
-.how-steps{display:flex;flex-direction:column;margin-top:40px;}
-.how-step{
-  display:flex;gap:20px;padding:26px 0;
-  border-bottom:1px solid var(--glass-border);transition:none;
-}
-.how-step:last-child{border-bottom:none;}
-@media(hover:hover){
-  .how-step:hover .step-icon-wrap{
-    box-shadow:0 0 28px rgba(124,58,237,.3);
-    border-color:rgba(124,58,237,.38);
-  }
-}
-.step-icon-wrap{
-  width:52px;height:52px;flex-shrink:0;border-radius:14px;
-  border:1px solid var(--glass-border);background:var(--glass);
-  backdrop-filter:blur(10px);display:flex;align-items:center;
-  justify-content:center;font-size:22px;
-  transition:box-shadow .3s,border-color .3s;
-}
-.how-step-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px;}
-.how-step-desc{font-size:14px;color:rgba(248,250,252,.43);line-height:1.65;font-weight:300;}
-.geo-visual{
-  position:relative;height:460px;border-radius:24px;overflow:hidden;
-  border:1px solid var(--glass-border);background:rgba(5,13,26,.7);
-  backdrop-filter:blur(10px);
-}
-#geo-canvas{width:100%;height:100%;}
-.geo-overlay{position:absolute;bottom:20px;left:20px;right:20px;display:flex;gap:10px;}
-.geo-chip{
-  background:rgba(5,13,26,.85);backdrop-filter:blur(12px);
-  border:1px solid var(--glass-border);border-radius:10px;
-  padding:10px 14px;font-size:12px;display:flex;align-items:center;
-  gap:7px;flex:1;justify-content:center;
-}
-.geo-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.geo-dot.green{background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
-.geo-dot.cyan{background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 2s .5s infinite;}
-.geo-dot.purple{background:var(--purple-glow);box-shadow:0 0 8px var(--purple-glow);animation:pulse 2s 1s infinite;}
+/* ─────────────────────────────────
+   HOW IT WORKS
+───────────────────────────────── */
+.how-section { padding: 80px 40px; }
+@media (max-width: 768px) { .how-section { padding: 60px 20px; } }
 
-/* MARKET */
-.market-section{
-  padding:100px 60px;
-  background:linear-gradient(180deg,transparent,rgba(5,13,26,.5),transparent);
+.how-inner {
+  max-width: 1120px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
 }
-.market-inner{max-width:1200px;margin:0 auto;}
-.market-header{text-align:center;margin-bottom:60px;}
-.market-header .section-sub{margin:0 auto;}
-.market-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
-.market-card{
-  background:var(--glass);border:1px solid var(--glass-border);
-  border-radius:20px;padding:32px;position:relative;overflow:hidden;
-  backdrop-filter:blur(20px);transition:transform .4s,border-color .4s,box-shadow .4s;
-}
-@media(hover:hover){
-  .market-card:hover{
-    transform:translateY(-6px);border-color:rgba(6,182,212,.3);
-    box-shadow:0 20px 60px rgba(0,0,0,.4);
-  }
-}
-.market-card-value{
-  font-family:'Syne',sans-serif;
-  font-size:clamp(28px,3.5vw,42px);font-weight:800;
-  background:linear-gradient(135deg,var(--white),var(--cyan));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:8px;
-}
-.market-card-value.purple{background:linear-gradient(135deg,var(--white),var(--purple-glow));-webkit-background-clip:text;background-clip:text;}
-.market-card-value.gold{background:linear-gradient(135deg,var(--white),var(--gold));-webkit-background-clip:text;background-clip:text;}
-.market-card-label{font-size:13px;color:var(--muted);margin-bottom:12px;font-family:'Space Mono',monospace;letter-spacing:.04em;}
-.market-card-desc{font-size:13px;color:rgba(248,250,252,.38);line-height:1.6;font-weight:300;}
-.market-insight{
-  background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.18);
-  border-radius:16px;padding:28px 36px;display:flex;align-items:center;gap:20px;
-}
-.mi-icon{font-size:28px;flex-shrink:0;}
-.mi-text{font-size:15px;color:rgba(248,250,252,.65);line-height:1.6;font-weight:300;}
-.mi-text strong{color:var(--green);}
+@media (max-width: 900px) { .how-inner { grid-template-columns: 1fr; gap: 48px; } }
 
-/* FEATURES */
-.features-section{padding:140px 60px;}
-.feat-wrap{max-width:1300px;margin:0 auto;}
-.feat-header{margin-bottom:70px;}
-.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-.feat-card{
-  background:var(--glass);border:1px solid var(--glass-border);
-  border-radius:20px;padding:40px;position:relative;overflow:hidden;
-  backdrop-filter:blur(20px);
-  transition:transform .4s cubic-bezier(.23,1,.32,1),border-color .4s,box-shadow .4s,opacity .5s,translate .5s;
-  cursor:default;opacity:0;translate:0 40px;
-}
-.feat-card.visible{opacity:1;translate:0 0;}
-.feat-card::before{
-  content:'';position:absolute;inset:-1px;
-  background:linear-gradient(135deg,transparent 40%,rgba(124,58,237,.26),transparent 60%);
-  border-radius:20px;opacity:0;transition:opacity .4s;
-}
-@media(hover:hover){
-  .feat-card:hover::before{opacity:1;}
-  .feat-card:hover{
-    transform:translateY(-6px) scale(1.02);
-    border-color:rgba(124,58,237,.38);
-    box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 40px rgba(124,58,237,.12);
-  }
-}
-.feat-card.wide{grid-column:span 2;}
-.feat-icon{
-  width:48px;height:48px;border-radius:13px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;margin-bottom:24px;
-}
-.feat-icon.cyan{background:rgba(6,182,212,.14);box-shadow:0 0 20px rgba(6,182,212,.18);}
-.feat-icon.purple{background:rgba(124,58,237,.14);box-shadow:0 0 20px rgba(124,58,237,.18);}
-.feat-icon.green{background:rgba(16,185,129,.14);box-shadow:0 0 20px rgba(16,185,129,.18);}
-.feat-icon.pink{background:rgba(236,72,153,.14);box-shadow:0 0 20px rgba(236,72,153,.18);}
-.feat-icon.gold{background:rgba(245,158,11,.14);box-shadow:0 0 20px rgba(245,158,11,.18);}
-.feat-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:12px;letter-spacing:-.01em;}
-.feat-desc{font-size:14px;color:rgba(248,250,252,.43);line-height:1.72;font-weight:300;}
-.feat-tag{display:inline-flex;align-items:center;margin-top:20px;gap:6px;font-size:12px;color:var(--cyan);font-family:'Space Mono',monospace;}
-.feat-tag::before{content:'→';}
+.section-header { margin-bottom: 40px; }
+.section-header .label-sm { margin-bottom: 14px; display: block; }
+.section-header .title-section { margin-bottom: 16px; }
 
-/* USE CASES */
-.usecases-section{padding:100px 60px;}
-.usecases-inner{max-width:1200px;margin:0 auto;}
-.usecases-header{margin-bottom:60px;}
-.usecases-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
-.uc-card{
-  background:var(--glass);border:1px solid var(--glass-border);
-  border-radius:16px;padding:28px 22px;
-  transition:transform .3s,border-color .3s;backdrop-filter:blur(12px);
+.how-steps { display: flex; flex-direction: column; gap: 0; }
+.how-step {
+  display: flex; gap: 18px; padding: 24px 0;
+  border-bottom: 0.5px solid var(--border-subtle);
 }
-@media(hover:hover){
-  .uc-card:hover{transform:translateY(-4px);border-color:rgba(6,182,212,.3);}
+.how-step:last-child { border-bottom: none; padding-bottom: 0; }
+.how-step-num {
+  width: 32px; height: 32px; border-radius: 10px;
+  background: var(--bg-raised); border: 0.5px solid var(--border-default);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-tertiary);
 }
-.uc-icon{font-size:28px;margin-bottom:14px;}
-.uc-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px;}
-.uc-desc{font-size:13px;color:rgba(248,250,252,.4);line-height:1.6;font-weight:300;}
-.uc-roi{
-  margin-top:14px;font-size:11px;font-family:'Space Mono',monospace;
-  color:var(--green);background:rgba(16,185,129,.1);
-  border:1px solid rgba(16,185,129,.2);border-radius:6px;
-  padding:4px 10px;display:inline-block;
+.how-step-content {}
+.how-step-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+.how-step-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+/* VERIFICATION DIAGRAM */
+.verify-diagram {
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 12px;
+  position: sticky; top: 88px;
+}
+.vd-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.vd-sub { font-size: 13px; color: var(--text-tertiary); margin-bottom: 8px; }
+
+.vd-step {
+  background: var(--bg-raised); border: 0.5px solid var(--border-subtle);
+  border-radius: 14px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.vd-step-icon {
+  width: 34px; height: 34px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.vd-step-icon svg { width: 16px; height: 16px; stroke-width: 1.5; }
+.vd-step-label { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.vd-step-detail { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+.vd-connector {
+  width: 1px; height: 12px; background: var(--border-subtle);
+  margin-left: 28px;
 }
 
-/* INFRASTRUCTURE (replaces Why Solana — neutral framing) */
-.infra-section{padding:140px 60px;}
-.infra-inner{
-  max-width:1200px;margin:0 auto;
-  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;
+.vd-result {
+  background: var(--geo-dim); border: 0.5px solid rgba(198,241,53,0.2);
+  border-radius: 14px; padding: 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 4px;
 }
-.infra-visual{
-  height:480px;border-radius:24px;overflow:hidden;
-  border:1px solid var(--glass-border);background:rgba(5,13,26,.6);
-  backdrop-filter:blur(10px);
-}
-#network-canvas{width:100%;height:100%;}
-.infra-note{
-  margin-top:24px;padding:16px 20px;
-  background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.15);
-  border-radius:12px;font-size:13px;color:rgba(248,250,252,.48);line-height:1.65;
-}
-.infra-note strong{color:rgba(248,250,252,.75);}
-.sol-points{display:flex;flex-direction:column;gap:14px;margin-top:36px;}
-.sol-point{
-  display:flex;gap:14px;align-items:flex-start;padding:16px;
-  border-radius:12px;border:1px solid var(--glass-border);
-  background:var(--glass);
-  transition:border-color .3s,transform .3s,box-shadow .3s;
-  backdrop-filter:blur(10px);
-}
-@media(hover:hover){
-  .sol-point:hover{
-    border-color:rgba(6,182,212,.3);transform:translateX(4px);
-    box-shadow:0 0 20px rgba(6,182,212,.08);
-  }
-}
-.sol-point-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
-.sol-point-title{font-size:14px;font-weight:600;margin-bottom:3px;}
-.sol-point-desc{font-size:13px;color:rgba(248,250,252,.42);line-height:1.6;font-weight:300;}
-.sol-metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px;}
-.sol-metric{
-  background:var(--glass);border:1px solid var(--glass-border);
-  border-radius:12px;padding:16px;text-align:center;
-  transition:border-color .3s,box-shadow .3s;
-}
-@media(hover:hover){
-  .sol-metric:hover{border-color:rgba(6,182,212,.3);box-shadow:0 0 16px rgba(6,182,212,.08);}
-}
-.sol-val{
-  font-family:'Syne',sans-serif;font-size:26px;font-weight:700;
-  background:linear-gradient(135deg,var(--white),var(--cyan));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.sol-key{font-size:11px;color:var(--muted);margin-top:4px;font-family:'Space Mono',monospace;}
+.vdr-label { font-size: 12px; color: var(--text-secondary); }
+.vdr-amount { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--geo); }
 
-/* ROADMAP */
-.roadmap-section{padding:140px 60px;}
-.roadmap-header{text-align:center;margin-bottom:80px;}
-.roadmap-header .section-sub{margin:0 auto;}
-.timeline-track{position:relative;max-width:1200px;margin:0 auto;}
-.timeline-line{
-  position:absolute;top:52px;left:40px;right:40px;
-  height:2px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;
-}
-.timeline-progress{
-  height:100%;width:0%;
-  background:linear-gradient(90deg,var(--green),var(--cyan),var(--purple-glow));
-  border-radius:2px;
-  transition:width 1.8s cubic-bezier(.23,1,.32,1);
-  box-shadow:0 0 20px rgba(6,182,212,.6),0 0 40px rgba(124,58,237,.3);
-  position:relative;
-}
-.timeline-progress::after{
-  content:'';position:absolute;right:-5px;top:50%;
-  transform:translateY(-50%);
-  width:10px;height:10px;border-radius:50%;background:var(--neon);
-  box-shadow:0 0 15px var(--neon),0 0 30px rgba(0,245,255,.5);
-  animation:pulse 1.5s infinite;
-}
-.timeline-cards{display:grid;grid-template-columns:repeat(4,1fr);}
-.timeline-node{
-  display:flex;flex-direction:column;align-items:center;
-  opacity:0;translate:0 30px;
-  transition:opacity .6s cubic-bezier(.23,1,.32,1),translate .6s cubic-bezier(.23,1,.32,1);
-}
-.timeline-node.visible{opacity:1;translate:0 0;}
-.node-dot{
-  width:20px;height:20px;border-radius:50%;
-  border:2px solid rgba(255,255,255,.15);background:var(--black);
-  position:relative;z-index:2;margin-bottom:24px;flex-shrink:0;
-  transition:border-color .4s,box-shadow .4s,background .4s;
-}
-.node-dot.active{
-  border-color:var(--cyan);
-  box-shadow:0 0 20px var(--cyan),0 0 40px rgba(6,182,212,.4);
-  background:rgba(6,182,212,.15);
-}
-.node-dot.active::before{
-  content:'';position:absolute;inset:3px;border-radius:50%;
-  background:var(--cyan);animation:pulse 2s infinite;
-}
-.rm-card{
-  background:var(--glass);border:1px solid var(--glass-border);
-  border-radius:16px;padding:28px 22px;width:100%;margin:0 8px;
-  transition:transform .4s cubic-bezier(.23,1,.32,1),border-color .4s,box-shadow .4s;
-  position:relative;overflow:hidden;cursor:default;
-}
-.rm-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-  opacity:0;transition:opacity .3s;
-}
-.rm-card.active{border-color:rgba(6,182,212,.28);}
-.rm-card.active::before{opacity:1;}
-@media(hover:hover){
-  .rm-card:hover{
-    transform:translateY(-8px) scale(1.02);border-color:rgba(124,58,237,.38);
-    box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 30px rgba(124,58,237,.12);
-  }
-  .rm-card:hover::before{opacity:1;}
-}
-.rm-quarter{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--cyan);margin-bottom:10px;}
-.rm-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:14px;}
-.rm-items{list-style:none;}
-.rm-items li{
-  font-size:13px;color:rgba(248,250,252,.48);padding:5px 0;
-  display:flex;align-items:center;gap:8px;
-}
-.rm-items li::before{
-  content:'';width:4px;height:4px;border-radius:50%;
-  background:rgba(6,182,212,.55);flex-shrink:0;
-}
-.rm-status{
-  display:inline-flex;align-items:center;gap:6px;margin-top:16px;
-  font-size:11px;padding:4px 10px;border-radius:20px;
-  font-family:'Space Mono',monospace;
-}
-.rm-status.live{background:rgba(6,182,212,.1);color:var(--cyan);border:1px solid rgba(6,182,212,.25);}
-.rm-status.building{background:rgba(124,58,237,.1);color:var(--purple-glow);border:1px solid rgba(124,58,237,.25);}
-.rm-status.soon{background:rgba(100,116,139,.1);color:var(--muted);border:1px solid rgba(100,116,139,.2);}
-.rm-status::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;animation:pulse 2s infinite;}
+/* ─────────────────────────────────
+   FEATURES
+───────────────────────────────── */
+.features-section { padding: 80px 40px; }
+@media (max-width: 768px) { .features-section { padding: 60px 20px; } }
+.features-header { max-width: 1120px; margin: 0 auto 48px; }
 
-/* ECOSYSTEM */
-.social-section{padding:90px 60px;border-top:1px solid var(--glass-border);}
-.social-inner{max-width:1100px;margin:0 auto;text-align:center;}
-.social-logos{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:44px;}
-.social-chip{
-  background:var(--glass);border:1px solid var(--glass-border);
-  border-radius:10px;padding:12px 22px;font-size:13px;
-  color:rgba(248,250,252,.4);font-family:'Space Mono',monospace;
-  letter-spacing:.04em;transition:border-color .3s,color .3s,transform .3s;
-  cursor:default;
+.features-grid {
+  max-width: 1120px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
 }
-@media(hover:hover){
-  .social-chip:hover{
-    border-color:rgba(6,182,212,.3);color:rgba(248,250,252,.7);
-    transform:translateY(-2px);
-  }
+@media (max-width: 900px) { .features-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .features-grid { grid-template-columns: 1fr; } }
+
+.feat-card {
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  border-radius: 20px; padding: 24px;
+  display: flex; flex-direction: column; gap: 14px;
+  transition: border-color 120ms var(--ease-smooth), transform 120ms var(--ease-smooth);
+}
+.feat-card:hover { border-color: var(--border-default); transform: translateY(-2px); }
+.feat-card.wide { grid-column: span 2; }
+@media (max-width: 900px) { .feat-card.wide { grid-column: span 1; } }
+
+.feat-card-body { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.feat-card-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.feat-card-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+.feat-tag {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 500; color: var(--text-tertiary);
+  border-top: 0.5px solid var(--border-subtle); padding-top: 12px; margin-top: auto;
 }
 
-/* WAITLIST */
-.waitlist-section{padding:0 60px 100px;display:flex;justify-content:center;}
-.waitlist-card{
-  max-width:640px;width:100%;background:rgba(5,13,26,.7);
-  border:1px solid var(--glass-border);border-radius:24px;padding:48px;
-  backdrop-filter:blur(20px);position:relative;overflow:hidden;
-}
-.waitlist-card::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(6,182,212,.07) 0%,transparent 70%);
-  pointer-events:none;
-}
-.waitlist-card::after{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--cyan),var(--purple-glow),transparent);
-  opacity:.4;
-}
-.waitlist-label{
-  font-family:'Space Mono',monospace;font-size:11px;
-  letter-spacing:.2em;color:var(--cyan);text-transform:uppercase;
-  margin-bottom:12px;display:block;
-}
-.waitlist-title{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px;}
-.waitlist-sub{font-size:15px;color:rgba(248,250,252,.42);margin-bottom:28px;line-height:1.6;font-weight:300;}
-.role-tabs{display:flex;gap:8px;margin-bottom:24px;}
-.role-tab{
-  padding:8px 18px;border-radius:8px;border:1px solid var(--glass-border);
-  background:var(--glass);color:rgba(248,250,252,.5);font-size:13px;
-  cursor:pointer;transition:background .2s,border-color .2s,color .2s;
-  font-family:'Space Mono',monospace;
-}
-.role-tab.active{background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.5);color:var(--purple-glow);}
-.waitlist-form{display:flex;flex-direction:column;gap:12px;position:relative;z-index:1;}
-.waitlist-input{
-  background:rgba(255,255,255,.05);border:1px solid var(--glass-border);
-  border-radius:10px;padding:14px 18px;color:var(--white);
-  font-size:15px;font-family:'DM Sans',sans-serif;
-  transition:border-color .3s,box-shadow .3s,background .3s;
-  outline:none;width:100%;
-}
-.waitlist-input::placeholder{color:rgba(248,250,252,.28);}
-.waitlist-input:focus{
-  border-color:rgba(6,182,212,.4);
-  box-shadow:0 0 0 3px rgba(6,182,212,.08);
-  background:rgba(255,255,255,.07);
-}
-.waitlist-input.error{
-  border-color:rgba(239,68,68,.5);box-shadow:0 0 0 3px rgba(239,68,68,.08);
-  animation:shake .4s ease;
-}
-@keyframes shake{0%,100%{translate:0;}25%{translate:-6px 0;}75%{translate:6px 0;}}
-.waitlist-btn{
-  background:linear-gradient(135deg,var(--purple),var(--blue));
-  color:#fff;padding:14px 26px;border-radius:10px;
-  font-size:15px;font-weight:600;border:none;cursor:pointer;
-  transition:box-shadow .3s,transform .3s;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-  box-shadow:0 0 24px rgba(124,58,237,.3);width:100%;
-}
-.waitlist-btn:active{transform:scale(.97);}
-@media(hover:hover){
-  .waitlist-btn:hover{box-shadow:0 0 40px rgba(124,58,237,.5);transform:translateY(-1px);}
-}
-.waitlist-btn:disabled{opacity:.6;cursor:not-allowed;transform:none!important;}
-.waitlist-success{
-  display:none;align-items:center;gap:12px;
-  background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);
-  border-radius:12px;padding:16px 20px;margin-top:16px;
-}
-.waitlist-success.show{display:flex;animation:successSlide .4s cubic-bezier(.23,1,.32,1);}
-@keyframes successSlide{from{opacity:0;translate:0 12px;}to{opacity:1;translate:0;}}
-.success-icon{
-  width:32px;height:32px;border-radius:50%;
-  background:rgba(16,185,129,.2);display:flex;align-items:center;
-  justify-content:center;font-size:16px;flex-shrink:0;
-  animation:successPop .5s cubic-bezier(.34,1.56,.64,1);
-}
-@keyframes successPop{from{scale:0;}to{scale:1;}}
-.success-text strong{display:block;color:var(--green);font-size:15px;margin-bottom:2px;}
-.success-text span{color:rgba(248,250,252,.5);font-size:13px;}
-.waitlist-count{margin-top:14px;font-size:12px;color:rgba(248,250,252,.3);font-family:'Space Mono',monospace;}
-.waitlist-count span{color:var(--cyan);}
-.waitlist-loading{display:none;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:8px;}
-.waitlist-loading.show{display:flex;}
-.wl-spinner{
-  width:14px;height:14px;border:2px solid rgba(6,182,212,.3);
-  border-top-color:var(--cyan);border-radius:50%;animation:spin .7s linear infinite;
-}
-@keyframes spin{to{rotate:360deg;}}
-.waitlist-error-msg{display:none;color:var(--red);font-size:13px;margin-top:8px;}
-.waitlist-error-msg.show{display:block;}
+/* ─────────────────────────────────
+   MARKET
+───────────────────────────────── */
+.market-section { padding: 80px 40px; }
+@media (max-width: 768px) { .market-section { padding: 60px 20px; } }
 
-/* STICKY MOBILE CTA */
-.sticky-cta{
-  display:none;position:fixed;bottom:0;left:0;right:0;z-index:90;
-  padding:12px 20px;background:rgba(2,4,8,.92);
-  border-top:1px solid var(--glass-border);backdrop-filter:blur(20px);
-  transform:translateY(100%);transition:transform .3s ease;
+.market-inner { max-width: 1120px; margin: 0 auto; }
+.market-header { margin-bottom: 48px; }
+
+.market-cards {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px;
 }
-.sticky-cta.visible{transform:translateY(0);}
-.sticky-cta a{
-  display:block;text-align:center;
-  background:linear-gradient(135deg,var(--purple),var(--blue));
-  color:#fff;padding:14px;border-radius:10px;font-size:15px;
-  font-weight:600;text-decoration:none;
-  box-shadow:0 0 24px rgba(124,58,237,.4);
+@media (max-width: 900px) { .market-cards { grid-template-columns: 1fr; } }
+
+.market-card {
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  border-radius: 20px; padding: 28px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: border-color 120ms var(--ease-smooth), transform 120ms var(--ease-smooth);
+}
+.market-card:hover { border-color: var(--border-default); transform: translateY(-2px); }
+.market-card-val {
+  font-family: 'Syne', sans-serif; font-size: 44px; font-weight: 800;
+  line-height: 1; letter-spacing: -1px; color: var(--text-primary);
+}
+.market-card-val.geo { color: var(--geo); }
+.market-card-label { font-size: 11px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.8px; }
+.market-card-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+.market-insight {
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  border-radius: 18px; padding: 22px 24px;
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.market-insight svg { width: 18px; height: 18px; color: var(--geo); flex-shrink: 0; stroke-width: 1.5; margin-top: 2px; }
+.market-insight p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+.market-insight p strong { color: var(--text-primary); font-weight: 500; }
+
+/* ─────────────────────────────────
+   USECASES
+───────────────────────────────── */
+.usecases-section { padding: 80px 40px; }
+@media (max-width: 768px) { .usecases-section { padding: 60px 20px; } }
+.usecases-inner { max-width: 1120px; margin: 0 auto; }
+.usecases-header { margin-bottom: 48px; }
+
+.usecases-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 12px;
+}
+@media (max-width: 1100px) { .usecases-grid { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 600px) { .usecases-grid { grid-template-columns: 1fr; } }
+
+.uc-card {
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  border-radius: 20px; padding: 24px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: border-color 120ms var(--ease-smooth), transform 120ms var(--ease-smooth);
+}
+.uc-card:hover { border-color: var(--border-default); transform: translateY(-2px); }
+.uc-card-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.uc-card-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; flex: 1; }
+.uc-roi {
+  display: inline-flex;
+  font-size: 12px; color: var(--geo); font-weight: 500;
+  padding: 3px 10px; border-radius: 99px;
+  background: var(--geo-dim); border: 0.5px solid rgba(198,241,53,0.2);
+  align-self: flex-start;
 }
 
-/* CTA SECTION */
-.cta-section{
-  padding:140px 60px;text-align:center;
-  position:relative;overflow:hidden;
+/* ─────────────────────────────────
+   INFRASTRUCTURE
+───────────────────────────────── */
+.infra-section { padding: 80px 40px; }
+@media (max-width: 768px) { .infra-section { padding: 60px 20px; } }
+
+.infra-inner {
+  max-width: 1120px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
 }
-.cta-bg{
-  position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(124,58,237,.18) 0%,rgba(6,182,212,.08) 40%,transparent 70%);
-  animation:ctaPulse 6s ease-in-out infinite;
+@media (max-width: 900px) { .infra-inner { grid-template-columns: 1fr; gap: 48px; } }
+
+.infra-points { display: flex; flex-direction: column; gap: 0; }
+.infra-point {
+  display: flex; gap: 18px; padding: 24px 0;
+  border-bottom: 0.5px solid var(--border-subtle);
 }
-@keyframes ctaPulse{
-  0%,100%{opacity:.8;scale:1;}50%{opacity:1;scale:1.04;}
+.infra-point:last-child { border-bottom: none; padding-bottom: 0; }
+.infra-point-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+.infra-point-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* INFRA VISUAL */
+.infra-visual {
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  border-radius: 24px; padding: 28px; position: sticky; top: 88px;
 }
-.cta-border-top{
-  position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--cyan),var(--purple-glow),var(--pink),transparent);
-  animation:borderScan 4s linear infinite;
+.iv-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 20px; }
+.iv-layers { display: flex; flex-direction: column; gap: 8px; }
+.iv-layer {
+  background: var(--bg-raised); border: 0.5px solid var(--border-subtle);
+  border-radius: 14px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
 }
-@keyframes borderScan{0%,100%{opacity:.3;}50%{opacity:1;}}
-.cta-section h2{
-  font-family:'Syne',sans-serif;
-  font-size:clamp(38px,6vw,76px);font-weight:800;
-  letter-spacing:-.025em;line-height:1.02;margin-bottom:22px;
-  position:relative;z-index:1;
+.iv-layer-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.iv-layer-label { font-size: 13px; font-weight: 500; color: var(--text-primary); flex: 1; }
+.iv-layer-tag { font-size: 11px; color: var(--text-tertiary); }
+
+/* ─────────────────────────────────
+   ROADMAP
+───────────────────────────────── */
+.roadmap-section { padding: 80px 40px; }
+@media (max-width: 768px) { .roadmap-section { padding: 60px 20px; } }
+.roadmap-inner { max-width: 1120px; margin: 0 auto; }
+.roadmap-header { text-align: center; margin-bottom: 48px; }
+.roadmap-header .label-sm { margin-bottom: 14px; display: block; }
+.roadmap-header .title-section { margin-bottom: 0; }
+
+.roadmap-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+@media (max-width: 1100px) { .roadmap-grid { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 600px) { .roadmap-grid { grid-template-columns: 1fr; } }
+
+.roadmap-card {
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 14px;
 }
-.cta-section p{
-  font-size:18px;color:rgba(248,250,252,.42);max-width:480px;
-  margin:0 auto 48px;font-weight:300;line-height:1.7;
-  position:relative;z-index:1;
-}
-.cta-actions{
-  position:relative;z-index:1;display:flex;
-  gap:16px;justify-content:center;flex-wrap:wrap;
+.roadmap-card.active { border-color: rgba(198,241,53,0.2); }
+.rm-quarter { font-size: 11px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.8px; }
+.rm-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.rm-items { display: flex; flex-direction: column; gap: 8px; }
+.rm-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); }
+.rm-item svg { width: 14px; height: 14px; stroke-width: 2; flex-shrink: 0; }
+
+/* ─────────────────────────────────
+   WAITLIST
+───────────────────────────────── */
+.waitlist-section { padding: 80px 40px; }
+@media (max-width: 768px) { .waitlist-section { padding: 60px 20px; } }
+
+.waitlist-inner {
+  max-width: 640px; margin: 0 auto; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 24px;
 }
 
-/* ═══════════════════════════════
-   FOOTER — rebuilt from scratch
-═══════════════════════════════ */
-footer{
-  border-top:1px solid var(--glass-border);
-  background:rgba(2,4,8,.9);backdrop-filter:blur(20px);
+.waitlist-card {
+  width: 100%; background: var(--bg-surface); border: 0.5px solid var(--border-default);
+  border-radius: 24px; padding: 40px;
+}
+.waitlist-card-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--text-primary); margin-bottom: 10px; letter-spacing: -0.5px; }
+.waitlist-card-sub { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 28px; }
+
+.waitlist-form { display: flex; gap: 8px; }
+@media (max-width: 480px) { .waitlist-form { flex-direction: column; } }
+
+.form-input {
+  flex: 1; background: var(--bg-raised); border: 0.5px solid var(--border-subtle);
+  border-radius: 12px; padding: 14px 16px; font-size: 15px;
+  color: var(--text-primary); font-family: 'DM Sans', sans-serif;
+  outline: none; transition: border-color 120ms;
+}
+.form-input:focus { border-color: rgba(198,241,53,0.35); }
+.form-input::placeholder { color: var(--text-tertiary); }
+
+.waitlist-count {
+  font-size: 13px; color: var(--text-tertiary); margin-top: 16px;
 }
 
-/* Top footer: 3-col grid */
-.footer-top{
-  max-width:1200px;margin:0 auto;
-  padding:64px 60px 48px;
-  display:grid;
-  grid-template-columns:1.4fr 1fr 1.1fr;
-  gap:60px;
-  border-bottom:1px solid var(--glass-border);
+.waitlist-success {
+  display: none; text-align: center; padding: 16px;
 }
+.waitlist-success.show { display: block; animation: fadeUp 300ms var(--ease-out); }
+.ws-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: var(--success-dim); border: 0.5px solid rgba(34,197,94,0.2);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px; color: var(--success);
+}
+.ws-icon svg { width: 22px; height: 22px; stroke-width: 2; }
+.ws-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+.ws-desc { font-size: 14px; color: var(--text-secondary); }
 
-/* LEFT col */
-.footer-brand{}
-.footer-logo{
-  display:flex;align-items:center;gap:8px;
-  font-family:'Syne',sans-serif;font-weight:800;font-size:20px;
-  background:linear-gradient(135deg,#fff 0%,var(--cyan) 50%,var(--purple-glow) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  text-decoration:none;margin-bottom:14px;display:inline-flex;
-}
-.footer-logo-icon{
-  width:28px;height:28px;border-radius:7px;flex-shrink:0;
-  background:linear-gradient(135deg,var(--purple),var(--cyan));
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;-webkit-text-fill-color:white;
-}
-.footer-desc{
-  font-size:14px;color:rgba(248,250,252,.38);line-height:1.7;
-  font-weight:300;max-width:240px;margin-bottom:20px;
-}
-.footer-tagline-pill{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.18);
-  border-radius:100px;padding:5px 12px;
-  font-size:11px;font-family:'Space Mono',monospace;
-  color:rgba(248,250,252,.42);letter-spacing:.04em;margin-bottom:22px;
-}
-.footer-socials{display:flex;gap:10px;}
-.footer-social-link{
-  width:36px;height:36px;border-radius:8px;background:var(--glass);
-  border:1px solid var(--glass-border);display:flex;align-items:center;
-  justify-content:center;color:rgba(248,250,252,.5);text-decoration:none;
-  font-size:15px;transition:border-color .3s,color .3s,transform .3s,box-shadow .3s;
-}
-@media(hover:hover){
-  .footer-social-link:hover{
-    border-color:rgba(6,182,212,.4);color:var(--white);
-    transform:translateY(-2px);box-shadow:0 0 16px rgba(6,182,212,.18);
-  }
-}
+/* ─────────────────────────────────
+   CTA SECTION
+───────────────────────────────── */
+.cta-section { padding: 80px 40px; }
+@media (max-width: 768px) { .cta-section { padding: 60px 20px; } }
 
-/* CENTER col */
-.footer-nav{}
-.footer-nav-cols{display:grid;grid-template-columns:1fr 1fr;gap:36px;}
-.footer-nav-col h4{
-  font-family:'Space Mono',monospace;font-size:11px;
-  letter-spacing:.15em;color:var(--cyan);text-transform:uppercase;
-  margin-bottom:18px;
+.cta-inner {
+  max-width: 1120px; margin: 0 auto;
+  background: var(--bg-surface); border: 0.5px solid var(--border-default);
+  border-radius: 28px; padding: 64px 56px;
+  display: flex; gap: 60px; align-items: center;
 }
-.footer-nav-col ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
-.footer-nav-col a{
-  font-size:14px;color:rgba(248,250,252,.42);text-decoration:none;
-  transition:color .2s;
-}
-@media(hover:hover){.footer-nav-col a:hover{color:var(--white);}}
+@media (max-width: 900px) { .cta-inner { flex-direction: column; gap: 36px; padding: 40px 28px; } }
 
-/* RIGHT col — contact + waitlist CTA */
-.footer-contact{}
-.footer-contact h4{
-  font-family:'Space Mono',monospace;font-size:11px;
-  letter-spacing:.15em;color:var(--cyan);text-transform:uppercase;
-  margin-bottom:18px;
-}
-.footer-contact-items{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
-.footer-contact-item{
-  display:flex;align-items:center;gap:10px;
-  font-size:14px;color:rgba(248,250,252,.42);text-decoration:none;
-  transition:color .3s;
-}
-.footer-contact-item:hover{color:var(--white);}
-.fc-icon{
-  width:30px;height:30px;border-radius:7px;
-  background:var(--glass);border:1px solid var(--glass-border);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;flex-shrink:0;
-}
+.cta-left { flex: 1; }
+.cta-title { font-family: 'Syne', sans-serif; font-size: clamp(28px,3.5vw,44px); font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 14px; }
+.cta-title em { color: var(--geo); font-style: normal; }
+.cta-sub { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+.cta-actions { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
 
-/* Footer CTA */
-.footer-cta{
-  background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(6,182,212,.1));
-  border:1px solid rgba(124,58,237,.28);border-radius:14px;padding:24px;
-  text-align:center;margin-top:4px;
+/* ─────────────────────────────────
+   FOOTER
+───────────────────────────────── */
+footer {
+  border-top: 0.5px solid var(--border-subtle);
+  padding: 60px 40px 40px;
 }
-.footer-cta-title{
-  font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
-  margin-bottom:6px;
-}
-.footer-cta-sub{font-size:12px;color:rgba(248,250,252,.35);margin-bottom:16px;line-height:1.5;}
-.footer-cta-btn{
-  display:block;
-  background:linear-gradient(135deg,var(--purple),var(--blue));
-  color:#fff;padding:11px 20px;border-radius:8px;font-size:14px;
-  font-weight:600;text-decoration:none;
-  transition:box-shadow .3s,transform .3s;
-  box-shadow:0 0 20px rgba(124,58,237,.3);
-}
-@media(hover:hover){
-  .footer-cta-btn:hover{box-shadow:0 0 35px rgba(124,58,237,.5);transform:translateY(-1px);}
-}
-.footer-cta-btn:active{transform:scale(.97);}
+@media (max-width: 768px) { footer { padding: 48px 20px 32px; } }
 
-/* Footer bottom bar */
-.footer-bottom{
-  max-width:1200px;margin:0 auto;
-  padding:24px 60px;
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:16px;
+.footer-inner {
+  max-width: 1120px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
 }
-.footer-copy{font-size:12px;color:rgba(100,116,139,.38);font-family:'Space Mono',monospace;}
-.footer-legal{display:flex;gap:20px;}
-.footer-legal a{
-  font-size:12px;color:rgba(100,116,139,.38);text-decoration:none;
-  font-family:'Space Mono',monospace;transition:color .2s;
-}
-@media(hover:hover){.footer-legal a:hover{color:rgba(248,250,252,.5);}}
-.footer-open-app{
-  display:inline-flex;align-items:center;gap:8px;
-  font-family:'Space Mono',monospace;font-size:12px;color:var(--neon);
-  text-decoration:none;padding:8px 16px;border-radius:8px;
-  border:1px solid rgba(0,245,255,.2);background:rgba(0,245,255,.05);
-  transition:border-color .3s,box-shadow .3s;
-}
-@media(hover:hover){
-  .footer-open-app:hover{border-color:rgba(0,245,255,.4);box-shadow:0 0 20px rgba(0,245,255,.15);}
-}
-.footer-open-app:active{transform:scale(.97);}
+@media (max-width: 900px) { .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; } }
+@media (max-width: 480px) { .footer-inner { grid-template-columns: 1fr; } }
 
-/* REVEAL */
-.reveal{
-  opacity:0;translate:0 40px;
-  transition:opacity .8s cubic-bezier(.23,1,.32,1),translate .8s cubic-bezier(.23,1,.32,1);
+.footer-brand {}
+.footer-logo {
+  display: flex; align-items: center; gap: 8px; text-decoration: none; margin-bottom: 14px;
+  font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary);
 }
-.reveal.visible{opacity:1;translate:0 0;}
-.reveal-delay-1{transition-delay:.1s;}
-.reveal-delay-2{transition-delay:.2s;}
-.reveal-delay-3{transition-delay:.3s;}
+.footer-desc { font-size: 13px; color: var(--text-tertiary); line-height: 1.6; margin-bottom: 20px; }
+.footer-socials { display: flex; gap: 8px; }
+.footer-social-link {
+  width: 34px; height: 34px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-tertiary); text-decoration: none;
+  background: var(--bg-surface); border: 0.5px solid var(--border-subtle);
+  transition: color 120ms, border-color 120ms;
+}
+.footer-social-link:hover { color: var(--text-primary); border-color: var(--border-default); }
+.footer-social-link svg { width: 14px; height: 14px; }
 
-/* TOAST */
-.toast{
-  position:fixed;bottom:28px;left:50%;
-  transform:translateX(-50%) translateY(80px);
-  background:rgba(5,13,26,.95);border:1px solid var(--glass-border);
-  border-radius:12px;padding:14px 22px;font-size:14px;
-  backdrop-filter:blur(20px);z-index:10000;white-space:nowrap;
-  transition:transform .4s cubic-bezier(.23,1,.32,1);
-  display:flex;align-items:center;gap:10px;
+.footer-nav-col h4 {
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 14px;
 }
-.toast.show{transform:translateX(-50%) translateY(0);}
-.toast.success{border-color:rgba(16,185,129,.3);}
-.toast.error{border-color:rgba(239,68,68,.3);}
+.footer-nav-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.footer-nav-col a {
+  font-size: 13px; color: var(--text-tertiary); text-decoration: none;
+  transition: color 120ms;
+}
+.footer-nav-col a:hover { color: var(--text-primary); }
 
-/* APP TRANSITION */
-.app-transition-overlay{
-  position:fixed;inset:0;background:var(--black);z-index:99999;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;transition:opacity .4s;
+.footer-bottom {
+  max-width: 1120px; margin: 40px auto 0;
+  padding-top: 20px; border-top: 0.5px solid var(--border-subtle);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--text-tertiary);
 }
-.app-transition-overlay.active{opacity:1;pointer-events:all;}
-.app-transition-logo{
-  font-family:'Syne',sans-serif;font-size:22px;font-weight:700;
-  display:flex;align-items:center;gap:10px;
-  background:linear-gradient(135deg,var(--cyan),var(--purple-glow));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:20px;
-}
-.app-transition-bar{width:200px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;}
-.app-transition-progress{
-  height:100%;width:0%;
-  background:linear-gradient(90deg,var(--cyan),var(--purple-glow));
-  border-radius:2px;transition:width .8s cubic-bezier(.23,1,.32,1);
-}
-.app-transition-label{margin-top:12px;font-size:12px;font-family:'Space Mono',monospace;color:var(--muted);}
+@media (max-width: 600px) { .footer-bottom { flex-direction: column; gap: 10px; text-align: center; } }
 
-/* RESPONSIVE */
-@media(max-width:1024px){
-  .features-grid{grid-template-columns:repeat(2,1fr);}
-  .feat-card.wide{grid-column:span 1;}
-  .timeline-cards{grid-template-columns:repeat(2,1fr);gap:16px;}
-  .timeline-line{display:none;}
-  .infra-inner,.how-inner{grid-template-columns:1fr;}
-  .footer-top{grid-template-columns:1fr 1fr;gap:40px;}
-  .footer-contact{grid-column:span 2;}
-  .market-cards{grid-template-columns:repeat(2,1fr);}
-  .usecases-grid{grid-template-columns:repeat(2,1fr);}
-  .stats-inner{grid-template-columns:repeat(2,1fr);}
+/* ─────────────────────────────────
+   TOAST
+───────────────────────────────── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 500;
+  background: var(--bg-raised); border: 0.5px solid var(--border-strong);
+  border-radius: 14px; padding: 14px 18px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; color: var(--text-primary);
+  opacity: 0; pointer-events: none; transform: translateY(16px);
+  transition: opacity 220ms var(--ease-out), transform 220ms var(--ease-out);
 }
-@media(max-width:768px){
-  nav{padding:16px 20px;}
-  .nav-links,.nav-socials{display:none;}
-  .nav-hamburger{display:flex;}
-  .nav-cta{display:none;}
-  .hero{padding:110px 24px 80px;}
-  .money-flow-row{flex-direction:column;align-items:center;gap:4px;}
-  .mf-arrow{padding:4px 0;}
-  .mf-arrow-line{transform:rotate(90deg);display:inline-block;}
-  .stats-section{padding:60px 24px;}
-  .features-section,.infra-section,.roadmap-section,.cta-section,
-  .how-section,.social-section,.market-section,.usecases-section{padding:80px 24px;}
-  .waitlist-section{padding:0 24px 100px;}
-  .waitlist-card{padding:28px 20px;}
-  .features-grid{grid-template-columns:1fr;}
-  .timeline-cards{grid-template-columns:1fr;}
-  .market-cards{grid-template-columns:1fr;}
-  .usecases-grid{grid-template-columns:1fr 1fr;}
-  .footer-top{grid-template-columns:1fr;gap:32px;padding:40px 24px 32px;}
-  .footer-contact{grid-column:span 1;}
-  .footer-bottom{flex-direction:column;gap:12px;text-align:center;padding:20px 24px;}
-  .footer-legal{justify-content:center;}
-  .footer-nav-cols{grid-template-columns:1fr 1fr;}
-  .hero-actions{flex-direction:column;align-items:stretch;}
-  .hero-actions a,.hero-actions button{justify-content:center;}
-  .sticky-cta{display:block;}
-  .cta-actions{flex-direction:column;align-items:center;}
-  .stats-inner{grid-template-columns:1fr 1fr;}
-  .role-tabs{flex-wrap:wrap;}
-  .positioning-banner{flex-direction:column;gap:10px;padding:18px 20px;}
-  .hero-positioning{font-size:12px;text-align:center;}
-}
-@media(max-width:480px){
-  .stats-inner{grid-template-columns:1fr;}
-  .usecases-grid{grid-template-columns:1fr;}
-  .market-insight{flex-direction:column;text-align:center;}
-  .footer-nav-cols{grid-template-columns:1fr;}
-}
+.toast.show { opacity: 1; transform: translateY(0); pointer-events: all; }
+.toast svg { width: 16px; height: 16px; stroke-width: 2; flex-shrink: 0; }
 
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
-  html{scroll-behavior:auto;}
+/* STICKY CTA */
+.sticky-cta {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 50; opacity: 0; pointer-events: none;
+  transition: opacity 300ms var(--ease-smooth), transform 300ms var(--ease-smooth);
 }
+.sticky-cta.visible { opacity: 1; pointer-events: all; }
+
+/* ─────────────────────────────────
+   SECTION SEPARATOR
+───────────────────────────────── */
+.sep { height: 0.5px; background: var(--border-subtle); max-width: 1120px; margin: 0 auto; }
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor" aria-hidden="true"></div>
-<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
-<canvas id="bg-canvas" aria-hidden="true"></canvas>
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 
-<div class="app-transition-overlay" id="appOverlay" aria-hidden="true" role="status">
-  <div class="app-transition-logo">
-    <span aria-hidden="true">📍</span>
-    <span>GeoEarn</span>
-  </div>
-  <div class="app-transition-bar">
-    <div class="app-transition-progress" id="appProgress"></div>
-  </div>
-  <div class="app-transition-label" data-i18n="launching">Launching app...</div>
-</div>
-
-<div class="toast" id="toast" role="alert" aria-live="polite">
-  <span id="toastIcon" aria-hidden="true">✓</span>
-  <span id="toastMsg">Success</span>
-</div>
-
-<div class="sticky-cta" id="stickyCta" aria-hidden="true">
-  <a href="#waitlist" data-i18n="joinEarly">Join Early Access →</a>
-</div>
-
-<!-- Mobile Drawer -->
-<div class="nav-drawer" id="navDrawer" role="dialog" aria-label="Navigation menu" aria-modal="true">
-  <button class="nav-drawer-close" id="navDrawerClose" type="button" aria-label="Close menu">✕</button>
-  <a href="#how" onclick="closeMobileNav()" data-i18n="navHow">How It Works</a>
-  <a href="#features" onclick="closeMobileNav()" data-i18n="navProtocol">Product</a>
-  <a href="#market" onclick="closeMobileNav()" data-i18n="navMarket">Market</a>
-  <a href="#infra" onclick="closeMobileNav()" data-i18n="navInfra">Infrastructure</a>
-  <a href="#roadmap" onclick="closeMobileNav()" data-i18n="navRoadmap">Roadmap</a>
-  <a href="#waitlist" onclick="closeMobileNav()" style="color:var(--cyan);" data-i18n="joinWaitlist">Join Waitlist</a>
-  <div class="nav-drawer-lang">
-    <div class="lang-switch" role="group" aria-label="Language selector">
-      <button class="lang-btn active" type="button" onclick="setLang('en')" aria-pressed="true">EN</button>
-      <button class="lang-btn" type="button" onclick="setLang('ru')" aria-pressed="false">RU</button>
-    </div>
-  </div>
-  <div class="nav-drawer-socials">
-    <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="nav-social-link" aria-label="Telegram">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-    </a>
-    <a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer" class="nav-social-link" aria-label="X (Twitter)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-    </a>
-  </div>
-</div>
-
-<!-- NAV -->
-<header>
-<nav id="nav" role="navigation" aria-label="Main navigation">
-  <a href="#" class="nav-logo" aria-label="GeoEarn home">
-    <span class="nav-logo-icon" aria-hidden="true">📍</span>GeoEarn
-  </a>
-  <ul class="nav-links" role="list">
-    <li><a href="#how" data-i18n="navHow">How It Works</a></li>
-    <li><a href="#features" data-i18n="navProtocol">Product</a></li>
-    <li><a href="#market" data-i18n="navMarket">Market</a></li>
-    <li><a href="#infra" data-i18n="navInfra">Infrastructure</a></li>
-    <li><a href="#roadmap" data-i18n="navRoadmap">Roadmap</a></li>
-  </ul>
-  <div class="nav-right">
-    <div class="lang-switch" role="group" aria-label="Language selector">
-      <button class="lang-btn active" type="button" onclick="setLang('en')" aria-pressed="true">EN</button>
-      <button class="lang-btn" type="button" onclick="setLang('ru')" aria-pressed="false">RU</button>
-    </div>
-    <div class="nav-socials" aria-label="Social links">
-      <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="nav-social-link" aria-label="Telegram">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-      </a>
-      <a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer" class="nav-social-link" aria-label="X (Twitter)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      </a>
-    </div>
-    <a href="#waitlist" class="nav-cta" data-i18n="joinWaitlist">Join Waitlist →</a>
-    <button class="nav-hamburger" type="button" id="navHamburger" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+<!-- MOBILE DRAWER -->
+<nav class="drawer" id="drawer" role="dialog" aria-label="Navigation" aria-modal="true">
+  <button class="drawer-close" onclick="closeDrawer()" aria-label="Close">
+    <i data-lucide="x"></i>
+  </button>
+  <div class="drawer-links">
+    <a href="#how" onclick="closeDrawer()">How It Works</a>
+    <a href="#features" onclick="closeDrawer()">Product</a>
+    <a href="#market" onclick="closeDrawer()">Market</a>
+    <a href="#infra" onclick="closeDrawer()">Infrastructure</a>
+    <a href="#roadmap" onclick="closeDrawer()">Roadmap</a>
+    <a href="#waitlist" onclick="closeDrawer()" style="color:var(--geo)">Join Waitlist</a>
   </div>
 </nav>
-</header>
+
+<!-- NAV -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" aria-label="GeoEarn home">
+      <div class="nav-logo-mark" aria-hidden="true">
+        <i data-lucide="map-pin"></i>
+      </div>
+      GeoEarn
+    </a>
+
+    <ul class="nav-links" role="list">
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#features">Product</a></li>
+      <li><a href="#market">Market</a></li>
+      <li><a href="#infra">Infrastructure</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button class="lang-btn active" onclick="setLang('en')" type="button">EN</button>
+        <button class="lang-btn" onclick="setLang('ru')" type="button">RU</button>
+      </div>
+      <div class="nav-social" aria-label="Social links">
+        <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="nav-social-link" aria-label="Telegram">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </a>
+        <a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer" class="nav-social-link" aria-label="X">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+      </div>
+      <a href="#waitlist" class="btn btn-primary" style="padding:10px 18px;font-size:14px">Join Waitlist</a>
+      <button class="hamburger" id="hamburger" onclick="openDrawer()" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
 
 <main>
-<!-- HERO -->
+
+<!-- ══════════════════ HERO ══════════════════ -->
 <section class="hero" aria-label="Hero">
-  <div class="orb orb-1" aria-hidden="true"></div>
-  <div class="orb orb-2" aria-hidden="true"></div>
-  <div class="orb orb-3" aria-hidden="true"></div>
-  <div class="grid-lines" aria-hidden="true"></div>
-
-  <div class="hero-badge" role="status">
-    <span class="badge-dot" aria-hidden="true"></span>
-    <span data-i18n="heroBadge">Pilot Program — Q3 2026 · 3 Cities</span>
-  </div>
-
-  <h1>
-    <span class="line-white" data-i18n="heroLine1">Real Customers.</span>
-    <span class="line-color" data-i18n="heroLine2">Verified. Rewarded.</span>
-  </h1>
-
-  <p class="hero-sub" data-i18n="heroSub">
-    GeoEarn is a <strong>performance-based marketplace for real-world customer acquisition.</strong> Businesses pay only for verified visits. Users earn for showing up.
-  </p>
-
-  <div class="hero-positioning" data-i18n="heroPositioning">
-    <span>📌</span>
-    <span>This is not a rewards app. This is <strong>pay-per-visit infrastructure</strong> for physical businesses — built to work the same way performance advertising does online, but for foot traffic.</span>
-  </div>
-
-  <div class="hero-actions">
-    <a href="#waitlist" class="btn-primary glow-pulse ripple-container">
-      <span data-i18n="joinEarly">Join Early Access</span><span aria-hidden="true">→</span>
-    </a>
-    <button type="button" class="btn-open-app ripple-container" onclick="openApp()">
-      <span class="app-icon" aria-hidden="true">🚀</span>
-      <span data-i18n="openApp">Open App</span>
-    </button>
-    <a href="#features" class="btn-secondary" data-i18n="forBusinesses">For Businesses</a>
-  </div>
-
-  <!-- MONEY FLOW -->
-  <div class="money-flow" aria-label="How money flows">
-    <div class="money-flow-title" data-i18n="moneyFlowTitle">HOW MONEY FLOWS</div>
-    <div class="money-flow-row">
-      <div class="mf-node">
-        <div class="mf-icon" aria-hidden="true">🏪</div>
-        <div class="mf-label" data-i18n="business">BUSINESS</div>
-        <div class="mf-title" data-i18n="setsBudget">Sets budget</div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <div class="live-dot" aria-hidden="true"></div>
+        Pilot Program — Q3 2026 · 3 Cities
       </div>
-      <div class="mf-arrow" aria-hidden="true">
-        <div class="mf-arrow-line">→</div>
-        <div class="mf-arrow-label" data-i18n="perVisit">per verified visit</div>
+
+      <h1 class="hero-title">
+        Real Customers.<br><em>Verified. Rewarded.</em>
+      </h1>
+
+      <p class="hero-sub">
+        GeoEarn is a <strong>performance-based marketplace for real-world customer acquisition.</strong>
+        Businesses pay only for verified visits. Users earn for showing up.
+      </p>
+
+      <div class="hero-positioning">
+        <i data-lucide="info" style="color:var(--geo);width:16px;height:16px;stroke-width:2;flex-shrink:0;margin-top:2px"></i>
+        <p>This is not a rewards app. This is <strong>pay-per-visit infrastructure</strong> for physical businesses — built to work the same way performance advertising does online, but for foot traffic.</p>
       </div>
-      <div class="mf-node">
-        <div class="mf-icon" aria-hidden="true">⚙️</div>
-        <div class="mf-label">GEOEARN</div>
-        <div class="mf-title" data-i18n="smartContract">Verifies & routes</div>
+
+      <div class="hero-actions">
+        <a href="#waitlist" class="btn btn-primary">
+          <i data-lucide="arrow-right"></i>
+          Join Early Access
+        </a>
+        <a href="#how" class="btn btn-secondary">How It Works</a>
+        <a href="#features" class="btn btn-ghost">For Businesses</a>
       </div>
-      <div class="mf-arrow" aria-hidden="true">
-        <div class="mf-arrow-line">→</div>
-        <div class="mf-arrow-label" data-i18n="instantly">instantly</div>
-        <div class="mf-amount" data-i18n="rewardAmount">+$0.50–$5</div>
-      </div>
-      <div class="mf-node">
-        <div class="mf-icon" aria-hidden="true">👤</div>
-        <div class="mf-label" data-i18n="user">USER</div>
-        <div class="mf-title" data-i18n="earnsCrypto">Earns reward</div>
+    </div>
+
+    <div class="hero-right" aria-label="Money flow diagram">
+      <div class="money-flow-card">
+        <div class="mf-title-row">
+          <span class="mf-title">How money flows</span>
+          <span class="pill pill-geo">
+            <div class="live-dot" style="width:5px;height:5px;margin:0"></div>
+            Live
+          </span>
+        </div>
+        <div class="mf-flow">
+          <div class="mf-node">
+            <div class="mf-node-icon ico-info" style="width:52px;height:52px;border-radius:16px">
+              <i data-lucide="building-2" style="width:22px;height:22px;stroke-width:1.5;color:var(--info)"></i>
+            </div>
+            <div class="mf-node-label">Business</div>
+            <div class="mf-node-desc">Sets visit<br>budget</div>
+          </div>
+          <div class="mf-arrow">
+            <div class="mf-arrow-line"></div>
+            <div class="mf-arrow-label">per visit</div>
+          </div>
+          <div class="mf-node">
+            <div class="mf-node-icon" style="background:var(--bg-raised);border:0.5px solid var(--border-default);width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center">
+              <i data-lucide="shield-check" style="width:22px;height:22px;stroke-width:1.5;color:var(--text-secondary)"></i>
+            </div>
+            <div class="mf-node-label">GeoEarn</div>
+            <div class="mf-node-desc">Verifies<br>&amp; routes</div>
+          </div>
+          <div class="mf-arrow">
+            <div class="mf-arrow-line"></div>
+            <div class="mf-arrow-amount">+GEO</div>
+            <div class="mf-arrow-label">instantly</div>
+          </div>
+          <div class="mf-node">
+            <div class="mf-node-icon ico-geo" style="width:52px;height:52px;border-radius:16px">
+              <i data-lucide="user" style="width:22px;height:22px;stroke-width:1.5;color:var(--geo)"></i>
+            </div>
+            <div class="mf-node-label">User</div>
+            <div class="mf-node-desc">Earns<br>reward</div>
+          </div>
+        </div>
+        <div class="mf-stats">
+          <div class="mf-stat">
+            <div class="mf-stat-val geo">800+</div>
+            <div class="mf-stat-label">Waitlist</div>
+          </div>
+          <div class="mf-stat">
+            <div class="mf-stat-val">23</div>
+            <div class="mf-stat-label">Businesses</div>
+          </div>
+          <div class="mf-stat">
+            <div class="mf-stat-val">91%</div>
+            <div class="mf-stat-label">Anti-fraud</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
-  <div class="scroll-indicator" aria-hidden="true">
-    <span class="scroll-label">SCROLL</span>
-    <div class="scroll-line"></div>
-  </div>
 </section>
 
-<!-- STATS -->
-<section class="stats-section" aria-label="Early-stage metrics">
+<!-- ══════════════════ STATS ══════════════════ -->
+<section class="stats-section" aria-label="Metrics">
   <div class="stats-inner">
-    <div class="stat-item">
-      <span class="stat-number cyan" data-target="800" data-suffix="+" aria-label="800+ waitlist signups">0</span>
-      <span class="stat-label" data-i18n="statWaitlist">Waitlist Signups</span>
-      <span class="stat-note" data-i18n="statWaitlistNote">and growing daily</span>
-      <div class="stat-glow" aria-hidden="true"></div>
+    <div class="stat-item reveal">
+      <div class="stat-num" data-target="800" data-suffix="+">0+</div>
+      <div class="stat-label">Waitlist Signups</div>
+      <div class="stat-note">and growing daily</div>
     </div>
-    <div class="stat-item">
-      <span class="stat-number purple" data-target="23" data-suffix="" aria-label="23 interested businesses">0</span>
-      <span class="stat-label" data-i18n="statBiz">Interested Businesses</span>
-      <span class="stat-note" data-i18n="statBizNote">across 3 cities</span>
-      <div class="stat-glow" aria-hidden="true"></div>
+    <div class="stat-item reveal reveal-delay-1">
+      <div class="stat-num" data-target="23" data-suffix="">0</div>
+      <div class="stat-label">Interested Businesses</div>
+      <div class="stat-note">across 3 cities</div>
     </div>
-    <div class="stat-item">
-      <span class="stat-number green" data-target="2100" data-suffix="+" aria-label="2100+ simulated visits validated">0</span>
-      <span class="stat-label" data-i18n="statTxns">Simulated Visits Validated</span>
-      <span class="stat-note" data-i18n="statTxnsNote">pilot environment</span>
-      <div class="stat-glow" aria-hidden="true"></div>
+    <div class="stat-item reveal reveal-delay-2">
+      <div class="stat-num" data-target="2100" data-suffix="+">0+</div>
+      <div class="stat-label">Simulated Visits Validated</div>
+      <div class="stat-note">pilot environment</div>
     </div>
-    <div class="stat-item">
-      <span class="stat-number gold" data-target="91" data-suffix="%" aria-label="91% anti-fraud accuracy">0</span>
-      <span class="stat-label" data-i18n="statFraud">Anti-Fraud Accuracy</span>
-      <span class="stat-note" data-i18n="statFraudNote">pilot simulations</span>
-      <div class="stat-glow" aria-hidden="true"></div>
+    <div class="stat-item reveal reveal-delay-3">
+      <div class="stat-num" data-target="91" data-suffix="%">0%</div>
+      <div class="stat-label">Anti-Fraud Accuracy</div>
+      <div class="stat-note">pilot simulations</div>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
+<!-- ══════════════════ HOW ══════════════════ -->
+<div class="sep"></div>
 <section class="how-section" id="how" aria-labelledby="how-title">
   <div class="how-inner">
     <div>
-      <span class="section-label reveal" data-i18n="howLabel">// HOW IT WORKS</span>
-      <h2 class="section-title reveal reveal-delay-1" id="how-title" data-i18n="howTitle">Foot traffic as a<br>measurable channel.</h2>
-      <p class="section-sub reveal reveal-delay-2" data-i18n="howSub">GeoEarn gives businesses the same accountability they get from digital ads — but for offline visits. Pay per result. Measure everything.</p>
-
+      <div class="section-header">
+        <span class="label-sm reveal">How It Works</span>
+        <h2 class="title-section reveal reveal-delay-1" id="how-title">Foot traffic as a measurable channel.</h2>
+        <p class="body-lg reveal reveal-delay-2" style="margin-top:14px">GeoEarn gives businesses the same accountability they get from digital ads — but for offline visits. Pay per result. Measure everything.</p>
+      </div>
       <div class="how-steps">
         <div class="how-step reveal reveal-delay-1">
-          <div class="step-icon-wrap" aria-hidden="true">🗺️</div>
-          <div>
-            <h3 class="how-step-title" data-i18n="step1Title">Discover Nearby Campaigns</h3>
-            <p class="how-step-desc" data-i18n="step1Desc">Users open the GeoEarn app — available as a Telegram Mini App — and browse active campaigns near them. Cafés, gyms, retail stores: any physical location can run a campaign with a set cost-per-visit budget.</p>
+          <div class="how-step-num">1</div>
+          <div class="how-step-content">
+            <div class="how-step-title">Discover Nearby Campaigns</div>
+            <div class="how-step-desc">Users open the GeoEarn Telegram Mini App and browse active campaigns nearby. Cafés, gyms, retail stores — any physical location can run a campaign with a set cost-per-visit budget.</div>
           </div>
         </div>
         <div class="how-step reveal reveal-delay-2">
-          <div class="step-icon-wrap" aria-hidden="true">📲</div>
-          <div>
-            <h3 class="how-step-title" data-i18n="step2Title">Walk In & Check In</h3>
-            <p class="how-step-desc" data-i18n="step2Desc">The user arrives and scans the QR code on-site. GPS location is cross-checked with the business address and the user's visit history to confirm the visit is genuine. No faking it.</p>
+          <div class="how-step-num">2</div>
+          <div class="how-step-content">
+            <div class="how-step-title">Walk In &amp; Check In</div>
+            <div class="how-step-desc">The user arrives and scans the QR code on-site. GPS location is cross-checked with the business address and the user's visit history to confirm the visit is genuine.</div>
           </div>
         </div>
         <div class="how-step reveal reveal-delay-3">
-          <div class="step-icon-wrap" aria-hidden="true">⚡</div>
-          <div>
-            <h3 class="how-step-title" data-i18n="step3Title">Instant Verified Reward</h3>
-            <p class="how-step-desc" data-i18n="step3Desc">Once the visit is confirmed, the reward is released to the user's wallet within seconds. The business is charged only for that one verified visit. Every transaction is logged transparently — no black boxes.</p>
+          <div class="how-step-num">3</div>
+          <div class="how-step-content">
+            <div class="how-step-title">Instant Verified Reward</div>
+            <div class="how-step-desc">Once verified, GEO coins land in the user's wallet within seconds. The business is charged only for that one confirmed visit — every transaction logged transparently.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="geo-visual reveal reveal-delay-2" aria-hidden="true">
-      <canvas id="geo-canvas"></canvas>
-      <div class="geo-overlay">
-        <div class="geo-chip"><span class="geo-dot green"></span><span data-i18n="chip1">3 Active Visits</span></div>
-        <div class="geo-chip"><span class="geo-dot cyan"></span><span data-i18n="chip2">8 Open Campaigns</span></div>
-        <div class="geo-chip"><span class="geo-dot purple"></span><span data-i18n="chip3">Rewards Live</span></div>
+    <div class="verify-diagram reveal reveal-delay-2" aria-label="Verification flow">
+      <div class="vd-title">Verification layers</div>
+      <div class="vd-sub">Every check-in passes three independent checks</div>
+
+      <div class="vd-step">
+        <div class="vd-step-icon ico-info">
+          <i data-lucide="scan-qr-code" style="color:var(--info)"></i>
+        </div>
+        <div>
+          <div class="vd-step-label">QR scan confirmed</div>
+          <div class="vd-step-detail">Unique token per campaign · tamper-proof</div>
+        </div>
+      </div>
+      <div class="vd-connector"></div>
+      <div class="vd-step">
+        <div class="vd-step-icon ico-warn">
+          <i data-lucide="map-pin" style="color:var(--warning)"></i>
+        </div>
+        <div>
+          <div class="vd-step-label">GPS geofence passed</div>
+          <div class="vd-step-detail">Within 150 m of business location</div>
+        </div>
+      </div>
+      <div class="vd-connector"></div>
+      <div class="vd-step">
+        <div class="vd-step-icon ico-success">
+          <i data-lucide="shield-check" style="color:var(--success)"></i>
+        </div>
+        <div>
+          <div class="vd-step-label">Anti-fraud cleared</div>
+          <div class="vd-step-detail">No repeat visit in 24 h · device verified</div>
+        </div>
+      </div>
+      <div class="vd-result">
+        <div>
+          <div class="vd-step-label">Reward released</div>
+          <div class="vd-step-detail">Instant · no disputes</div>
+        </div>
+        <div class="vdr-amount">+ GEO</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- MARKET -->
+<!-- ══════════════════ FEATURES ══════════════════ -->
+<div class="sep"></div>
+<section class="features-section" id="features" aria-labelledby="features-title">
+  <div class="features-header">
+    <span class="label-sm reveal">Product</span>
+    <h2 class="title-section reveal reveal-delay-1" id="features-title" style="margin-top:14px">Built for businesses,<br>not crypto users.</h2>
+    <p class="body-lg reveal reveal-delay-2" style="margin-top:14px;max-width:600px">GeoEarn works as a straightforward business tool. Blockchain infrastructure runs quietly in the background — merchants and users don't need to understand it.</p>
+  </div>
+
+  <div class="features-grid">
+    <article class="feat-card wide reveal">
+      <div class="ico-wrap ico-info"><i data-lucide="locate"></i></div>
+      <div class="feat-card-body">
+        <div class="feat-card-title">Verified Visit Engine</div>
+        <div class="feat-card-desc">A multi-layer verification system combining GPS geofencing, QR scan confirmation, and visit history scoring. Every check-in is independently auditable — businesses are never charged for a visit that didn't happen.</div>
+      </div>
+      <div class="feat-tag">GPS + QR + Visit History Scoring</div>
+    </article>
+
+    <article class="feat-card reveal reveal-delay-1">
+      <div class="ico-wrap ico-geo"><i data-lucide="zap"></i></div>
+      <div class="feat-card-body">
+        <div class="feat-card-title">Instant Rewards</div>
+        <div class="feat-card-desc">Users receive GEO within seconds of a verified check-in — no waiting period, no minimum balance, no voucher to redeem later.</div>
+      </div>
+      <div class="feat-tag">Instant Settlement</div>
+    </article>
+
+    <article class="feat-card reveal reveal-delay-2">
+      <div class="ico-wrap ico-muted"><i data-lucide="store"></i></div>
+      <div class="feat-card-body">
+        <div class="feat-card-title">Campaign Manager</div>
+        <div class="feat-card-desc">Set a cost-per-visit budget, define a geo-zone, and go live in minutes. Pause, adjust, or end campaigns at any time. Pay only when a verified customer walks in.</div>
+      </div>
+      <div class="feat-tag">Pay Per Verified Visit</div>
+    </article>
+
+    <article class="feat-card wide reveal reveal-delay-1">
+      <div class="ico-wrap ico-warn"><i data-lucide="layers"></i></div>
+      <div class="feat-card-body">
+        <div class="feat-card-title">Transparent Settlement Layer</div>
+        <div class="feat-card-desc">GeoEarn uses blockchain infrastructure for settlement — not because it's trendy, but because it solves a specific problem: microtransaction settlement at scale with full auditability. At fractions of a cent per transaction, every reward payout is economically viable and every charge is verifiable by the merchant independently.</div>
+      </div>
+      <div class="feat-tag">Transparent · Auditable · Scalable</div>
+    </article>
+
+    <article class="feat-card reveal reveal-delay-2">
+      <div class="ico-wrap ico-info"><i data-lucide="trending-up"></i></div>
+      <div class="feat-card-body">
+        <div class="feat-card-title">Analytics Dashboard</div>
+        <div class="feat-card-desc">Businesses track visit heatmaps, peak hours, campaign ROI, and repeat visitor rates in real time. All sourced from verified visits.</div>
+      </div>
+      <div class="feat-tag">Coming Q1 2027</div>
+    </article>
+  </div>
+</section>
+
+<!-- ══════════════════ MARKET ══════════════════ -->
+<div class="sep"></div>
 <section class="market-section" id="market" aria-labelledby="market-title">
   <div class="market-inner">
-    <div class="market-header reveal">
-      <span class="section-label" data-i18n="marketLabel">// MARKET OPPORTUNITY</span>
-      <h2 class="section-title" id="market-title" data-i18n="marketTitle">Offline commerce is huge.<br>Performance tools don't exist.</h2>
-      <p class="section-sub" data-i18n="marketSub">Online advertising has cost-per-click. Offline has nothing equivalent. GeoEarn is building the infrastructure to change that.</p>
+    <div class="market-header">
+      <span class="label-sm reveal">Market Opportunity</span>
+      <h2 class="title-section reveal reveal-delay-1" id="market-title" style="margin-top:14px">Offline commerce is huge.<br>Performance tools don't exist.</h2>
+      <p class="body-lg reveal reveal-delay-2" style="margin-top:14px;max-width:600px">Online advertising has cost-per-click. Offline has nothing equivalent. GeoEarn is building the infrastructure to change that.</p>
     </div>
+
     <div class="market-cards">
+      <div class="market-card reveal">
+        <div class="market-card-val">$3.8T</div>
+        <div class="market-card-label">US Local Retail Market</div>
+        <div class="market-card-desc">Annual spending at physical stores, restaurants, and service businesses. Every business in this market needs to drive foot traffic — and most have no way to measure it accurately.</div>
+      </div>
       <div class="market-card reveal reveal-delay-1">
-        <div class="market-card-value">$3.8T</div>
-        <div class="market-card-label" data-i18n="mCard1Label">US LOCAL RETAIL MARKET</div>
-        <p class="market-card-desc" data-i18n="mCard1Desc">Annual spending at physical stores, restaurants, and service businesses. Every business in this market needs to drive foot traffic — and most have no way to measure it accurately.</p>
+        <div class="market-card-val geo">$27B</div>
+        <div class="market-card-label">Loyalty Market Size</div>
+        <div class="market-card-desc">Spent annually on loyalty programs that are siloed, opaque, and non-portable. Points expire. Rewards go unused. GeoEarn replaces this with transparent, instant, liquid rewards.</div>
       </div>
       <div class="market-card reveal reveal-delay-2">
-        <div class="market-card-value purple">$27B</div>
-        <div class="market-card-label" data-i18n="mCard2Label">LOYALTY MARKET SIZE</div>
-        <p class="market-card-desc" data-i18n="mCard2Desc">Spent annually on loyalty programs that are siloed, opaque, and non-portable. Points expire. Rewards go unused. GeoEarn replaces this with transparent, instant, liquid rewards.</p>
-      </div>
-      <div class="market-card reveal reveal-delay-3">
-        <div class="market-card-value gold">$2–5</div>
-        <div class="market-card-label" data-i18n="mCard3Label">TARGET COST PER VISIT</div>
-        <p class="market-card-desc" data-i18n="mCard3Desc">Businesses on GeoEarn set their own cost-per-visit budget. At $2–5 per confirmed customer walking through the door, this is significantly cheaper than most traditional local advertising.</p>
+        <div class="market-card-val">$2–5</div>
+        <div class="market-card-label">Target Cost Per Visit</div>
+        <div class="market-card-desc">Businesses on GeoEarn set their own cost-per-visit budget. At $2–5 per confirmed customer walking through the door, this is significantly cheaper than most traditional local advertising.</div>
       </div>
     </div>
+
     <div class="market-insight reveal">
-      <div class="mi-icon" aria-hidden="true">💡</div>
-      <p class="mi-text" data-i18n="marketInsight">
-        <strong>The gap:</strong> A café can run a Google ad campaign and measure every click. But when that same customer walks through the door, there's no equivalent measurement layer. GeoEarn is <strong>cost-per-visit infrastructure</strong> — filling the last-mile gap between digital reach and physical conversion.
-      </p>
+      <i data-lucide="lightbulb" style="width:18px;height:18px;color:var(--geo);stroke-width:1.5;flex-shrink:0;margin-top:2px"></i>
+      <p><strong>The gap:</strong> A café can run a Google ad campaign and measure every click. But when that same customer walks through the door, there's no equivalent measurement layer. GeoEarn is <strong>cost-per-visit infrastructure</strong> — filling the last-mile gap between digital reach and physical conversion.</p>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section class="features-section" id="features" aria-labelledby="features-title">
-  <div class="feat-wrap">
-    <div class="feat-header reveal">
-      <span class="section-label" data-i18n="featLabel">// PRODUCT</span>
-      <h2 class="section-title" id="features-title" data-i18n="featTitle">Built for businesses,<br>not crypto users.</h2>
-      <p class="section-sub" data-i18n="featSub">GeoEarn works as a straightforward business tool. Blockchain infrastructure runs quietly in the background — merchants and users don't need to understand it.</p>
-    </div>
-
-    <!-- Product-first positioning banner -->
-    <div class="positioning-banner reveal">
-      <div class="pb-icon">🎯</div>
-      <div class="pb-text"><strong>Product-first, infrastructure-second.</strong> GeoEarn uses blockchain infrastructure selectively — where it adds real value in transparency, instant settlement, and tamper-proof verification. The core product works with or without a crypto wallet. Users who prefer simple cash rewards are supported too.</div>
-    </div>
-
-    <div class="features-grid">
-      <article class="feat-card wide">
-        <div class="feat-icon cyan" aria-hidden="true">📍</div>
-        <h3 class="feat-title" data-i18n="feat1Title">Verified Visit Engine</h3>
-        <p class="feat-desc" data-i18n="feat1Desc">A multi-layer verification system combining GPS geofencing, QR scan confirmation, and visit history scoring. Every check-in is independently auditable — businesses are never charged for a visit that didn't happen. No disputes. No click fraud. No bot traffic. Just real customers at the door.</p>
-        <span class="feat-tag">GPS + QR + Visit History Scoring</span>
-      </article>
-      <article class="feat-card">
-        <div class="feat-icon green" aria-hidden="true">💎</div>
-        <h3 class="feat-title" data-i18n="feat2Title">Instant Rewards</h3>
-        <p class="feat-desc" data-i18n="feat2Desc">Users receive their reward within seconds of a verified check-in — no waiting period, no minimum balance, no voucher to redeem later. Rewards land directly in the app wallet and can be cashed out or spent.</p>
-        <span class="feat-tag" data-i18n="feat2Tag">Instant Settlement</span>
-      </article>
-      <article class="feat-card">
-        <div class="feat-icon purple" aria-hidden="true">🏪</div>
-        <h3 class="feat-title" data-i18n="feat3Title">Business Campaign Manager</h3>
-        <p class="feat-desc" data-i18n="feat3Desc">Merchants set a cost-per-visit budget, define a geo-zone, and go live in minutes. Pause, adjust, or end campaigns at any time. Pay only when a verified customer walks in — no minimum spend required.</p>
-        <span class="feat-tag" data-i18n="feat3Tag">Pay Per Verified Visit</span>
-      </article>
-      <article class="feat-card wide">
-        <div class="feat-icon gold" aria-hidden="true">🔧</div>
-        <h3 class="feat-title" data-i18n="feat4Title">Transparent Settlement Layer</h3>
-        <p class="feat-desc" data-i18n="feat4Desc">GeoEarn uses blockchain infrastructure for settlement — not because it's trendy, but because it solves a specific problem: microtransaction settlement at scale with full auditability. At fractions of a cent per transaction, every reward payout is economically viable and every charge is verifiable by the merchant independently. The infrastructure is invisible to the end user.</p>
-        <span class="feat-tag">Transparent · Auditable · Scalable</span>
-      </article>
-      <article class="feat-card">
-        <div class="feat-icon pink" aria-hidden="true">📊</div>
-        <h3 class="feat-title" data-i18n="feat5Title">Analytics Dashboard</h3>
-        <p class="feat-desc" data-i18n="feat5Desc">Businesses track visit heatmaps, peak hours, campaign ROI, and repeat visitor rates in real time. All data is sourced from verified visits — no estimations, no samples.</p>
-        <span class="feat-tag" data-i18n="feat5Tag">Coming Q1 2027</span>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- USE CASES -->
+<!-- ══════════════════ USECASES ══════════════════ -->
+<div class="sep"></div>
 <section class="usecases-section" id="usecases" aria-labelledby="usecases-title">
   <div class="usecases-inner">
-    <div class="usecases-header reveal">
-      <span class="section-label" data-i18n="ucLabel">// USE CASES</span>
-      <h2 class="section-title" id="usecases-title" data-i18n="ucTitle">Any business.<br>Any location.</h2>
-      <p class="section-sub" data-i18n="ucSub">If customers walk through your door, GeoEarn can measure, incentivize, and attribute that visit.</p>
+    <div class="usecases-header">
+      <span class="label-sm reveal">Use Cases</span>
+      <h2 class="title-section reveal reveal-delay-1" id="usecases-title" style="margin-top:14px">Any business. Any location.</h2>
+      <p class="body-lg reveal reveal-delay-2" style="margin-top:14px">If customers walk through your door, GeoEarn can measure, incentivize, and attribute that visit.</p>
     </div>
+
     <div class="usecases-grid">
+      <article class="uc-card reveal">
+        <div class="ico-wrap ico-warn"><i data-lucide="utensils"></i></div>
+        <div class="uc-card-title">Cafés &amp; Restaurants</div>
+        <div class="uc-card-desc">Run "happy hour" visit campaigns or first-visit incentives. Pay only when someone actually walks through the door — not per impression or click.</div>
+        <div class="uc-roi">~2.8× ROI vs flyers</div>
+      </article>
       <article class="uc-card reveal reveal-delay-1">
-        <div class="uc-icon" aria-hidden="true">☕</div>
-        <h3 class="uc-title" data-i18n="uc1Title">Cafés & Restaurants</h3>
-        <p class="uc-desc" data-i18n="uc1Desc">Run "happy hour" visit campaigns or first-visit incentives. Pay only when someone actually walks through the door — not per impression or click.</p>
-        <div class="uc-roi" data-i18n="uc1Roi">~2.8x ROI vs flyers</div>
+        <div class="ico-wrap ico-info"><i data-lucide="target"></i></div>
+        <div class="uc-card-title">Gyms &amp; Fitness</div>
+        <div class="uc-card-desc">Reward first visits and trial memberships. Measure drop-off between trial and signup. Every visit is verified — no fake sign-ups counted.</div>
+        <div class="uc-roi">~40% trial conversion</div>
       </article>
       <article class="uc-card reveal reveal-delay-2">
-        <div class="uc-icon" aria-hidden="true">🏋️</div>
-        <h3 class="uc-title" data-i18n="uc2Title">Gyms & Fitness</h3>
-        <p class="uc-desc" data-i18n="uc2Desc">Reward first visits and trial memberships. Measure drop-off between trial and signup. Every visit is verified — no fake sign-ups counted.</p>
-        <div class="uc-roi" data-i18n="uc2Roi">~40% trial conversion</div>
+        <div class="ico-wrap ico-geo"><i data-lucide="shopping-bag"></i></div>
+        <div class="uc-card-title">Retail Stores</div>
+        <div class="uc-card-desc">Drive foot traffic during off-peak hours with geo-targeted visit campaigns. Replace broad local advertising with precise cost-per-door attribution.</div>
+        <div class="uc-roi">Avg. $2.50 CPA</div>
       </article>
       <article class="uc-card reveal reveal-delay-3">
-        <div class="uc-icon" aria-hidden="true">🛍️</div>
-        <h3 class="uc-title" data-i18n="uc3Title">Retail Stores</h3>
-        <p class="uc-desc" data-i18n="uc3Desc">Drive foot traffic during off-peak hours with geo-targeted visit campaigns. Replace broad local advertising with precise cost-per-door attribution.</p>
-        <div class="uc-roi" data-i18n="uc3Roi">Avg. $2.50 CPA</div>
-      </article>
-      <article class="uc-card reveal">
-        <div class="uc-icon" aria-hidden="true">🎭</div>
-        <h3 class="uc-title" data-i18n="uc4Title">Events & Venues</h3>
-        <p class="uc-desc" data-i18n="uc4Desc">Incentivize attendance at conferences, pop-ups, and cultural events. Issue verified attendance records as proof — useful for sponsors and future marketing.</p>
-        <div class="uc-roi" data-i18n="uc4Roi">Verified attendance proof</div>
+        <div class="ico-wrap ico-muted"><i data-lucide="landmark"></i></div>
+        <div class="uc-card-title">Events &amp; Venues</div>
+        <div class="uc-card-desc">Incentivize attendance at conferences, pop-ups, and cultural events. Issue verified attendance records useful for sponsors and future marketing.</div>
+        <div class="uc-roi">Verified attendance proof</div>
       </article>
     </div>
   </div>
 </section>
 
-<!-- INFRASTRUCTURE (was "Why Solana" — now neutral, product-first framing) -->
+<!-- ══════════════════ INFRA ══════════════════ -->
+<div class="sep"></div>
 <section class="infra-section" id="infra" aria-labelledby="infra-title">
   <div class="infra-inner">
     <div>
-      <span class="section-label reveal" data-i18n="infraLabel">// INFRASTRUCTURE</span>
-      <h2 class="section-title reveal reveal-delay-1" id="infra-title" data-i18n="infraTitle">Blockchain where it<br>actually helps.</h2>
-      <p class="section-sub reveal reveal-delay-2" data-i18n="infraSub">GeoEarn uses blockchain infrastructure selectively — for the specific problems it solves better than any alternative: transparent microtransactions, tamper-proof visit logs, and instant reward settlement. Users don't need to understand or interact with crypto to use the product.</p>
-
-      <div class="sol-points reveal reveal-delay-3">
-        <div class="sol-point">
-          <span class="sol-point-icon" aria-hidden="true">🔍</span>
-          <div>
-            <h3 class="sol-point-title" data-i18n="infraPt1Title">Tamper-proof visit records</h3>
-            <p class="sol-point-desc" data-i18n="infraPt1Desc">Every verified check-in is logged immutably. Businesses can independently verify any charge — there's no central server to dispute with, no billing support ticket to file. The record is just there.</p>
-          </div>
-        </div>
-        <div class="sol-point">
-          <span class="sol-point-icon" aria-hidden="true">⚡</span>
-          <div>
-            <h3 class="sol-point-title" data-i18n="infraPt2Title">Economical at micro scale</h3>
-            <p class="sol-point-desc" data-i18n="infraPt2Desc">GeoEarn processes thousands of small reward payouts daily — fractions of a dollar each. The settlement layer handles this at sub-cent cost per transaction, making reward amounts of $0.50–$5 commercially viable even for small businesses.</p>
-          </div>
-        </div>
-        <div class="sol-point">
-          <span class="sol-point-icon" aria-hidden="true">🙈</span>
-          <div>
-            <h3 class="sol-point-title" data-i18n="infraPt3Title">Invisible to end users</h3>
-            <p class="sol-point-desc" data-i18n="infraPt3Desc">Users earn rewards and businesses run campaigns without ever needing a crypto wallet or understanding how the settlement layer works. The product is designed for mainstream adoption, not crypto users.</p>
-          </div>
-        </div>
+      <div class="section-header">
+        <span class="label-sm reveal">Infrastructure</span>
+        <h2 class="title-section reveal reveal-delay-1" id="infra-title" style="margin-top:14px">Blockchain where it actually helps.</h2>
+        <p class="body-lg reveal reveal-delay-2" style="margin-top:14px">GeoEarn uses blockchain infrastructure selectively — for transparent microtransactions, tamper-proof visit logs, and instant reward settlement. Users don't need to interact with crypto.</p>
       </div>
 
-      <div class="infra-note reveal reveal-delay-3">
-        <strong>Not crypto-dependent.</strong> GeoEarn's core product — visit verification, campaign management, and reward distribution — is independent of any specific blockchain. The infrastructure is a component, not the product.
+      <div class="infra-points">
+        <div class="infra-point reveal reveal-delay-1">
+          <div class="ico-wrap ico-success"><i data-lucide="database"></i></div>
+          <div>
+            <div class="infra-point-title">Tamper-proof visit records</div>
+            <div class="infra-point-desc">Every verified check-in is logged immutably. Businesses can independently verify any charge — there's no central server to dispute with, no billing support ticket to file.</div>
+          </div>
+        </div>
+        <div class="infra-point reveal reveal-delay-2">
+          <div class="ico-wrap ico-geo"><i data-lucide="zap"></i></div>
+          <div>
+            <div class="infra-point-title">Economical at micro scale</div>
+            <div class="infra-point-desc">Thousands of small reward payouts daily at sub-cent cost per transaction, making reward amounts of $0.50–$5 commercially viable even for small businesses.</div>
+          </div>
+        </div>
+        <div class="infra-point reveal reveal-delay-3">
+          <div class="ico-wrap ico-muted"><i data-lucide="eye-off"></i></div>
+          <div>
+            <div class="infra-point-title">Invisible to end users</div>
+            <div class="infra-point-desc">Users earn rewards and businesses run campaigns without ever needing a crypto wallet. The product is designed for mainstream adoption, not crypto users.</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="infra-visual reveal reveal-delay-2" aria-hidden="true">
-      <canvas id="network-canvas"></canvas>
+    <div class="infra-visual reveal reveal-delay-2" aria-label="Infrastructure layers">
+      <div class="iv-title">Technology stack</div>
+      <div class="iv-layers">
+        <div class="iv-layer">
+          <div class="iv-layer-dot" style="background:var(--geo)"></div>
+          <div class="iv-layer-label">User interface</div>
+          <div class="iv-layer-tag">Telegram Mini App</div>
+        </div>
+        <div class="iv-layer">
+          <div class="iv-layer-dot" style="background:var(--info)"></div>
+          <div class="iv-layer-label">Verification engine</div>
+          <div class="iv-layer-tag">GPS + QR + Anti-fraud</div>
+        </div>
+        <div class="iv-layer">
+          <div class="iv-layer-dot" style="background:var(--warning)"></div>
+          <div class="iv-layer-label">Business logic</div>
+          <div class="iv-layer-tag">Campaign · Budget · Rewards</div>
+        </div>
+        <div class="iv-layer">
+          <div class="iv-layer-dot" style="background:var(--success)"></div>
+          <div class="iv-layer-label">Settlement layer</div>
+          <div class="iv-layer-tag">Immutable · Auditable</div>
+        </div>
+        <div class="iv-layer">
+          <div class="iv-layer-dot" style="background:var(--text-tertiary)"></div>
+          <div class="iv-layer-label">Payout</div>
+          <div class="iv-layer-tag">Payme · Bank transfer</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ROADMAP -->
+<!-- ══════════════════ ROADMAP ══════════════════ -->
+<div class="sep"></div>
 <section class="roadmap-section" id="roadmap" aria-labelledby="roadmap-title">
-  <div class="roadmap-header">
-    <span class="section-label" data-i18n="roadmapLabel">// ROADMAP</span>
-    <h2 class="section-title reveal" id="roadmap-title" data-i18n="roadmapTitle">Grounded milestones.<br>Real progress.</h2>
-    <p class="section-sub reveal reveal-delay-1" data-i18n="roadmapSub">Every milestone is tied to real user adoption and business revenue — not fundraising rounds or token events.</p>
-  </div>
-  <div class="timeline-track">
-    <div class="timeline-line" aria-hidden="true">
-      <div class="timeline-progress" id="timelineProgress"></div>
+  <div class="roadmap-inner">
+    <div class="roadmap-header">
+      <span class="label-sm">Roadmap</span>
+      <h2 class="title-section reveal reveal-delay-1" id="roadmap-title" style="margin-top:14px">Building in public.</h2>
     </div>
-    <div class="timeline-cards">
-      <div class="timeline-node" style="transition-delay:0s">
-        <div class="node-dot active" aria-hidden="true"></div>
-        <div class="rm-card active">
-          <div class="rm-quarter">Q3 2026</div>
-          <h3 class="rm-title" data-i18n="rm1Title">MVP & Pilot</h3>
-          <ul class="rm-items">
-            <li data-i18n="rm1A">Telegram Mini App MVP</li>
-            <li data-i18n="rm1B">QR check-in system live</li>
-            <li data-i18n="rm1C">100+ test users</li>
-            <li data-i18n="rm1D">5 pilot business locations</li>
-          </ul>
-          <span class="rm-status live" data-i18n="statusProgress">● IN PROGRESS</span>
+
+    <div class="roadmap-grid">
+      <div class="roadmap-card reveal">
+        <div class="rm-quarter">Q2 2026</div>
+        <div class="rm-title">Pilot Launch</div>
+        <div class="rm-items">
+          <div class="rm-item"><i data-lucide="check-circle" style="color:var(--success)"></i> Core check-in flow</div>
+          <div class="rm-item"><i data-lucide="check-circle" style="color:var(--success)"></i> GPS + QR verification</div>
+          <div class="rm-item"><i data-lucide="check-circle" style="color:var(--success)"></i> Telegram Mini App</div>
+          <div class="rm-item"><i data-lucide="check-circle" style="color:var(--success)"></i> Payme withdrawal</div>
         </div>
+        <span class="pill pill-success" style="align-self:flex-start">In progress</span>
       </div>
-      <div class="timeline-node" style="transition-delay:.15s">
-        <div class="node-dot" aria-hidden="true"></div>
-        <div class="rm-card">
-          <div class="rm-quarter">Q4 2026</div>
-          <h3 class="rm-title" data-i18n="rm2Title">Settlement Integration</h3>
-          <ul class="rm-items">
-            <li data-i18n="rm2A">Wallet onboarding flow</li>
-            <li data-i18n="rm2B">Automated reward distribution</li>
-            <li data-i18n="rm2C">Smart contract deployment</li>
-            <li data-i18n="rm2D">Anti-fraud system v1</li>
-          </ul>
-          <span class="rm-status building" data-i18n="statusBuilding">◐ BUILDING</span>
+      <div class="roadmap-card active reveal reveal-delay-1">
+        <div class="rm-quarter">Q3 2026</div>
+        <div class="rm-title">Tashkent Rollout</div>
+        <div class="rm-items">
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> 50+ business partners</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Anti-fraud v2</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Business dashboard</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Referral system</div>
         </div>
+        <span class="pill pill-geo" style="align-self:flex-start">Next</span>
       </div>
-      <div class="timeline-node" style="transition-delay:.3s">
-        <div class="node-dot" aria-hidden="true"></div>
-        <div class="rm-card">
-          <div class="rm-quarter">Q1 2027</div>
-          <h3 class="rm-title" data-i18n="rm3Title">First Revenue</h3>
-          <ul class="rm-items">
-            <li data-i18n="rm3A">1,000+ active users</li>
-            <li data-i18n="rm3B">25+ paying business partners</li>
-            <li data-i18n="rm3C">Analytics dashboard launch</li>
-            <li data-i18n="rm3D">First monthly recurring revenue</li>
-          </ul>
-          <span class="rm-status soon" data-i18n="statusUpcoming">○ UPCOMING</span>
+      <div class="roadmap-card reveal reveal-delay-2">
+        <div class="rm-quarter">Q4 2026</div>
+        <div class="rm-title">Multi-city</div>
+        <div class="rm-items">
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> 3 cities</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Analytics dashboard</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Dynamic rewards</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Gamification</div>
         </div>
+        <span class="pill" style="background:var(--bg-raised);color:var(--text-tertiary);align-self:flex-start">Planned</span>
       </div>
-      <div class="timeline-node" style="transition-delay:.45s">
-        <div class="node-dot" aria-hidden="true"></div>
-        <div class="rm-card">
-          <div class="rm-quarter">Q2 2027</div>
-          <h3 class="rm-title" data-i18n="rm4Title">Scale</h3>
-          <ul class="rm-items">
-            <li data-i18n="rm4A">10,000+ verified visits</li>
-            <li data-i18n="rm4B">Multi-city expansion</li>
-            <li data-i18n="rm4C">B2B loyalty integrations</li>
-            <li data-i18n="rm4D">Series A preparation</li>
-          </ul>
-          <span class="rm-status soon" data-i18n="statusUpcoming">○ UPCOMING</span>
+      <div class="roadmap-card reveal reveal-delay-3">
+        <div class="rm-quarter">Q1 2027</div>
+        <div class="rm-title">Scale</div>
+        <div class="rm-items">
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> 10+ cities</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> AI optimization</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> B2B API access</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Series A</div>
         </div>
+        <span class="pill" style="background:var(--bg-raised);color:var(--text-tertiary);align-self:flex-start">Future</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ECOSYSTEM -->
-<section class="social-section" aria-labelledby="ecosystem-title">
-  <div class="social-inner">
-    <span class="section-label reveal" id="ecosystem-title" style="text-align:center;" data-i18n="ecosystemLabel">// ECOSYSTEM & PARTNERS</span>
-    <p style="color:rgba(248,250,252,.32);font-size:13px;letter-spacing:.04em;margin-top:8px;" class="reveal reveal-delay-1" data-i18n="builtOn">Built on and exploring partnerships with</p>
-    <div class="social-logos reveal reveal-delay-2" role="list" aria-label="Ecosystem partners">
-      <div class="social-chip" role="listitem">Telegram Mini Apps</div>
-      <div class="social-chip" role="listitem">Solana Foundation</div>
-      <div class="social-chip" role="listitem">Superteam</div>
-      <div class="social-chip" role="listitem">Phantom Wallet</div>
-      <div class="social-chip" role="listitem">Colosseum</div>
-      <div class="social-chip" role="listitem">Helius RPC</div>
-    </div>
-  </div>
-</section>
+<!-- ══════════════════ WAITLIST ══════════════════ -->
+<div class="sep"></div>
+<section class="waitlist-section" id="waitlist" aria-label="Waitlist signup">
+  <div class="waitlist-inner">
+    <div class="waitlist-card reveal">
+      <div id="waitlistForm">
+        <div class="waitlist-card-title">Join the waitlist</div>
+        <div class="waitlist-card-sub">Be the first to know when GeoEarn launches in your city. Early access, no spam.</div>
+        <div class="waitlist-form">
+          <input
+            class="form-input"
+            id="waitlistEmail"
+            type="email"
+            placeholder="your@email.com"
+            autocomplete="email"
+            aria-label="Email address"
+          >
+          <button class="btn btn-primary" onclick="submitWaitlist()" type="button" style="flex-shrink:0;white-space:nowrap">
+            Join Waitlist
+          </button>
+        </div>
+        <div class="waitlist-count">Already <strong id="waitlistCount">800+</strong> people waiting</div>
+      </div>
 
-<!-- WAITLIST -->
-<section id="waitlist" class="waitlist-section" aria-labelledby="waitlist-title">
-  <div class="waitlist-card reveal">
-    <span class="waitlist-label" data-i18n="waitlistLabel">// GET EARLY ACCESS</span>
-    <h2 class="waitlist-title" id="waitlist-title" data-i18n="waitlistTitle">Join the Waitlist</h2>
-    <p class="waitlist-sub" data-i18n="waitlistSub">Be among the first businesses or users when we go live. Early partners shape the product — and get priority access to pilot campaigns.</p>
-
-    <div class="role-tabs" role="group" aria-label="I am a...">
-      <button class="role-tab active" type="button" onclick="setRole('user')" id="roleUser" aria-pressed="true" data-i18n="roleUser">👤 I'm a User</button>
-      <button class="role-tab" type="button" onclick="setRole('business')" id="roleBiz" aria-pressed="false" data-i18n="roleBiz">🏪 I'm a Business</button>
-      <button class="role-tab" type="button" onclick="setRole('investor')" id="roleInv" aria-pressed="false" data-i18n="roleInv">💼 I'm an Investor</button>
-    </div>
-
-    <div class="waitlist-form">
-      <label for="waitlistEmail" class="sr-only">Email address</label>
-      <input
-        type="email"
-        class="waitlist-input"
-        id="waitlistEmail"
-        placeholder="your@email.com"
-        autocomplete="email"
-        inputmode="email"
-        aria-required="true"
-        aria-describedby="waitlistErrorMsg waitlistSuccess"
-      >
-      <button class="waitlist-btn ripple-container" type="button" id="waitlistBtn" onclick="submitWaitlist('main')">
-        <span data-i18n="joinWaitlistBtn">Join Waitlist →</span>
-      </button>
-    </div>
-
-    <div class="waitlist-loading" id="waitlistLoading" role="status" aria-live="polite">
-      <div class="wl-spinner" aria-hidden="true"></div>
-      <span data-i18n="submitting">Submitting...</span>
-    </div>
-    <div class="waitlist-error-msg" id="waitlistErrorMsg" role="alert" aria-live="assertive"></div>
-
-    <div class="waitlist-success" id="waitlistSuccess" role="status" aria-live="polite">
-      <div class="success-icon" aria-hidden="true">✓</div>
-      <div class="success-text">
-        <strong data-i18n="successTitle">You're on the list!</strong>
-        <span data-i18n="successDesc">We'll be in touch when your city goes live.</span>
+      <div class="waitlist-success" id="waitlistSuccess" role="status">
+        <div class="ws-icon"><i data-lucide="check"></i></div>
+        <div class="ws-title">You're on the list!</div>
+        <div class="ws-desc">We'll reach out when your city goes live.</div>
       </div>
     </div>
-    <p class="waitlist-count" data-i18n="alreadyOn">Already <span id="waitlistCountDisplay">800+</span> people waiting</p>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-section" id="cta" aria-labelledby="cta-title">
-  <div class="cta-bg" aria-hidden="true"></div>
-  <div class="cta-border-top" aria-hidden="true"></div>
-  <div class="orb" style="width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.16) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);position:absolute;animation:orbFloat1 10s ease-in-out infinite;pointer-events:none;filter:blur(80px);border-radius:50%;" aria-hidden="true"></div>
-  <h2 id="cta-title">
-    <span style="display:block;background:linear-gradient(135deg,#fff,rgba(255,255,255,.82));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;" data-i18n="ctaLine1">Turn Foot Traffic</span>
-    <span style="display:block;background:linear-gradient(135deg,var(--cyan),var(--purple-glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;animation:gradientShift 3s ease infinite;" data-i18n="ctaLine2">Into Measurable Revenue.</span>
-  </h2>
-  <p data-i18n="ctaSub">GeoEarn is performance-based customer acquisition for the physical world. Join the early access list — it takes under a minute.</p>
-  <div class="cta-actions">
-    <a href="#waitlist" class="btn-primary glow-pulse ripple-container"><span data-i18n="joinEarly">Join Early Access</span><span aria-hidden="true">→</span></a>
-    <button type="button" class="btn-open-app ripple-container" onclick="openApp()">
-      <span class="app-icon" aria-hidden="true">🚀</span>
-      <span data-i18n="openApp">Open App</span>
-    </button>
-    <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="btn-secondary" data-i18n="partnerWithUs">Partner With Us</a>
+<!-- ══════════════════ CTA ══════════════════ -->
+<section class="cta-section" aria-label="Call to action">
+  <div class="cta-inner reveal">
+    <div class="cta-left">
+      <div class="cta-title">Turn Foot Traffic Into<br><em>Measurable Revenue.</em></div>
+      <div class="cta-sub">GeoEarn is performance-based customer acquisition for the physical world. Join the early access list — it takes under a minute.</div>
+    </div>
+    <div class="cta-actions">
+      <a href="#waitlist" class="btn btn-primary">
+        <i data-lucide="arrow-right"></i>
+        Join Early Access
+      </a>
+      <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Partner With Us</a>
+    </div>
   </div>
 </section>
+
 </main>
 
-<!-- ═══════════════════════════════
-     FOOTER — rebuilt
-═══════════════════════════════ -->
-<footer>
-  <div class="footer-top">
-
-    <!-- LEFT: Brand -->
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer aria-label="Footer">
+  <div class="footer-inner">
     <div class="footer-brand">
       <a href="#" class="footer-logo" aria-label="GeoEarn home">
-        <span class="footer-logo-icon" aria-hidden="true">📍</span>
+        <div class="nav-logo-mark" aria-hidden="true" style="width:26px;height:26px;border-radius:8px">
+          <i data-lucide="map-pin" style="width:13px;height:13px;stroke-width:2;color:var(--geo)"></i>
+        </div>
         GeoEarn
       </a>
-      <p class="footer-desc" data-i18n="footerDesc">Marketplace for real-world customer acquisition. Businesses pay per verified visit. Users earn for showing up.</p>
-      <div class="footer-tagline-pill">
-        <span>📍</span> Pre-seed · Q3 2026 Pilot
-      </div>
+      <p class="footer-desc">Marketplace for real-world customer acquisition. Businesses pay per verified visit. Users earn for showing up.</p>
       <div class="footer-socials" aria-label="Social links">
         <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Telegram">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
         </a>
-        <a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="X (Twitter)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        </a>
-        <a href="https://discord.gg/YOUR_LINK" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Discord">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        <a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="X">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </a>
       </div>
     </div>
 
-    <!-- CENTER: Links -->
-    <nav class="footer-nav" aria-label="Footer navigation">
-      <div class="footer-nav-cols">
-        <div class="footer-nav-col">
-          <h4 data-i18n="footerProduct">Product</h4>
-          <ul role="list">
-            <li><a href="#how" data-i18n="navHow">How It Works</a></li>
-            <li><a href="#features" data-i18n="navProtocol">Features</a></li>
-            <li><a href="#market" data-i18n="navMarket">Market</a></li>
-            <li><a href="#infra" data-i18n="navInfra">Infrastructure</a></li>
-            <li><a href="#roadmap" data-i18n="navRoadmap">Roadmap</a></li>
-          </ul>
-        </div>
-        <div class="footer-nav-col">
-          <h4 data-i18n="footerCompany">Company</h4>
-          <ul role="list">
-            <li><a href="#waitlist" data-i18n="earlyAccess">Early Access</a></li>
-            <li><a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer">Telegram</a></li>
-            <li><a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer">Twitter / X</a></li>
-            <li><a href="https://discord.gg/YOUR_LINK" target="_blank" rel="noopener noreferrer">Discord</a></li>
-            <li><a href="mailto:hello@geoearn.app" data-i18n="footerContact">Contact Us</a></li>
-          </ul>
-        </div>
-      </div>
+    <nav class="footer-nav-col" aria-label="Product links">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#market">Market</a></li>
+        <li><a href="#infra">Infrastructure</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+      </ul>
     </nav>
 
-    <!-- RIGHT: Contact + CTA -->
-    <div class="footer-contact">
-      <h4 data-i18n="footerGetInTouch">Get In Touch</h4>
-      <div class="footer-contact-items">
-        <a href="mailto:hello@geoearn.app" class="footer-contact-item">
-          <span class="fc-icon">✉️</span>
-          hello@geoearn.app
-        </a>
-        <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
-          <span class="fc-icon">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-          </span>
-          t.me/GeoEarn
-        </a>
-        <a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
-          <span class="fc-icon">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          </span>
-          @AvyasovAlexandr
-        </a>
-      </div>
+    <nav class="footer-nav-col" aria-label="Company links">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#waitlist">Early Access</a></li>
+        <li><a href="mailto:hello@geoearn.app">hello@geoearn.app</a></li>
+        <li><a href="https://t.me/GeoEarn" target="_blank" rel="noopener">Telegram</a></li>
+        <li><a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener">X (Twitter)</a></li>
+      </ul>
+    </nav>
 
-      <div class="footer-cta">
-        <div class="footer-cta-title" data-i18n="footerCtaTitle">Ready to get started?</div>
-        <div class="footer-cta-sub" data-i18n="footerCtaSub">Join the waitlist and be notified when your city goes live.</div>
-        <a href="#waitlist" class="footer-cta-btn" data-i18n="joinWaitlistBtn">Join Waitlist →</a>
-      </div>
-    </div>
-
+    <nav class="footer-nav-col" aria-label="Legal links">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Cookie Policy</a></li>
+      </ul>
+    </nav>
   </div>
 
-  <!-- Bottom bar -->
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 GeoEarn Labs · All rights reserved</span>
-    <div class="footer-legal">
-      <a href="#" data-i18n="footerPrivacy">Privacy Policy</a>
-      <a href="#" data-i18n="footerTerms">Terms of Service</a>
-    </div>
-    <a href="https://t.me/GeoEarnBot" class="footer-open-app" onclick="openApp(event)">
-      <span aria-hidden="true">🚀</span> Open App
-    </a>
+    <span>© 2026 GeoEarn Labs · All rights reserved</span>
+    <span>Built for the physical world</span>
   </div>
 </footer>
 
-<style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0;}</style>
+<!-- TOAST -->
+<div class="toast" id="toast" role="alert" aria-live="polite">
+  <i data-lucide="check-circle" style="color:var(--success)"></i>
+  <span id="toastMsg">Done</span>
+</div>
+
+<!-- STICKY CTA -->
+<div class="sticky-cta" id="stickyCta" aria-hidden="true">
+  <a href="#waitlist" class="btn btn-primary">
+    <i data-lucide="arrow-right"></i>
+    Join Waitlist
+  </a>
+</div>
 
 <script>
-'use strict';
-
-/* ═══ I18N ═══ */
-const translations={
-en:{
-  heroBadge:"Pilot Program — Q3 2026 · 3 Cities",
-  heroLine1:"Real Customers.",
-  heroLine2:"Verified. Rewarded.",
-  heroSub:"GeoEarn is a <strong>performance-based marketplace for real-world customer acquisition.</strong> Businesses pay only for verified visits. Users earn for showing up.",
-  heroPositioning:"This is not a rewards app. This is <strong>pay-per-visit infrastructure</strong> for physical businesses — built to work the same way performance advertising does online, but for foot traffic.",
-  joinEarly:"Join Early Access",
-  openApp:"Open App",
-  forBusinesses:"For Businesses",
-  moneyFlowTitle:"HOW MONEY FLOWS",
-  business:"BUSINESS",
-  setsBudget:"Sets budget",
-  perVisit:"per verified visit",
-  smartContract:"Verifies & routes",
-  instantly:"instantly",
-  rewardAmount:"+$0.50–$5",
-  user:"USER",
-  earnsCrypto:"Earns reward",
-  statWaitlist:"Waitlist Signups",
-  statWaitlistNote:"and growing daily",
-  statBiz:"Interested Businesses",
-  statBizNote:"across 3 cities",
-  statTxns:"Simulated Visits Validated",
-  statTxnsNote:"pilot environment",
-  statFraud:"Anti-Fraud Accuracy",
-  statFraudNote:"pilot simulations",
-  navHow:"How It Works",
-  navProtocol:"Product",
-  navMarket:"Market",
-  navInfra:"Infrastructure",
-  navRoadmap:"Roadmap",
-  joinWaitlist:"Join Waitlist →",
-  howLabel:"// HOW IT WORKS",
-  howTitle:"Foot traffic as a<br>measurable channel.",
-  howSub:"GeoEarn gives businesses the same accountability they get from digital ads — but for offline visits. Pay per result. Measure everything.",
-  step1Title:"Discover Nearby Campaigns",
-  step1Desc:"Users open the GeoEarn app — available as a Telegram Mini App — and browse active campaigns near them. Cafés, gyms, retail stores: any physical location can run a campaign with a set cost-per-visit budget.",
-  step2Title:"Walk In & Check In",
-  step2Desc:"The user arrives and scans the QR code on-site. GPS location is cross-checked with the business address and the user's visit history to confirm the visit is genuine.",
-  step3Title:"Instant Verified Reward",
-  step3Desc:"Once the visit is confirmed, the reward is released to the user's wallet within seconds. The business is charged only for that one verified visit. Every transaction is logged transparently.",
-  chip1:"3 Active Visits",
-  chip2:"8 Open Campaigns",
-  chip3:"Rewards Live",
-  marketLabel:"// MARKET OPPORTUNITY",
-  marketTitle:"Offline commerce is huge.<br>Performance tools don't exist.",
-  marketSub:"Online advertising has cost-per-click. Offline has nothing equivalent. GeoEarn is building the infrastructure to change that.",
-  mCard1Label:"US LOCAL RETAIL MARKET",
-  mCard1Desc:"Annual spending at physical stores, restaurants, and service businesses. Every business needs to drive foot traffic — and most have no way to measure it accurately.",
-  mCard2Label:"LOYALTY MARKET SIZE",
-  mCard2Desc:"Spent annually on loyalty programs that are siloed, opaque, and non-portable. Points expire. Rewards go unused. GeoEarn replaces this with transparent, instant, liquid rewards.",
-  mCard3Label:"TARGET COST PER VISIT",
-  mCard3Desc:"Businesses on GeoEarn set their own cost-per-visit budget. At $2–5 per confirmed door visit, this is significantly cheaper than most local advertising alternatives.",
-  marketInsight:"<strong>The gap:</strong> A café can run a Google ad and measure every click. But when that same customer walks through the door, there's no equivalent measurement. GeoEarn is <strong>cost-per-visit infrastructure</strong> — filling the last-mile gap between digital reach and physical conversion.",
-  featLabel:"// PRODUCT",
-  featTitle:"Built for businesses,<br>not crypto users.",
-  featSub:"GeoEarn works as a straightforward business tool. Blockchain infrastructure runs quietly in the background — merchants and users don't need to understand it.",
-  feat1Title:"Verified Visit Engine",
-  feat1Desc:"A multi-layer verification system combining GPS geofencing, QR scan confirmation, and visit history scoring. Every check-in is independently auditable — businesses are never charged for a visit that didn't happen. No disputes. No click fraud. No bot traffic. Just real customers at the door.",
-  feat2Title:"Instant Rewards",
-  feat2Desc:"Users receive their reward within seconds of a verified check-in — no waiting period, no minimum balance, no voucher to redeem later. Rewards land directly in the app wallet and can be cashed out or spent.",
-  feat2Tag:"Instant Settlement",
-  feat3Title:"Business Campaign Manager",
-  feat3Desc:"Merchants set a cost-per-visit budget, define a geo-zone, and go live in minutes. Pause, adjust, or end campaigns at any time. Pay only when a verified customer walks in — no minimum spend required.",
-  feat3Tag:"Pay Per Verified Visit",
-  feat4Title:"Transparent Settlement Layer",
-  feat4Desc:"GeoEarn uses blockchain infrastructure for settlement — not because it's trendy, but because it solves a specific problem: microtransaction settlement at scale with full auditability. Every charge is verifiable by the merchant independently. The infrastructure is invisible to the end user.",
-  feat5Title:"Analytics Dashboard",
-  feat5Desc:"Businesses track visit heatmaps, peak hours, campaign ROI, and repeat visitor rates in real time. All data is sourced from verified visits — no estimations, no samples.",
-  feat5Tag:"Coming Q1 2027",
-  ucLabel:"// USE CASES",
-  ucTitle:"Any business.<br>Any location.",
-  ucSub:"If customers walk through your door, GeoEarn can measure, incentivize, and attribute that visit.",
-  uc1Title:"Cafés & Restaurants",
-  uc1Desc:"Run happy-hour or first-visit incentive campaigns. Pay only when someone actually walks through the door — not per impression or click.",
-  uc1Roi:"~2.8x ROI vs flyers",
-  uc2Title:"Gyms & Fitness",
-  uc2Desc:"Reward first visits and trial memberships. Measure drop-off between trial and signup. Every visit is verified — no fake sign-ups.",
-  uc2Roi:"~40% trial conversion",
-  uc3Title:"Retail Stores",
-  uc3Desc:"Drive foot traffic during off-peak hours with geo-targeted visit campaigns. Replace broad local advertising with precise cost-per-door attribution.",
-  uc3Roi:"Avg. $2.50 CPA",
-  uc4Title:"Events & Venues",
-  uc4Desc:"Incentivize attendance at conferences, pop-ups, and cultural events. Issue verified attendance records as proof — useful for sponsors.",
-  uc4Roi:"Verified attendance proof",
-  infraLabel:"// INFRASTRUCTURE",
-  infraTitle:"Blockchain where it<br>actually helps.",
-  infraSub:"GeoEarn uses blockchain infrastructure selectively — for the specific problems it solves better than any alternative: transparent microtransactions, tamper-proof visit logs, and instant reward settlement. Users don't need to understand or interact with crypto to use the product.",
-  infraPt1Title:"Tamper-proof visit records",
-  infraPt1Desc:"Every verified check-in is logged immutably. Businesses can independently verify any charge — there's no central server to dispute with, no billing support ticket to file.",
-  infraPt2Title:"Economical at micro scale",
-  infraPt2Desc:"GeoEarn processes thousands of small reward payouts daily. The settlement layer handles this at sub-cent cost per transaction, making reward amounts of $0.50–$5 commercially viable even for small businesses.",
-  infraPt3Title:"Invisible to end users",
-  infraPt3Desc:"Users earn rewards and businesses run campaigns without ever needing a crypto wallet or understanding how the settlement layer works. Designed for mainstream adoption, not crypto users.",
-  roadmapLabel:"// ROADMAP",
-  roadmapTitle:"Grounded milestones.<br>Real progress.",
-  roadmapSub:"Every milestone is tied to real user adoption and business revenue — not fundraising rounds or token events.",
-  rm1Title:"MVP & Pilot",
-  rm1A:"Telegram Mini App MVP",
-  rm1B:"QR check-in system live",
-  rm1C:"100+ test users",
-  rm1D:"5 pilot business locations",
-  statusProgress:"● IN PROGRESS",
-  rm2Title:"Settlement Integration",
-  rm2A:"Wallet onboarding flow",
-  rm2B:"Automated reward distribution",
-  rm2C:"Smart contract deployment",
-  rm2D:"Anti-fraud system v1",
-  statusBuilding:"◐ BUILDING",
-  rm3Title:"First Revenue",
-  rm3A:"1,000+ active users",
-  rm3B:"25+ paying business partners",
-  rm3C:"Analytics dashboard launch",
-  rm3D:"First monthly recurring revenue",
-  rm4Title:"Scale",
-  rm4A:"10,000+ verified visits",
-  rm4B:"Multi-city expansion",
-  rm4C:"B2B loyalty integrations",
-  rm4D:"Series A preparation",
-  statusUpcoming:"○ UPCOMING",
-  ecosystemLabel:"// ECOSYSTEM & PARTNERS",
-  builtOn:"Built on and exploring partnerships with",
-  waitlistLabel:"// GET EARLY ACCESS",
-  waitlistTitle:"Join the Waitlist",
-  waitlistSub:"Be among the first businesses or users when we go live. Early partners shape the product — and get priority access to pilot campaigns.",
-  roleUser:"👤 I'm a User",
-  roleBiz:"🏪 I'm a Business",
-  roleInv:"💼 I'm an Investor",
-  joinWaitlistBtn:"Join Waitlist →",
-  submitting:"Submitting...",
-  successTitle:"You're on the list!",
-  successDesc:"We'll be in touch when your city goes live.",
-  alreadyOn:"Already <span id='waitlistCountDisplay'>800+</span> people waiting",
-  ctaLine1:"Turn Foot Traffic",
-  ctaLine2:"Into Measurable Revenue.",
-  ctaSub:"GeoEarn is performance-based customer acquisition for the physical world. Join the early access list — it takes under a minute.",
-  partnerWithUs:"Partner With Us",
-  footerDesc:"Marketplace for real-world customer acquisition. Businesses pay per verified visit. Users earn for showing up.",
-  footerProduct:"Product",
-  footerCompany:"Company",
-  footerGetInTouch:"Get In Touch",
-  footerCtaTitle:"Ready to get started?",
-  footerCtaSub:"Join the waitlist and be notified when your city goes live.",
-  footerContact:"Contact Us",
-  footerPrivacy:"Privacy Policy",
-  footerTerms:"Terms of Service",
-  earlyAccess:"Early Access",
-  launching:"Launching app..."
-},
-ru:{
-  heroBadge:"Пилот — Q3 2026 · 3 города",
-  heroLine1:"Реальные клиенты.",
-  heroLine2:"Верифицированные. Вознаграждённые.",
-  heroSub:"GeoEarn — это <strong>маркетплейс привлечения клиентов для офлайн-бизнеса.</strong> Бизнес платит только за верифицированные визиты. Пользователи зарабатывают за посещения.",
-  heroPositioning:"Это не приложение лояльности. Это <strong>инфраструктура оплаты за визит</strong> для физических бизнесов — работает так же, как перформанс-реклама в интернете, но для пешеходного трафика.",
-  joinEarly:"Ранний доступ",
-  openApp:"Открыть приложение",
-  forBusinesses:"Для бизнеса",
-  moneyFlowTitle:"КАК ДВИЖУТСЯ ДЕНЬГИ",
-  business:"БИЗНЕС",
-  setsBudget:"Устанавливает бюджет",
-  perVisit:"за верифицированный визит",
-  smartContract:"Верифицирует и маршрутизирует",
-  instantly:"мгновенно",
-  rewardAmount:"+$0.50–$5",
-  user:"ПОЛЬЗОВАТЕЛЬ",
-  earnsCrypto:"Получает награду",
-  statWaitlist:"В листе ожидания",
-  statWaitlistNote:"и растёт каждый день",
-  statBiz:"Заинтересованных бизнесов",
-  statBizNote:"в 3 городах",
-  statTxns:"Валидированных симулированных визитов",
-  statTxnsNote:"пилотная среда",
-  statFraud:"Точность антифрода",
-  statFraudNote:"в пилотных симуляциях",
-  navHow:"Как это работает",
-  navProtocol:"Продукт",
-  navMarket:"Рынок",
-  navInfra:"Инфраструктура",
-  navRoadmap:"Роадмап",
-  joinWaitlist:"Лист ожидания →",
-  howLabel:"// КАК ЭТО РАБОТАЕТ",
-  howTitle:"Пешеходный трафик как<br>измеримый канал.",
-  howSub:"GeoEarn даёт бизнесам ту же отчётность, что и цифровая реклама — но для офлайн-визитов. Платите за результат. Измеряйте всё.",
-  step1Title:"Найди ближайшие кампании",
-  step1Desc:"Пользователи открывают приложение GeoEarn — Telegram Mini App — и просматривают активные кампании рядом. Кафе, спортзалы, магазины: любая физическая точка может запустить кампанию с бюджетом за визит.",
-  step2Title:"Зайди и зарегистрируйся",
-  step2Desc:"Пользователь прибывает и сканирует QR-код. GPS-координаты сверяются с адресом бизнеса и историей визитов — для подтверждения реального визита.",
-  step3Title:"Мгновенная верифицированная награда",
-  step3Desc:"После подтверждения визита награда поступает в кошелёк пользователя в течение секунд. Бизнес оплачивает только этот один верифицированный визит.",
-  chip1:"3 активных визита",
-  chip2:"8 открытых кампаний",
-  chip3:"Награды активны",
-  marketLabel:"// РЫНОЧНАЯ ВОЗМОЖНОСТЬ",
-  marketTitle:"Офлайн-коммерция огромна.<br>Инструментов перформанса нет.",
-  marketSub:"В интернет-рекламе есть цена за клик. В офлайне — нет ничего аналогичного. GeoEarn строит инфраструктуру, чтобы это изменить.",
-  mCard1Label:"РЫНОК ЛОКАЛЬНОГО РЕТЕЙЛА США",
-  mCard1Desc:"Ежегодные расходы в физических магазинах, ресторанах и сервисах. Каждый бизнес нуждается в привлечении трафика — и большинство не могут его точно измерить.",
-  mCard2Label:"РЫНОК ЛОЯЛЬНОСТИ",
-  mCard2Desc:"Тратится ежегодно на программы лояльности — изолированные, непрозрачные, непереносимые. Баллы истекают. Награды не используются. GeoEarn заменяет это прозрачными мгновенными наградами.",
-  mCard3Label:"ЦЕЛЕВАЯ СТОИМОСТЬ ВИЗИТА",
-  mCard3Desc:"Бизнесы на GeoEarn сами устанавливают стоимость за визит. При $2–5 за подтверждённого клиента — это значительно дешевле большинства локальных рекламных инструментов.",
-  marketInsight:"<strong>Пробел:</strong> Кафе может запустить рекламу в Google и измерить каждый клик. Но когда тот же клиент входит в дверь — эквивалентного измерения нет. GeoEarn — это <strong>инфраструктура стоимости за визит</strong>, заполняющая разрыв между цифровым охватом и физической конверсией.",
-  featLabel:"// ПРОДУКТ",
-  featTitle:"Создан для бизнеса,<br>не для крипто-пользователей.",
-  featSub:"GeoEarn работает как обычный бизнес-инструмент. Блокчейн-инфраструктура работает в фоне — мерчантам и пользователям не нужно её понимать.",
-  feat1Title:"Движок верификации визитов",
-  feat1Desc:"Многоуровневая система верификации: GPS-геофенсинг, QR-сканирование и скоринг истории визитов. Каждый чекин независимо проверяем — бизнес никогда не платит за несостоявшийся визит.",
-  feat2Title:"Мгновенные награды",
-  feat2Desc:"Пользователи получают награду в течение секунд после верифицированного чекина. Никаких периодов ожидания, минимальных балансов, купонов.",
-  feat2Tag:"Мгновенный расчёт",
-  feat3Title:"Менеджер кампаний",
-  feat3Desc:"Мерчанты задают стоимость за визит, определяют гео-зону и запускают кампанию за минуты. Оплата только за верифицированного клиента — без минимального бюджета.",
-  feat3Tag:"Оплата за верифицированный визит",
-  feat4Title:"Прозрачный расчётный слой",
-  feat4Desc:"GeoEarn использует блокчейн для расчётов — не потому что это модно, а потому что это решает конкретную задачу: микротранзакции в масштабе с полной аудируемостью. Инфраструктура невидима для конечного пользователя.",
-  feat5Title:"Панель аналитики",
-  feat5Desc:"Бизнесы отслеживают тепловые карты визитов, пиковые часы, ROI кампаний и процент повторных клиентов в реальном времени.",
-  feat5Tag:"Появится в Q1 2027",
-  ucLabel:"// ВАРИАНТЫ ИСПОЛЬЗОВАНИЯ",
-  ucTitle:"Любой бизнес.<br>Любая локация.",
-  ucSub:"Если клиенты проходят через вашу дверь — GeoEarn это измерит, простимулирует и атрибутирует.",
-  uc1Title:"Кафе и рестораны",
-  uc1Desc:"Запускайте кампании «счастливый час» или первого визита. Платите только когда кто-то реально заходит в дверь.",
-  uc1Roi:"~2.8x ROI vs листовки",
-  uc2Title:"Фитнес и спортзалы",
-  uc2Desc:"Вознаграждайте первые визиты и пробные абонементы. Измеряйте отток между пробником и покупкой.",
-  uc2Roi:"~40% конверсия пробников",
-  uc3Title:"Розничные магазины",
-  uc3Desc:"Привлекайте трафик в непиковые часы с гео-таргетированными кампаниями.",
-  uc3Roi:"Ср. $2.50 CPA",
-  uc4Title:"Мероприятия и площадки",
-  uc4Desc:"Стимулируйте посещение конференций и поп-апов. Выдавайте верифицированные подтверждения посещения.",
-  uc4Roi:"Верифицированное посещение",
-  infraLabel:"// ИНФРАСТРУКТУРА",
-  infraTitle:"Блокчейн там,<br>где он реально помогает.",
-  infraSub:"GeoEarn использует блокчейн-инфраструктуру избирательно — для задач, которые она решает лучше любой альтернативы: прозрачные микротранзакции, защищённые записи визитов и мгновенный расчёт. Пользователи не обязаны понимать крипту.",
-  infraPt1Title:"Защищённые записи визитов",
-  infraPt1Desc:"Каждый верифицированный чекин логируется неизменно. Бизнесы могут независимо проверить любой платёж — без обращений в поддержку.",
-  infraPt2Title:"Экономично на микромасштабе",
-  infraPt2Desc:"GeoEarn обрабатывает тысячи небольших выплат ежедневно. Расчётный слой делает это за доли цента за транзакцию — награды в $0.50–$5 экономически выгодны даже для малого бизнеса.",
-  infraPt3Title:"Невидим для пользователей",
-  infraPt3Desc:"Пользователи получают награды, бизнесы запускают кампании — без крипто-кошелька и понимания технологии. Продукт создан для массового рынка.",
-  roadmapLabel:"// РОАДМАП",
-  roadmapTitle:"Реальные этапы.<br>Реальный прогресс.",
-  roadmapSub:"Каждый этап привязан к реальному принятию пользователями и выручке бизнеса — не к раундам фандрайзинга.",
-  rm1Title:"MVP и пилот",
-  rm1A:"MVP Telegram Mini App",
-  rm1B:"QR чекин-система запущена",
-  rm1C:"100+ тестовых пользователей",
-  rm1D:"5 пилотных локаций",
-  statusProgress:"● В ПРОЦЕССЕ",
-  rm2Title:"Интеграция расчётного слоя",
-  rm2A:"Онбординг кошелька",
-  rm2B:"Автоматическое распределение наград",
-  rm2C:"Деплой смарт-контракта",
-  rm2D:"Система антифрода v1",
-  statusBuilding:"◐ СТРОИМ",
-  rm3Title:"Первая выручка",
-  rm3A:"1,000+ активных пользователей",
-  rm3B:"25+ платящих бизнес-партнёров",
-  rm3C:"Запуск панели аналитики",
-  rm3D:"Первый ежемесячный MRR",
-  rm4Title:"Масштабирование",
-  rm4A:"10,000+ верифицированных визитов",
-  rm4B:"Расширение на несколько городов",
-  rm4C:"B2B интеграции лояльности",
-  rm4D:"Подготовка к Series A",
-  statusUpcoming:"○ ВПЕРЕДИ",
-  ecosystemLabel:"// ЭКОСИСТЕМА И ПАРТНЁРЫ",
-  builtOn:"Построено на и исследуем партнёрства с",
-  waitlistLabel:"// РАННИЙ ДОСТУП",
-  waitlistTitle:"Присоединиться к листу",
-  waitlistSub:"Будьте в числе первых бизнесов и пользователей после запуска. Ранние партнёры формируют продукт и получают приоритетный доступ к пилоту.",
-  roleUser:"👤 Я пользователь",
-  roleBiz:"🏪 Я бизнес",
-  roleInv:"💼 Я инвестор",
-  joinWaitlistBtn:"Присоединиться →",
-  submitting:"Отправляем...",
-  successTitle:"Вы в списке!",
-  successDesc:"Мы сообщим, когда ваш город выйдет в эфир.",
-  alreadyOn:"Уже <span id='waitlistCountDisplay'>800+</span> человек ждут",
-  ctaLine1:"Превратите пешеходный трафик",
-  ctaLine2:"в измеримую выручку.",
-  ctaSub:"GeoEarn — перформанс-привлечение клиентов для физического мира. Присоединяйтесь к листу ожидания — это займёт меньше минуты.",
-  partnerWithUs:"Стать партнёром",
-  footerDesc:"Маркетплейс привлечения клиентов для офлайн-бизнеса. Бизнес платит за верифицированный визит. Пользователи зарабатывают за посещения.",
-  footerProduct:"Продукт",
-  footerCompany:"Компания",
-  footerGetInTouch:"Связаться",
-  footerCtaTitle:"Готовы начать?",
-  footerCtaSub:"Подпишитесь на лист ожидания и узнайте, когда запустится ваш город.",
-  footerContact:"Написать нам",
-  footerPrivacy:"Политика конфиденциальности",
-  footerTerms:"Условия использования",
-  earlyAccess:"Ранний доступ",
-  launching:"Запускаем приложение..."
-}
-};
-
-let currentLang=localStorage.getItem('geoEarnLang')||'en';
-let selectedRole='user';
-
-function setLang(lang){
-  currentLang=lang;
-  localStorage.setItem('geoEarnLang',lang);
-  document.documentElement.lang=lang;
-  applyTranslations();
-  document.querySelectorAll('.lang-btn').forEach(b=>{
-    const isActive=b.textContent===lang.toUpperCase();
-    b.classList.toggle('active',isActive);
-    b.setAttribute('aria-pressed',isActive);
-  });
-}
-function applyTranslations(){
-  const t=translations[currentLang];
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const key=el.getAttribute('data-i18n');
-    if(t[key]!==undefined) el.innerHTML=t[key];
-  });
-  initRipple();
-  updateCountDisplay();
-}
-
-/* CURSOR */
-const cursorEl=document.getElementById('cursor');
-const cursorRingEl=document.getElementById('cursorRing');
-if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
-  cursorEl.style.display='block';
-  cursorRingEl.style.display='block';
-  let cx=0,cy=0,rx=0,ry=0;
-  document.addEventListener('mousemove',e=>{cx=e.clientX;cy=e.clientY;});
-  (function animCursor(){
-    cursorEl.style.setProperty('--cx',cx+'px');
-    cursorEl.style.setProperty('--cy',cy+'px');
-    rx+=(cx-rx)*.12; ry+=(cy-ry)*.12;
-    cursorRingEl.style.setProperty('--rx',rx+'px');
-    cursorRingEl.style.setProperty('--ry',ry+'px');
-    requestAnimationFrame(animCursor);
-  })();
-}
-
-/* NAV SCROLL */
-const navEl=document.getElementById('nav');
-const stickyCtaEl=document.getElementById('stickyCta');
-const waitlistEl=document.getElementById('waitlist');
-let scrollRAF=false,stickyVisible=false;
-window.addEventListener('scroll',()=>{
-  if(scrollRAF)return;scrollRAF=true;
-  requestAnimationFrame(()=>{
-    const sy=scrollY;
-    navEl.classList.toggle('scrolled',sy>50);
-    if(waitlistEl){
-      const rect=waitlistEl.getBoundingClientRect();
-      const atWaitlist=rect.top<window.innerHeight&&rect.bottom>0;
-      const shouldShow=sy>300&&!atWaitlist;
-      if(shouldShow!==stickyVisible){
-        stickyVisible=shouldShow;
-        stickyCtaEl.classList.toggle('visible',shouldShow);
-        stickyCtaEl.setAttribute('aria-hidden',!shouldShow);
-      }
-    }
-    scrollRAF=false;
-  });
-},{passive:true});
-
-/* HAMBURGER */
-const hamburger=document.getElementById('navHamburger');
-const drawer=document.getElementById('navDrawer');
-hamburger.addEventListener('click',()=>{
-  drawer.classList.add('open');
-  document.body.style.overflow='hidden';
-  hamburger.setAttribute('aria-expanded','true');
-  document.getElementById('navDrawerClose').focus();
+/* Init Lucide */
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.lucide) lucide.createIcons();
 });
-document.getElementById('navDrawerClose').addEventListener('click',closeMobileNav);
-drawer.addEventListener('click',e=>{if(e.target===drawer)closeMobileNav();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drawer.classList.contains('open'))closeMobileNav();});
-function closeMobileNav(){
-  drawer.classList.remove('open');
-  document.body.style.overflow='';
-  hamburger.setAttribute('aria-expanded','false');
+
+/* ── NAV scroll ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+  document.getElementById('stickyCta').classList.toggle('visible', window.scrollY > 600);
+}, { passive: true });
+
+/* ── Drawer ── */
+function openDrawer() {
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('visible');
+  document.getElementById('hamburger').setAttribute('aria-expanded', 'true');
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('visible');
+  document.getElementById('hamburger').setAttribute('aria-expanded', 'false');
 }
 
-/* RIPPLE */
-function initRipple(){
-  document.querySelectorAll('.ripple-container:not([data-ripple])').forEach(el=>{
-    el.setAttribute('data-ripple','1');
-    el.addEventListener('pointerdown',function(e){
-      const rect=this.getBoundingClientRect();
-      const size=Math.max(rect.width,rect.height)*2;
-      const r=document.createElement('span');
-      r.className='ripple';
-      r.style.cssText=`width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;`;
-      this.appendChild(r);
-      setTimeout(()=>r.remove(),700);
-    });
+/* ── Reveal on scroll ── */
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => io.observe(el));
+
+/* ── Stat counters ── */
+function easeOutExpo(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); }
+function animateNum(el, target, suffix, duration) {
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min((now - start) / duration, 1);
+    el.textContent = Math.round(easeOutExpo(t) * target).toLocaleString() + suffix;
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+const statIo = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const el = e.target;
+      const target = parseInt(el.dataset.target, 10);
+      const suffix = el.dataset.suffix || '';
+      animateNum(el, target, suffix, 1200);
+      statIo.unobserve(el);
+    }
   });
-}
-initRipple();
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-target]').forEach(el => statIo.observe(el));
 
-/* TOAST */
+/* ── Lang toggle ── */
+function setLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll(`.lang-btn`).forEach(b => { if (b.textContent.trim().toLowerCase() === lang) b.classList.add('active'); });
+}
+
+/* ── Toast ── */
 let toastTimer;
-function showToast(msg,type='success'){
-  const t=document.getElementById('toast');
-  document.getElementById('toastMsg').textContent=msg;
-  document.getElementById('toastIcon').textContent=type==='success'?'✓':'✕';
-  t.className='toast '+type+' show';
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.style.animation = 'none';
+  t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
+  toastTimer = setTimeout(() => {
+    t.style.transition = 'opacity 180ms var(--ease-in), transform 180ms var(--ease-in)';
+    t.style.opacity = '0';
+    t.style.transform = 'translateY(-8px)';
+    setTimeout(() => {
+      t.classList.remove('show');
+      t.style.transition = '';
+      t.style.opacity = '';
+      t.style.transform = '';
+    }, 200);
+  }, 3000);
 }
 
-/* ROLE TABS */
-function setRole(role){
-  selectedRole=role;
-  ['user','business','investor'].forEach(r=>{
-    const el=document.getElementById('role'+r.charAt(0).toUpperCase()+r.slice(1));
-    if(el){el.classList.toggle('active',r===role);el.setAttribute('aria-pressed',r===role);}
-  });
-}
-
-/* WAITLIST */
-const GOOGLE_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyBAsxr_1EQRz3GAGh4_ba0a7HpQ7x0-ZPI8AyYlF9yGIHRNoc7oWyL9QAYHQvzMnHh/exec';
-const SCRIPT_CONFIGURED=GOOGLE_SCRIPT_URL.includes('/exec');
-
-function getLocalEmails(){try{return JSON.parse(localStorage.getItem('geoEarnWaitlist')||'[]');}catch{return[];}}
-function saveLocalEmail(email){const arr=getLocalEmails();if(!arr.includes(email)){arr.push(email);localStorage.setItem('geoEarnWaitlist',JSON.stringify(arr));}}
-function isEmailLocal(email){return getLocalEmails().includes(email);}
-
-let waitlistCount=parseInt(localStorage.getItem('geoEarnWaitlistCount')||'800');
-function updateCountDisplay(){
-  document.querySelectorAll('#waitlistCountDisplay').forEach(el=>el.textContent=waitlistCount+'+');
-}
-
-async function submitWaitlist(source){
-  const isFooter=source==='footer';
-  const inputEl=document.getElementById(isFooter?'footerWaitlistEmail':'waitlistEmail');
-  if(!inputEl)return;
-  const email=inputEl.value.trim();
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    inputEl.classList.add('error');
-    showToast(currentLang==='ru'?'Введите корректный email':'Please enter a valid email.','error');
-    setTimeout(()=>inputEl.classList.remove('error'),1000);
+/* ── Waitlist ── */
+function submitWaitlist() {
+  const input = document.getElementById('waitlistEmail');
+  const email = input.value.trim();
+  if (!email || !email.includes('@')) {
+    input.style.borderColor = 'var(--danger)';
+    input.focus();
+    setTimeout(() => { input.style.borderColor = ''; }, 2000);
     return;
   }
-  if(isEmailLocal(email)){
-    showToast(currentLang==='ru'?'Вы уже в списке! 🎉':"You're already on the list! 🎉",'success');
-    return;
-  }
-  const btn=isFooter?null:document.getElementById('waitlistBtn');
-  const loadingEl=document.getElementById('waitlistLoading');
-  const errEl=document.getElementById('waitlistErrorMsg');
-  if(btn)btn.disabled=true;
-  if(!isFooter&&loadingEl)loadingEl.classList.add('show');
-  if(errEl)errEl.classList.remove('show');
-  if(SCRIPT_CONFIGURED){
-    try{
-      const fd=new FormData();
-      fd.append('email',email);fd.append('role',selectedRole);
-      fd.append('lang',currentLang);fd.append('source',source);
-      fd.append('timestamp',new Date().toISOString());
-      await fetch(GOOGLE_SCRIPT_URL,{method:'POST',body:fd,mode:'no-cors'});
-    }catch(err){console.warn('GeoEarn: Sheets submission failed, saved locally.',err);}
-  }
-  saveLocalEmail(email);
-  waitlistCount++;
-  localStorage.setItem('geoEarnWaitlistCount',waitlistCount);
-  updateCountDisplay();
-  if(!isFooter&&loadingEl)loadingEl.classList.remove('show');
-  if(isFooter){
-    inputEl.value='';
-    showToast(currentLang==='ru'?'Вы в списке! 🚀':"You're on the list! We'll be in touch 🚀",'success');
-  }else{
-    inputEl.value='';
-    if(btn){
-      btn.textContent=currentLang==='ru'?'Вы в списке! 🎉':"You're In! 🎉";
-      setTimeout(()=>{btn.disabled=false;btn.innerHTML=`<span data-i18n="joinWaitlistBtn">${translations[currentLang].joinWaitlistBtn}</span>`;},4000);
-    }
-    document.getElementById('waitlistSuccess').classList.add('show');
-  }
+  document.getElementById('waitlistForm').style.display = 'none';
+  document.getElementById('waitlistSuccess').classList.add('show');
+  if (window.lucide) lucide.createIcons();
+  showToast('You\'re on the list!');
 }
 
-document.getElementById('waitlistEmail').addEventListener('keydown',e=>{if(e.key==='Enter')submitWaitlist('main');});
-
-/* OPEN APP */
-function openApp(e){
-  if(e)e.preventDefault();
-  const overlay=document.getElementById('appOverlay');
-  const progress=document.getElementById('appProgress');
-  overlay.classList.add('active');
-  overlay.removeAttribute('aria-hidden');
-  requestAnimationFrame(()=>{
-    progress.style.width='70%';
-    setTimeout(()=>{progress.style.width='100%';},500);
-    setTimeout(()=>{window.location.href='https://t.me/GeoEarnBot';},900);
-  });
-}
-
-/* BG CANVAS */
-const bgC=document.getElementById('bg-canvas');
-const bgCtx=bgC.getContext('2d');
-let bgPaused=false;
-document.addEventListener('visibilitychange',()=>{bgPaused=document.hidden;});
-function resizeBg(){bgC.width=innerWidth;bgC.height=innerHeight;}
-resizeBg();
-let resizeTimer;
-window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(resizeBg,150);});
-const PT_COUNT=window.innerWidth<768?40:80;
-const pts=Array.from({length:PT_COUNT},()=>({
-  x:Math.random()*innerWidth,y:Math.random()*innerHeight,
-  r:Math.random()*1.4+.3,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28,
-  alpha:Math.random()*.5+.1,
-  color:['#06b6d4','#7c3aed','#ec4899','#10b981'][Math.floor(Math.random()*4)]
-}));
-(function drawBg(){
-  if(!bgPaused){
-    bgCtx.clearRect(0,0,bgC.width,bgC.height);
-    if(window.innerWidth>=768){
-      for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
-        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
-        if(d<120){bgCtx.beginPath();bgCtx.strokeStyle=`rgba(124,58,237,${.055*(1-d/120)})`;bgCtx.lineWidth=.5;bgCtx.moveTo(pts[i].x,pts[i].y);bgCtx.lineTo(pts[j].x,pts[j].y);bgCtx.stroke();}
-      }
-    }
-    pts.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0)p.x=bgC.width;if(p.x>bgC.width)p.x=0;
-      if(p.y<0)p.y=bgC.height;if(p.y>bgC.height)p.y=0;
-      bgCtx.beginPath();bgCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      bgCtx.fillStyle=p.color+Math.floor(p.alpha*255).toString(16).padStart(2,'0');
-      bgCtx.fill();
-    });
-  }
-  requestAnimationFrame(drawBg);
-})();
-
-/* GEO CANVAS */
-const gc=document.getElementById('geo-canvas');
-if(gc){
-  const gctx=gc.getContext('2d');
-  function resizeGeo(){gc.width=gc.offsetWidth;gc.height=gc.offsetHeight;}
-  resizeGeo();
-  window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(resizeGeo,150);});
-  const W=()=>gc.width,H=()=>gc.height;
-  const pinDefs=()=>[
-    {x:W()*.25,y:H()*.3,label:'Café',color:'#06b6d4'},
-    {x:W()*.62,y:H()*.22,label:'Gym',color:'#a855f7'},
-    {x:W()*.75,y:H()*.55,label:'Store',color:'#10b981'},
-    {x:W()*.3,y:H()*.68,label:'Bar',color:'#ec4899'},
-    {x:W()*.52,y:H()*.65,label:'Market',color:'#f59e0b'},
-  ];
-  let pins=pinDefs();
-  let users=pins.map(p=>({sx:Math.random()*W(),sy:Math.random()*H(),tx:p.x,ty:p.y,color:p.color,t:Math.random()*.5,speed:.0025+Math.random()*.002,rewardAlpha:0}));
-  window.addEventListener('resize',()=>{pins=pinDefs();});
-  (function drawGeo(){
-    if(!bgPaused){
-      gctx.clearRect(0,0,W(),H());
-      gctx.strokeStyle='rgba(6,182,212,0.03)';gctx.lineWidth=1;
-      for(let x=0;x<W();x+=36){gctx.beginPath();gctx.moveTo(x,0);gctx.lineTo(x,H());gctx.stroke();}
-      for(let y=0;y<H();y+=36){gctx.beginPath();gctx.moveTo(0,y);gctx.lineTo(W(),y);gctx.stroke();}
-      pins.forEach(p=>{
-        const rg=gctx.createRadialGradient(p.x,p.y,0,p.x,p.y,52);
-        rg.addColorStop(0,p.color+'1A');rg.addColorStop(1,'transparent');
-        gctx.beginPath();gctx.arc(p.x,p.y,52,0,Math.PI*2);gctx.fillStyle=rg;gctx.fill();
-        gctx.beginPath();gctx.arc(p.x,p.y,7,0,Math.PI*2);gctx.fillStyle=p.color;gctx.fill();
-        gctx.fillStyle='rgba(248,250,252,0.5)';gctx.font='11px DM Sans';gctx.textAlign='center';
-        gctx.fillText(p.label,p.x,p.y-16);
-      });
-      users.forEach(u=>{
-        u.t+=u.speed;
-        if(u.t>=1){u.t=0;u.sx=u.tx;u.sy=u.ty;const np=pins[Math.floor(Math.random()*pins.length)];u.tx=np.x;u.ty=np.y;u.color=np.color;u.rewardAlpha=1;}
-        const ef=1-Math.pow(1-Math.min(u.t,1),3);
-        const ux=u.sx+(u.tx-u.sx)*ef,uy=u.sy+(u.ty-u.sy)*ef;
-        const dg=gctx.createRadialGradient(ux,uy,0,ux,uy,6);
-        dg.addColorStop(0,u.color+'ff');dg.addColorStop(1,'transparent');
-        gctx.beginPath();gctx.arc(ux,uy,6,0,Math.PI*2);gctx.fillStyle=dg;gctx.fill();
-        if(u.rewardAlpha>0){
-          gctx.fillStyle=`rgba(16,185,129,${u.rewardAlpha})`;
-          gctx.font='bold 11px Space Mono';gctx.textAlign='center';
-          gctx.fillText('+reward',u.tx,u.ty-26-(1-u.rewardAlpha)*16);
-          u.rewardAlpha=Math.max(0,u.rewardAlpha-.014);
-        }
-      });
-    }
-    requestAnimationFrame(drawGeo);
-  })();
-}
-
-/* NETWORK CANVAS */
-const nc=document.getElementById('network-canvas');
-if(nc){
-  const nctx=nc.getContext('2d');
-  function resizeNet(){nc.width=nc.offsetWidth;nc.height=nc.offsetHeight;}
-  resizeNet();
-  window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(resizeNet,150);});
-  const nodes=Array.from({length:18},()=>({
-    x:60+Math.random()*(nc.width-120),y:60+Math.random()*(nc.height-120),
-    r:Math.random()*5+3,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,
-    pulse:Math.random()*Math.PI*2,
-    color:['#06b6d4','#7c3aed','#10b981'][Math.floor(Math.random()*3)]
-  }));
-  const pkts=[];
-  setInterval(()=>{
-    if(bgPaused)return;
-    const a=nodes[Math.floor(Math.random()*nodes.length)],b=nodes[Math.floor(Math.random()*nodes.length)];
-    if(a!==b)pkts.push({ax:a.x,ay:a.y,bx:b.x,by:b.y,t:0,color:a.color});
-  },280);
-  (function drawNet(){
-    if(!bgPaused){
-      nctx.clearRect(0,0,nc.width,nc.height);
-      nodes.forEach((n,i)=>nodes.slice(i+1).forEach(m=>{
-        const d=Math.hypot(n.x-m.x,n.y-m.y);
-        if(d<170){nctx.beginPath();nctx.strokeStyle=`rgba(124,58,237,${.13*(1-d/170)})`;nctx.lineWidth=.8;nctx.moveTo(n.x,n.y);nctx.lineTo(m.x,m.y);nctx.stroke();}
-      }));
-      for(let i=pkts.length-1;i>=0;i--){
-        const p=pkts[i];p.t+=.022;if(p.t>1){pkts.splice(i,1);continue;}
-        const px=p.ax+(p.bx-p.ax)*p.t,py=p.ay+(p.by-p.ay)*p.t;
-        const g=nctx.createRadialGradient(px,py,0,px,py,7);
-        g.addColorStop(0,p.color+'ff');g.addColorStop(1,'transparent');
-        nctx.beginPath();nctx.arc(px,py,7,0,Math.PI*2);nctx.fillStyle=g;nctx.fill();
-      }
-      nodes.forEach(n=>{
-        n.x+=n.vx;n.y+=n.vy;n.pulse+=.04;
-        if(n.x<n.r||n.x>nc.width-n.r)n.vx*=-1;
-        if(n.y<n.r||n.y>nc.height-n.r)n.vy*=-1;
-        const ps=Math.sin(n.pulse)*3;
-        const glow=nctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*4+ps);
-        glow.addColorStop(0,n.color+'50');glow.addColorStop(1,'transparent');
-        nctx.beginPath();nctx.arc(n.x,n.y,n.r*4+ps,0,Math.PI*2);nctx.fillStyle=glow;nctx.fill();
-        nctx.beginPath();nctx.arc(n.x,n.y,n.r,0,Math.PI*2);nctx.fillStyle=n.color;nctx.fill();
-      });
-    }
-    requestAnimationFrame(drawNet);
-  })();
-}
-
-/* INTERSECTION OBSERVERS */
-const revObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revObs.unobserve(e.target);}});
-},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
-document.querySelectorAll('.reveal,.feat-card,.timeline-node').forEach(el=>revObs.observe(el));
-
-function animCounter(el){
-  const target=parseInt(el.dataset.target),suffix=el.dataset.suffix||'';
-  const start=performance.now(),dur=2000;
-  (function u(now){
-    const p=Math.min((now-start)/dur,1),ease=1-Math.pow(1-p,3),cur=Math.floor(ease*target);
-    el.textContent=target>=1000?(cur/1000).toFixed(cur<1000?1:0)+'k'+suffix:cur+suffix;
-    if(p<1)requestAnimationFrame(u);
-    else el.textContent=target>=1000?(target/1000).toFixed(0)+'k'+suffix:target+suffix;
-  })(start);
-}
-const cntObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting){animCounter(e.target);cntObs.unobserve(e.target);}});
-},{threshold:.5});
-document.querySelectorAll('.stat-number[data-target]').forEach(el=>cntObs.observe(el));
-
-const tlObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting){document.getElementById('timelineProgress').style.width='28%';tlObs.unobserve(e.target);}});
-},{threshold:.3});
-const tlS=document.querySelector('.roadmap-section');if(tlS)tlObs.observe(tlS);
-
-/* TOUCH FEEDBACK */
-document.querySelectorAll('.sol-point,.rm-card,.feat-card,.market-card,.uc-card').forEach(el=>{
-  el.addEventListener('touchstart',()=>{el.style.scale='.98';},{passive:true});
-  el.addEventListener('touchend',()=>{el.style.scale='';},{passive:true});
-  el.addEventListener('touchcancel',()=>{el.style.scale='';},{passive:true});
+/* Enter on waitlist input */
+document.getElementById('waitlistEmail').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitWaitlist();
 });
-
-/* INIT */
-setLang(currentLang);
 </script>
 </body>
 </html>
