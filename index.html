@@ -845,12 +845,12 @@ footer {
     <i data-lucide="x"></i>
   </button>
   <div class="drawer-links">
-    <a href="#how" onclick="closeDrawer()">How It Works</a>
-    <a href="#features" onclick="closeDrawer()">Product</a>
-    <a href="#market" onclick="closeDrawer()">Market</a>
-    <a href="#infra" onclick="closeDrawer()">Infrastructure</a>
-    <a href="#roadmap" onclick="closeDrawer()">Roadmap</a>
-    <a href="#waitlist" onclick="closeDrawer()" style="color:var(--geo)">Join Waitlist</a>
+    <a href="#how" onclick="closeDrawer()"><span data-en="How It Works" data-ru="Как это работает">How It Works</span></a>
+    <a href="#features" onclick="closeDrawer()"><span data-en="Product" data-ru="Продукт"><span data-en="Product" data-ru="Продукт">Product</span></span></a>
+    <a href="#market" onclick="closeDrawer()"><span data-en="Market" data-ru="Рынок">Market</span></a>
+    <a href="#infra" onclick="closeDrawer()"><span data-en="Infrastructure" data-ru="Инфраструктура">Infrastructure</span></a>
+    <a href="#roadmap" onclick="closeDrawer()"><span data-en="Roadmap" data-ru="Дорожная карта">Roadmap</span></a>
+    <a href="#waitlist" onclick="closeDrawer()" style="color:var(--geo)"><span data-en="Join Waitlist" data-ru="Ранний доступ">Join Waitlist</span></a>
   </div>
 </nav>
 
@@ -865,11 +865,11 @@ footer {
     </a>
 
     <ul class="nav-links" role="list">
-      <li><a href="#how">How It Works</a></li>
-      <li><a href="#features">Product</a></li>
-      <li><a href="#market">Market</a></li>
-      <li><a href="#infra">Infrastructure</a></li>
-      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#how"><span data-en="How It Works" data-ru="Как это работает">How It Works</span></a></li>
+      <li><a href="#features"><span data-en="Product" data-ru="Продукт">Product</span></a></li>
+      <li><a href="#market"><span data-en="Market" data-ru="Рынок">Market</span></a></li>
+      <li><a href="#infra"><span data-en="Infrastructure" data-ru="Инфраструктура">Infrastructure</span></a></li>
+      <li><a href="#roadmap"><span data-en="Roadmap" data-ru="Дорожная карта">Roadmap</span></a></li>
     </ul>
 
     <div class="nav-right">
@@ -885,7 +885,9 @@ footer {
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </a>
       </div>
-      <a href="#waitlist" class="btn btn-primary" style="padding:10px 18px;font-size:14px">Join Waitlist</a>
+      <!-- ████ BOT LINK — ВСТАВЬ ССЫЛКУ НА БОТА СЮДА (nav) ████ -->
+      <a href="https://t.me/GeoEarnBot" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding:10px 18px;font-size:14px" id="nav-app-btn">Open App</a>
+      <a href="#waitlist" class="btn btn-secondary" style="padding:10px 18px;font-size:14px" id="nav-waitlist-btn"><span data-en="Join Waitlist" data-ru="Ранний доступ">Join Waitlist</span></a>
       <button class="hamburger" id="hamburger" onclick="openDrawer()" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -901,40 +903,41 @@ footer {
     <div class="hero-left">
       <div class="hero-badge">
         <div class="live-dot" aria-hidden="true"></div>
-        Pilot Program — Q3 2026 · 3 Cities
+        <span data-en="Pilot Program — Q3 2026 · 3 Cities" data-ru="Пилотная программа — Q3 2026 · 3 города">Pilot Program — Q3 2026 · 3 Cities</span>
       </div>
 
       <h1 class="hero-title">
-        Real Customers.<br><em>Verified. Rewarded.</em>
+        <span data-en="Real Customers." data-ru="Реальные клиенты.">Real Customers.</span><br><em><span data-en="Verified. Rewarded." data-ru="Подтверждённые. Вознаграждённые.">Verified. Rewarded.</span></em>
       </h1>
 
       <p class="hero-sub">
-        GeoEarn is a <strong>performance-based marketplace for real-world customer acquisition.</strong>
-        Businesses pay only for verified visits. Users earn for showing up.
+        <span data-en="GeoEarn is a" data-ru="GeoEarn — это">GeoEarn is a</span> <strong><span data-en="performance-based marketplace for real-world customer acquisition." data-ru="маркетплейс привлечения клиентов с оплатой за результат в физическом мире.">performance-based marketplace for real-world customer acquisition.</span></strong>
+        <span data-en="Businesses pay only for verified visits. Users earn for showing up." data-ru="Бизнес платит только за подтверждённые визиты. Пользователи зарабатывают за посещения.">Businesses pay only for verified visits. Users earn for showing up.</span>
       </p>
 
       <div class="hero-positioning">
         <i data-lucide="info" style="color:var(--geo);width:16px;height:16px;stroke-width:2;flex-shrink:0;margin-top:2px"></i>
-        <p>This is not a rewards app. This is <strong>pay-per-visit infrastructure</strong> for physical businesses — built to work the same way performance advertising does online, but for foot traffic.</p>
+        <p><span data-en="This is not a rewards app. This is" data-ru="Это не приложение для наград. Это">This is not a rewards app. This is</span> <strong><span data-en="pay-per-visit infrastructure" data-ru="инфраструктура оплаты за визит">pay-per-visit infrastructure</span></strong> <span data-en="for physical businesses — built to work the same way performance advertising does online, but for foot traffic." data-ru="для физического бизнеса — работает так же, как перформанс-реклама онлайн, но для трафика посетителей.">for physical businesses — built to work the same way performance advertising does online, but for foot traffic.</span></p>
       </div>
 
       <div class="hero-actions">
-        <a href="#waitlist" class="btn btn-primary">
-          <i data-lucide="arrow-right"></i>
-          Join Early Access
+        <!-- ████ BOT LINK — ВСТАВЬ ССЫЛКУ НА БОТА СЮДА (hero) ████ -->
+        <a href="https://t.me/YOUR_BOT_LINK_HERE" target="_blank" rel="noopener noreferrer" class="btn btn-primary" id="hero-app-btn">
+          <i data-lucide="send"></i>
+          <span data-en="Open App" data-ru="Открыть приложение">Open App</span>
         </a>
-        <a href="#how" class="btn btn-secondary">How It Works</a>
-        <a href="#features" class="btn btn-ghost">For Businesses</a>
+        <a href="#waitlist" class="btn btn-secondary" id="hero-waitlist-btn"><span data-en="Join Early Access" data-ru="Ранний доступ">Join Early Access</span></a>
+        <a href="#how" class="btn btn-ghost"><span data-en="How It Works" data-ru="Как это работает">How It Works</span></a>
       </div>
     </div>
 
     <div class="hero-right" aria-label="Money flow diagram">
       <div class="money-flow-card">
         <div class="mf-title-row">
-          <span class="mf-title">How money flows</span>
+          <span class="mf-title"><span data-en="How money flows" data-ru="Как движутся деньги">How money flows</span></span>
           <span class="pill pill-geo">
             <div class="live-dot" style="width:5px;height:5px;margin:0"></div>
-            Live
+            <span data-en="Live" data-ru="Онлайн">Live</span>
           </span>
         </div>
         <div class="mf-flow">
@@ -942,45 +945,45 @@ footer {
             <div class="mf-node-icon ico-info" style="width:52px;height:52px;border-radius:16px">
               <i data-lucide="building-2" style="width:22px;height:22px;stroke-width:1.5;color:var(--info)"></i>
             </div>
-            <div class="mf-node-label">Business</div>
+            <div class="mf-node-label"><span data-en="Business" data-ru="Бизнес">Business</span></div>
             <div class="mf-node-desc">Sets visit<br>budget</div>
           </div>
           <div class="mf-arrow">
             <div class="mf-arrow-line"></div>
-            <div class="mf-arrow-label">per visit</div>
+            <div class="mf-arrow-label"><span data-en="per visit" data-ru="за визит">per visit</span></div>
           </div>
           <div class="mf-node">
             <div class="mf-node-icon" style="background:var(--bg-raised);border:0.5px solid var(--border-default);width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center">
               <i data-lucide="shield-check" style="width:22px;height:22px;stroke-width:1.5;color:var(--text-secondary)"></i>
             </div>
-            <div class="mf-node-label">GeoEarn</div>
+            <div class="mf-node-label"><span data-en="GeoEarn" data-ru="GeoEarn">GeoEarn</span></div>
             <div class="mf-node-desc">Verifies<br>&amp; routes</div>
           </div>
           <div class="mf-arrow">
             <div class="mf-arrow-line"></div>
             <div class="mf-arrow-amount">+GEO</div>
-            <div class="mf-arrow-label">instantly</div>
+            <div class="mf-arrow-label"><span data-en="instantly" data-ru="мгновенно">instantly</span></div>
           </div>
           <div class="mf-node">
             <div class="mf-node-icon ico-geo" style="width:52px;height:52px;border-radius:16px">
               <i data-lucide="user" style="width:22px;height:22px;stroke-width:1.5;color:var(--geo)"></i>
             </div>
-            <div class="mf-node-label">User</div>
+            <div class="mf-node-label"><span data-en="User" data-ru="Пользователь">User</span></div>
             <div class="mf-node-desc">Earns<br>reward</div>
           </div>
         </div>
         <div class="mf-stats">
           <div class="mf-stat">
             <div class="mf-stat-val geo">800+</div>
-            <div class="mf-stat-label">Waitlist</div>
+            <div class="mf-stat-label"><span data-en="Waitlist" data-ru="Лист ожидания">Waitlist</span></div>
           </div>
           <div class="mf-stat">
             <div class="mf-stat-val">23</div>
-            <div class="mf-stat-label">Businesses</div>
+            <div class="mf-stat-label"><span data-en="Businesses" data-ru="Бизнесов">Businesses</span></div>
           </div>
           <div class="mf-stat">
             <div class="mf-stat-val">91%</div>
-            <div class="mf-stat-label">Anti-fraud</div>
+            <div class="mf-stat-label"><span data-en="Anti-fraud" data-ru="Антифрод">Anti-fraud</span></div>
           </div>
         </div>
       </div>
@@ -993,23 +996,23 @@ footer {
   <div class="stats-inner">
     <div class="stat-item reveal">
       <div class="stat-num" data-target="800" data-suffix="+">0+</div>
-      <div class="stat-label">Waitlist Signups</div>
-      <div class="stat-note">and growing daily</div>
+      <div class="stat-label"><span data-en="Waitlist Signups" data-ru="Подписок в листе ожидания">Waitlist Signups</span></div>
+      <div class="stat-note"><span data-en="and growing daily" data-ru="и растёт каждый день">and growing daily</span></div>
     </div>
     <div class="stat-item reveal reveal-delay-1">
       <div class="stat-num" data-target="23" data-suffix="">0</div>
-      <div class="stat-label">Interested Businesses</div>
-      <div class="stat-note">across 3 cities</div>
+      <div class="stat-label"><span data-en="Interested Businesses" data-ru="Заинтересованных бизнесов">Interested Businesses</span></div>
+      <div class="stat-note"><span data-en="across <span data-en="3 cities" data-ru="3 города">3 cities</span>" data-ru="в 3 городах">across 3 cities</span></div>
     </div>
     <div class="stat-item reveal reveal-delay-2">
       <div class="stat-num" data-target="2100" data-suffix="+">0+</div>
-      <div class="stat-label">Simulated Visits Validated</div>
-      <div class="stat-note">pilot environment</div>
+      <div class="stat-label"><span data-en="Simulated Visits Validated" data-ru="Симулированных визитов проверено">Simulated Visits Validated</span></div>
+      <div class="stat-note"><span data-en="pilot environment" data-ru="пилотная среда">pilot environment</span></div>
     </div>
     <div class="stat-item reveal reveal-delay-3">
       <div class="stat-num" data-target="91" data-suffix="%">0%</div>
-      <div class="stat-label">Anti-Fraud Accuracy</div>
-      <div class="stat-note">pilot simulations</div>
+      <div class="stat-label"><span data-en="Anti-Fraud Accuracy" data-ru="Точность антифрода">Anti-Fraud Accuracy</span></div>
+      <div class="stat-note"><span data-en="pilot simulations" data-ru="пилотные симуляции">pilot simulations</span></div>
     </div>
   </div>
 </section>
@@ -1021,45 +1024,45 @@ footer {
     <div>
       <div class="section-header">
         <span class="label-sm reveal">How It Works</span>
-        <h2 class="title-section reveal reveal-delay-1" id="how-title">Foot traffic as a measurable channel.</h2>
-        <p class="body-lg reveal reveal-delay-2" style="margin-top:14px">GeoEarn gives businesses the same accountability they get from digital ads — but for offline visits. Pay per result. Measure everything.</p>
+        <h2 class="title-section reveal reveal-delay-1" id="how-title"><span data-en="Foot traffic as a measurable channel." data-ru="Трафик посетителей как измеримый канал.">Foot traffic as a measurable channel.</span></h2>
+        <p class="body-lg reveal reveal-delay-2" style="margin-top:14px"><span data-en="GeoEarn gives businesses the same accountability they get from digital ads — but for offline visits. Pay per result. Measure everything." data-ru="GeoEarn даёт бизнесу ту же измеримость, что и цифровая реклама — но для офлайн-визитов. Платите за результат. Измеряйте всё.">GeoEarn gives businesses the same accountability they get from digital ads — but for offline visits. Pay per result. Measure everything.</span></p>
       </div>
       <div class="how-steps">
         <div class="how-step reveal reveal-delay-1">
           <div class="how-step-num">1</div>
           <div class="how-step-content">
-            <div class="how-step-title">Discover Nearby Campaigns</div>
-            <div class="how-step-desc">Users open the GeoEarn Telegram Mini App and browse active campaigns nearby. Cafés, gyms, retail stores — any physical location can run a campaign with a set cost-per-visit budget.</div>
+            <div class="how-step-title"><span data-en="Discover Nearby Campaigns" data-ru="Найти кампании рядом">Discover Nearby Campaigns</span></div>
+            <div class="how-step-desc">Users open the GeoEarn <span data-en="Telegram Mini App" data-ru="Telegram Mini App">Telegram Mini App</span> and browse active campaigns nearby. Cafés, gyms, retail stores — any physical location can run a campaign with a set cost-per-visit budget.</div>
           </div>
         </div>
         <div class="how-step reveal reveal-delay-2">
           <div class="how-step-num">2</div>
           <div class="how-step-content">
-            <div class="how-step-title">Walk In &amp; Check In</div>
-            <div class="how-step-desc">The user arrives and scans the QR code on-site. GPS location is cross-checked with the business address and the user's visit history to confirm the visit is genuine.</div>
+            <div class="how-step-title"><span data-en="Walk In &amp; Check In" data-ru="Зайдите и отметьтесь">Walk In &amp; Check In</span></div>
+            <div class="how-step-desc"><span data-en="The user arrives and scans the QR code on-site. GPS location is cross-checked with the business address and the user's visit history to confirm the visit is genuine." data-ru="Пользователь приходит и сканирует QR-код на месте. GPS-локация сверяется с адресом бизнеса и историей визитов пользователя для подтверждения подлинности визита.">The user arrives and scans the QR code on-site. GPS location is cross-checked with the business address and the user's visit history to confirm the visit is genuine.</span></div>
           </div>
         </div>
         <div class="how-step reveal reveal-delay-3">
           <div class="how-step-num">3</div>
           <div class="how-step-content">
-            <div class="how-step-title">Instant Verified Reward</div>
-            <div class="how-step-desc">Once verified, GEO coins land in the user's wallet within seconds. The business is charged only for that one confirmed visit — every transaction logged transparently.</div>
+            <div class="how-step-title"><span data-en="Instant Verified Reward" data-ru="Мгновенное подтверждённое вознаграждение">Instant Verified Reward</span></div>
+            <div class="how-step-desc"><span data-en="Once verified, GEO coins land in the user's wallet within seconds. The business is charged only for that one confirmed visit — every transaction logged transparently." data-ru="После верификации GEO-монеты поступают в кошелёк пользователя за секунды. С бизнеса списывается только за этот подтверждённый визит — каждая транзакция прозрачно логируется.">Once verified, GEO coins land in the user's wallet within seconds. The business is charged only for that one confirmed visit — every transaction logged transparently.</span></div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="verify-diagram reveal reveal-delay-2" aria-label="Verification flow">
-      <div class="vd-title">Verification layers</div>
-      <div class="vd-sub">Every check-in passes three independent checks</div>
+      <div class="vd-title"><span data-en="Verification layers" data-ru="Уровни верификации">Verification layers</span></div>
+      <div class="vd-sub"><span data-en="Every check-in passes three independent checks" data-ru="Каждый чекин проходит три независимые проверки">Every check-in passes three independent checks</span></div>
 
       <div class="vd-step">
         <div class="vd-step-icon ico-info">
           <i data-lucide="scan-qr-code" style="color:var(--info)"></i>
         </div>
         <div>
-          <div class="vd-step-label">QR scan confirmed</div>
-          <div class="vd-step-detail">Unique token per campaign · tamper-proof</div>
+          <div class="vd-step-label"><span data-en="QR scan confirmed" data-ru="QR-скан подтверждён">QR scan confirmed</span></div>
+          <div class="vd-step-detail"><span data-en="Unique token per campaign · tamper-proof" data-ru="Уникальный токен на кампанию · защита от подделки">Unique token per campaign · tamper-proof</span></div>
         </div>
       </div>
       <div class="vd-connector"></div>
@@ -1068,8 +1071,8 @@ footer {
           <i data-lucide="map-pin" style="color:var(--warning)"></i>
         </div>
         <div>
-          <div class="vd-step-label">GPS geofence passed</div>
-          <div class="vd-step-detail">Within 150 m of business location</div>
+          <div class="vd-step-label"><span data-en="GPS geofence passed" data-ru="GPS-геофенс пройден">GPS geofence passed</span></div>
+          <div class="vd-step-detail"><span data-en="Within 150 m of business location" data-ru="В радиусе 150 м от точки бизнеса">Within 150 m of business location</span></div>
         </div>
       </div>
       <div class="vd-connector"></div>
@@ -1078,14 +1081,14 @@ footer {
           <i data-lucide="shield-check" style="color:var(--success)"></i>
         </div>
         <div>
-          <div class="vd-step-label">Anti-fraud cleared</div>
-          <div class="vd-step-detail">No repeat visit in 24 h · device verified</div>
+          <div class="vd-step-label"><span data-en="Anti-fraud cleared" data-ru="Антифрод пройден">Anti-fraud cleared</span></div>
+          <div class="vd-step-detail"><span data-en="No repeat visit in 24 h · device verified" data-ru="Нет повторного визита за 24 ч · устройство проверено">No repeat visit in 24 h · device verified</span></div>
         </div>
       </div>
       <div class="vd-result">
         <div>
-          <div class="vd-step-label">Reward released</div>
-          <div class="vd-step-detail">Instant · no disputes</div>
+          <div class="vd-step-label"><span data-en="Reward released" data-ru="Награда выдана">Reward released</span></div>
+          <div class="vd-step-detail"><span data-en="Instant · no disputes" data-ru="Мгновенно · без споров">Instant · no disputes</span></div>
         </div>
         <div class="vdr-amount">+ GEO</div>
       </div>
@@ -1098,54 +1101,54 @@ footer {
 <section class="features-section" id="features" aria-labelledby="features-title">
   <div class="features-header">
     <span class="label-sm reveal">Product</span>
-    <h2 class="title-section reveal reveal-delay-1" id="features-title" style="margin-top:14px">Built for businesses,<br>not crypto users.</h2>
-    <p class="body-lg reveal reveal-delay-2" style="margin-top:14px;max-width:600px">GeoEarn works as a straightforward business tool. Blockchain infrastructure runs quietly in the background — merchants and users don't need to understand it.</p>
+    <h2 class="title-section reveal reveal-delay-1" id="features-title" style="margin-top:14px"><span data-en="Built for businesses," data-ru="Создано для бизнеса,">Built for businesses,</span><br><span data-en="not crypto users." data-ru="не для крипто-юзеров.">not crypto users.</span></h2>
+    <p class="body-lg reveal reveal-delay-2" style="margin-top:14px;max-width:600px"><span data-en="GeoEarn works as a straightforward business tool. Blockchain infrastructure runs quietly in the background — merchants and users don't need to understand it." data-ru="GeoEarn работает как простой бизнес-инструмент. Блокчейн-инфраструктура работает незаметно на фоне — продавцы и пользователи не обязаны в ней разбираться.">GeoEarn works as a straightforward business tool. Blockchain infrastructure runs quietly in the background — merchants and users don't need to understand it.</span></p>
   </div>
 
   <div class="features-grid">
     <article class="feat-card wide reveal">
       <div class="ico-wrap ico-info"><i data-lucide="locate"></i></div>
       <div class="feat-card-body">
-        <div class="feat-card-title">Verified Visit Engine</div>
-        <div class="feat-card-desc">A multi-layer verification system combining GPS geofencing, QR scan confirmation, and visit history scoring. Every check-in is independently auditable — businesses are never charged for a visit that didn't happen.</div>
+        <div class="feat-card-title"><span data-en="Verified Visit Engine" data-ru="Движок верификации визитов">Verified Visit Engine</span></div>
+        <div class="feat-card-desc"><span data-en="A multi-layer verification system combining GPS geofencing, QR scan confirmation, and visit history scoring. Every check-in is independently auditable — businesses are never charged for a visit that didn't happen." data-ru="Многоуровневая система верификации, объединяющая GPS-геофенсинг, подтверждение QR-скана и оценку истории визитов. Каждый чекин можно проверить независимо — бизнес никогда не платит за несостоявшийся визит.">A multi-layer verification system combining GPS geofencing, QR scan confirmation, and visit history scoring. Every check-in is independently auditable — businesses are never charged for a visit that didn't happen.</span></div>
       </div>
-      <div class="feat-tag">GPS + QR + Visit History Scoring</div>
+      <div class="feat-tag"><span data-en="GPS + QR + Visit History Scoring" data-ru="GPS + QR + оценка истории визитов">GPS + QR + Visit History Scoring</span></div>
     </article>
 
     <article class="feat-card reveal reveal-delay-1">
       <div class="ico-wrap ico-geo"><i data-lucide="zap"></i></div>
       <div class="feat-card-body">
-        <div class="feat-card-title">Instant Rewards</div>
-        <div class="feat-card-desc">Users receive GEO within seconds of a verified check-in — no waiting period, no minimum balance, no voucher to redeem later.</div>
+        <div class="feat-card-title"><span data-en="Instant Rewards" data-ru="Мгновенные награды">Instant Rewards</span></div>
+        <div class="feat-card-desc"><span data-en="Users receive GEO within seconds of a verified check-in — no waiting period, no minimum balance, no voucher to redeem later." data-ru="Пользователи получают GEO через секунды после подтверждённого чекина — без периода ожидания, без минимального баланса, без ваучеров на потом.">Users receive GEO within seconds of a verified check-in — no waiting period, no minimum balance, no voucher to redeem later.</span></div>
       </div>
-      <div class="feat-tag">Instant Settlement</div>
+      <div class="feat-tag"><span data-en="Instant Settlement" data-ru="Мгновенный расчёт">Instant Settlement</span></div>
     </article>
 
     <article class="feat-card reveal reveal-delay-2">
       <div class="ico-wrap ico-muted"><i data-lucide="store"></i></div>
       <div class="feat-card-body">
-        <div class="feat-card-title">Campaign Manager</div>
-        <div class="feat-card-desc">Set a cost-per-visit budget, define a geo-zone, and go live in minutes. Pause, adjust, or end campaigns at any time. Pay only when a verified customer walks in.</div>
+        <div class="feat-card-title"><span data-en="Campaign Manager" data-ru="Менеджер кампаний">Campaign Manager</span></div>
+        <div class="feat-card-desc"><span data-en="Set a cost-per-visit budget, define a geo-zone, and go live in minutes. Pause, adjust, or end campaigns at any time. Pay only when a verified customer walks in." data-ru="Задайте бюджет за визит, определите геозону и запустите кампанию за минуты. Приостанавливайте, корректируйте или завершайте кампании в любое время. Платите только когда подтверждённый клиент зашёл.">Set a cost-per-visit budget, define a geo-zone, and go live in minutes. Pause, adjust, or end campaigns at any time. Pay only when a verified customer walks in.</span></div>
       </div>
-      <div class="feat-tag">Pay Per Verified Visit</div>
+      <div class="feat-tag"><span data-en="Pay Per Verified Visit" data-ru="Оплата за подтверждённый визит">Pay Per Verified Visit</span></div>
     </article>
 
     <article class="feat-card wide reveal reveal-delay-1">
       <div class="ico-wrap ico-warn"><i data-lucide="layers"></i></div>
       <div class="feat-card-body">
-        <div class="feat-card-title">Transparent Settlement Layer</div>
-        <div class="feat-card-desc">GeoEarn uses blockchain infrastructure for settlement — not because it's trendy, but because it solves a specific problem: microtransaction settlement at scale with full auditability. At fractions of a cent per transaction, every reward payout is economically viable and every charge is verifiable by the merchant independently.</div>
+        <div class="feat-card-title"><span data-en="Transparent Settlement Layer" data-ru="Прозрачный расчётный слой">Transparent Settlement Layer</span></div>
+        <div class="feat-card-desc"><span data-en="GeoEarn uses blockchain infrastructure for settlement — not because it's trendy, but because it solves a specific problem: microtransaction settlement at scale with full auditability. At fractions of a cent per transaction, every reward payout is economically viable and every charge is verifiable by the merchant independently." data-ru="GeoEarn использует блокчейн-инфраструктуру для расчётов — не потому что это модно, а потому что это решает конкретную задачу: масштабируемые микроплатежи с полной прозрачностью. При стоимости долей цента за транзакцию каждая выплата экономически оправдана, а каждая операция проверяема мерчантом самостоятельно.">GeoEarn uses blockchain infrastructure for settlement — not because it's trendy, but because it solves a specific problem: microtransaction settlement at scale with full auditability. At fractions of a cent per transaction, every reward payout is economically viable and every charge is verifiable by the merchant independently.</span></div>
       </div>
-      <div class="feat-tag">Transparent · Auditable · Scalable</div>
+      <div class="feat-tag"><span data-en="Transparent · Auditable · Scalable" data-ru="Прозрачно · Проверяемо · Масштабируемо">Transparent · Auditable · Scalable</span></div>
     </article>
 
     <article class="feat-card reveal reveal-delay-2">
       <div class="ico-wrap ico-info"><i data-lucide="trending-up"></i></div>
       <div class="feat-card-body">
-        <div class="feat-card-title">Analytics Dashboard</div>
-        <div class="feat-card-desc">Businesses track visit heatmaps, peak hours, campaign ROI, and repeat visitor rates in real time. All sourced from verified visits.</div>
+        <div class="feat-card-title"><span data-en="Analytics Dashboard" data-ru="Аналитическая панель">Analytics Dashboard</span></div>
+        <div class="feat-card-desc"><span data-en="Businesses track visit heatmaps, peak hours, campaign ROI, and repeat visitor rates in real time. All sourced from verified visits." data-ru="Бизнес отслеживает тепловые карты визитов, часы пик, ROI кампаний и долю повторных посетителей в реальном времени. Всё на основе подтверждённых визитов.">Businesses track visit heatmaps, peak hours, campaign ROI, and repeat visitor rates in real time. All sourced from verified visits.</span></div>
       </div>
-      <div class="feat-tag">Coming Q1 2027</div>
+      <div class="feat-tag"><span data-en="Coming Q1 2027" data-ru="Ожидается Q1 2027">Coming Q1 2027</span></div>
     </article>
   </div>
 </section>
@@ -1155,32 +1158,32 @@ footer {
 <section class="market-section" id="market" aria-labelledby="market-title">
   <div class="market-inner">
     <div class="market-header">
-      <span class="label-sm reveal">Market Opportunity</span>
-      <h2 class="title-section reveal reveal-delay-1" id="market-title" style="margin-top:14px">Offline commerce is huge.<br>Performance tools don't exist.</h2>
-      <p class="body-lg reveal reveal-delay-2" style="margin-top:14px;max-width:600px">Online advertising has cost-per-click. Offline has nothing equivalent. GeoEarn is building the infrastructure to change that.</p>
+      <span class="label-sm reveal"><span data-en="Market Opportunity" data-ru="Рыночная возможность">Market Opportunity</span></span>
+      <h2 class="title-section reveal reveal-delay-1" id="market-title" style="margin-top:14px"><span data-en="Offline commerce is huge." data-ru="Офлайн-коммерция огромна.">Offline commerce is huge.</span><br><span data-en="Performance tools don't exist." data-ru="Инструментов перформанса не существует.">Performance tools don't exist.</span></h2>
+      <p class="body-lg reveal reveal-delay-2" style="margin-top:14px;max-width:600px"><span data-en="Online advertising has cost-per-click. Offline has nothing equivalent. GeoEarn is building the infrastructure to change that." data-ru="У онлайн-рекламы есть цена за клик. У офлайна нет ничего аналогичного. GeoEarn строит инфраструктуру, чтобы это изменить.">Online advertising has cost-per-click. Offline has nothing equivalent. GeoEarn is building the infrastructure to change that.</span></p>
     </div>
 
     <div class="market-cards">
       <div class="market-card reveal">
         <div class="market-card-val">$3.8T</div>
-        <div class="market-card-label">US Local Retail Market</div>
-        <div class="market-card-desc">Annual spending at physical stores, restaurants, and service businesses. Every business in this market needs to drive foot traffic — and most have no way to measure it accurately.</div>
+        <div class="market-card-label"><span data-en="US Local Retail Market" data-ru="Рынок локальной розницы США">US Local Retail Market</span></div>
+        <div class="market-card-desc"><span data-en="Annual spending at physical stores, restaurants, and service businesses. Every business in this market needs to drive foot traffic — and most have no way to measure it accurately." data-ru="Ежегодные расходы в физических магазинах, ресторанах и сервисах. Каждому бизнесу нужен поток посетителей — но у большинства нет способа точно его измерить.">Annual spending at physical stores, restaurants, and service businesses. Every business in this market needs to drive foot traffic — and most have no way to measure it accurately.</span></div>
       </div>
       <div class="market-card reveal reveal-delay-1">
         <div class="market-card-val geo">$27B</div>
-        <div class="market-card-label">Loyalty Market Size</div>
-        <div class="market-card-desc">Spent annually on loyalty programs that are siloed, opaque, and non-portable. Points expire. Rewards go unused. GeoEarn replaces this with transparent, instant, liquid rewards.</div>
+        <div class="market-card-label"><span data-en="Loyalty Market Size" data-ru="Объём рынка лояльности">Loyalty Market Size</span></div>
+        <div class="market-card-desc"><span data-en="Spent annually on loyalty programs that are siloed, opaque, and non-portable. Points expire. Rewards go unused. GeoEarn replaces this with transparent, instant, liquid rewards." data-ru="Ежегодно тратится на программы лояльности, которые изолированы, непрозрачны и не переносятся. Баллы сгорают. Награды не используются. GeoEarn заменяет это прозрачными, мгновенными, ликвидными вознаграждениями.">Spent annually on loyalty programs that are siloed, opaque, and non-portable. Points expire. Rewards go unused. GeoEarn replaces this with transparent, instant, liquid rewards.</span></div>
       </div>
       <div class="market-card reveal reveal-delay-2">
         <div class="market-card-val">$2–5</div>
-        <div class="market-card-label">Target Cost Per Visit</div>
-        <div class="market-card-desc">Businesses on GeoEarn set their own cost-per-visit budget. At $2–5 per confirmed customer walking through the door, this is significantly cheaper than most traditional local advertising.</div>
+        <div class="market-card-label"><span data-en="Target Cost Per Visit" data-ru="Целевая стоимость визита">Target Cost Per Visit</span></div>
+        <div class="market-card-desc"><span data-en="Businesses on GeoEarn set their own cost-per-visit budget. At $2–5 per confirmed customer walking through the door, this is significantly cheaper than most traditional local advertising." data-ru="Бизнес на GeoEarn сам устанавливает бюджет за визит. При $2–5 за подтверждённого клиента, вошедшего в дверь, это значительно дешевле большинства традиционной локальной рекламы.">Businesses on GeoEarn set their own cost-per-visit budget. At $2–5 per confirmed customer walking through the door, this is significantly cheaper than most traditional local advertising.</span></div>
       </div>
     </div>
 
     <div class="market-insight reveal">
       <i data-lucide="lightbulb" style="width:18px;height:18px;color:var(--geo);stroke-width:1.5;flex-shrink:0;margin-top:2px"></i>
-      <p><strong>The gap:</strong> A café can run a Google ad campaign and measure every click. But when that same customer walks through the door, there's no equivalent measurement layer. GeoEarn is <strong>cost-per-visit infrastructure</strong> — filling the last-mile gap between digital reach and physical conversion.</p>
+      <p><strong>The gap:</strong> <span data-en="A café can run a Google ad campaign and measure every click. But when that same customer walks through the door, there's no equivalent measurement layer. GeoEarn is <strong>cost-per-visit infrastructure</strong> — filling the last-mile gap between digital reach and physical conversion." data-ru="Кафе может запустить рекламу в Google и измерить каждый клик. Но когда тот же клиент входит в дверь — аналогичного слоя измерения не существует. GeoEarn — это <strong>инфраструктура стоимости за визит</strong>, заполняющая разрыв последней мили между цифровым охватом и физической конверсией.">A café can run a Google ad campaign and measure every click. But when that same customer walks through the door, there's no equivalent measurement layer. GeoEarn is <strong>cost-per-visit infrastructure</strong> — filling the last-mile gap between digital reach and physical conversion.</span></p>
     </div>
   </div>
 </section>
@@ -1190,35 +1193,35 @@ footer {
 <section class="usecases-section" id="usecases" aria-labelledby="usecases-title">
   <div class="usecases-inner">
     <div class="usecases-header">
-      <span class="label-sm reveal">Use Cases</span>
-      <h2 class="title-section reveal reveal-delay-1" id="usecases-title" style="margin-top:14px">Any business. Any location.</h2>
-      <p class="body-lg reveal reveal-delay-2" style="margin-top:14px">If customers walk through your door, GeoEarn can measure, incentivize, and attribute that visit.</p>
+      <span class="label-sm reveal"><span data-en="Use Cases" data-ru="Сферы применения">Use Cases</span></span>
+      <h2 class="title-section reveal reveal-delay-1" id="usecases-title" style="margin-top:14px"><span data-en="Any business. Any location." data-ru="Любой бизнес. Любое место.">Any business. Any location.</span></h2>
+      <p class="body-lg reveal reveal-delay-2" style="margin-top:14px"><span data-en="If customers walk through your door, GeoEarn can measure, incentivize, and attribute that visit." data-ru="Если клиенты заходят к вам, GeoEarn может измерить, стимулировать и атрибутировать этот визит.">If customers walk through your door, GeoEarn can measure, incentivize, and attribute that visit.</span></p>
     </div>
 
     <div class="usecases-grid">
       <article class="uc-card reveal">
         <div class="ico-wrap ico-warn"><i data-lucide="utensils"></i></div>
-        <div class="uc-card-title">Cafés &amp; Restaurants</div>
-        <div class="uc-card-desc">Run "happy hour" visit campaigns or first-visit incentives. Pay only when someone actually walks through the door — not per impression or click.</div>
-        <div class="uc-roi">~2.8× ROI vs flyers</div>
+        <div class="uc-card-title"><span data-en="Cafés &amp; Restaurants" data-ru="Кафе и рестораны">Cafés &amp; Restaurants</span></div>
+        <div class="uc-card-desc"><span data-en="Run &quot;happy hour&quot; visit campaigns or first-visit incentives. Pay only when someone actually walks through the door — not per impression or click." data-ru="Запускайте кампании «счастливого часа» или стимулируйте первый визит. Платите только когда кто-то реально зашёл — не за показы или клики.">Run "happy hour" visit campaigns or first-visit incentives. Pay only when someone actually walks through the door — not per impression or click.</span></div>
+        <div class="uc-roi"><span data-en="~2.8× ROI vs flyers" data-ru="~2.8× ROI против листовок">~2.8× ROI vs flyers</span></div>
       </article>
       <article class="uc-card reveal reveal-delay-1">
         <div class="ico-wrap ico-info"><i data-lucide="target"></i></div>
-        <div class="uc-card-title">Gyms &amp; Fitness</div>
-        <div class="uc-card-desc">Reward first visits and trial memberships. Measure drop-off between trial and signup. Every visit is verified — no fake sign-ups counted.</div>
-        <div class="uc-roi">~40% trial conversion</div>
+        <div class="uc-card-title"><span data-en="Gyms &amp; Fitness" data-ru="Фитнес и спортзалы">Gyms &amp; Fitness</span></div>
+        <div class="uc-card-desc"><span data-en="Reward first visits and trial memberships. Measure drop-off between trial and signup. Every visit is verified — no fake sign-ups counted." data-ru="Поощряйте первые визиты и пробные абонементы. Измеряйте отсев между пробным и полным членством. Каждый визит подтверждён — фейковые записи не учитываются.">Reward first visits and trial memberships. Measure drop-off between trial and signup. Every visit is verified — no fake sign-ups counted.</span></div>
+        <div class="uc-roi"><span data-en="~40% trial conversion" data-ru="~40% конверсия пробных">~40% trial conversion</span></div>
       </article>
       <article class="uc-card reveal reveal-delay-2">
         <div class="ico-wrap ico-geo"><i data-lucide="shopping-bag"></i></div>
-        <div class="uc-card-title">Retail Stores</div>
-        <div class="uc-card-desc">Drive foot traffic during off-peak hours with geo-targeted visit campaigns. Replace broad local advertising with precise cost-per-door attribution.</div>
-        <div class="uc-roi">Avg. $2.50 CPA</div>
+        <div class="uc-card-title"><span data-en="Retail Stores" data-ru="Розничные магазины">Retail Stores</span></div>
+        <div class="uc-card-desc"><span data-en="Drive foot traffic during off-peak hours with geo-targeted visit campaigns. Replace broad local advertising with precise cost-per-door attribution." data-ru="Увеличивайте трафик в часы спада с помощью гео-таргетированных кампаний. Замените широкую локальную рекламу точной атрибуцией стоимости входа.">Drive foot traffic during off-peak hours with geo-targeted visit campaigns. Replace broad local advertising with precise cost-per-door attribution.</span></div>
+        <div class="uc-roi"><span data-en="Avg. $2.50 CPA" data-ru="Ср. $2.50 CPA">Avg. $2.50 CPA</span></div>
       </article>
       <article class="uc-card reveal reveal-delay-3">
         <div class="ico-wrap ico-muted"><i data-lucide="landmark"></i></div>
-        <div class="uc-card-title">Events &amp; Venues</div>
-        <div class="uc-card-desc">Incentivize attendance at conferences, pop-ups, and cultural events. Issue verified attendance records useful for sponsors and future marketing.</div>
-        <div class="uc-roi">Verified attendance proof</div>
+        <div class="uc-card-title"><span data-en="Events &amp; Venues" data-ru="Мероприятия и площадки">Events &amp; Venues</span></div>
+        <div class="uc-card-desc"><span data-en="Incentivize attendance at conferences, pop-ups, and cultural events. Issue verified attendance records useful for sponsors and future marketing." data-ru="Стимулируйте посещаемость конференций, поп-апов и культурных мероприятий. Выдавайте подтверждённые записи о посещении — полезны для спонсоров и будущего маркетинга.">Incentivize attendance at conferences, pop-ups, and cultural events. Issue verified attendance records useful for sponsors and future marketing.</span></div>
+        <div class="uc-roi"><span data-en="Verified attendance proof" data-ru="Подтверждение посещаемости">Verified attendance proof</span></div>
       </article>
     </div>
   </div>
@@ -1231,7 +1234,7 @@ footer {
     <div>
       <div class="section-header">
         <span class="label-sm reveal">Infrastructure</span>
-        <h2 class="title-section reveal reveal-delay-1" id="infra-title" style="margin-top:14px">Blockchain where it actually helps.</h2>
+        <h2 class="title-section reveal reveal-delay-1" id="infra-title" style="margin-top:14px"><span data-en="Blockchain where it actually helps." data-ru="Блокчейн там, где он реально помогает.">Blockchain where it actually helps.</span></h2>
         <p class="body-lg reveal reveal-delay-2" style="margin-top:14px">GeoEarn uses blockchain infrastructure selectively — for transparent microtransactions, tamper-proof visit logs, and instant reward settlement. Users don't need to interact with crypto.</p>
       </div>
 
@@ -1239,49 +1242,49 @@ footer {
         <div class="infra-point reveal reveal-delay-1">
           <div class="ico-wrap ico-success"><i data-lucide="database"></i></div>
           <div>
-            <div class="infra-point-title">Tamper-proof visit records</div>
-            <div class="infra-point-desc">Every verified check-in is logged immutably. Businesses can independently verify any charge — there's no central server to dispute with, no billing support ticket to file.</div>
+            <div class="infra-point-title"><span data-en="Tamper-proof visit records" data-ru="Защищённые записи о визитах">Tamper-proof visit records</span></div>
+            <div class="infra-point-desc"><span data-en="Every verified check-in is logged immutably. Businesses can independently verify any charge — there's no central server to dispute with, no billing support ticket to file." data-ru="Каждый подтверждённый чекин логируется неизменяемо. Бизнес может самостоятельно проверить любую транзакцию — нет центрального сервера, с которым можно поспорить, нет заявки в поддержку.">Every verified check-in is logged immutably. Businesses can independently verify any charge — there's no central server to dispute with, no billing support ticket to file.</span></div>
           </div>
         </div>
         <div class="infra-point reveal reveal-delay-2">
           <div class="ico-wrap ico-geo"><i data-lucide="zap"></i></div>
           <div>
-            <div class="infra-point-title">Economical at micro scale</div>
-            <div class="infra-point-desc">Thousands of small reward payouts daily at sub-cent cost per transaction, making reward amounts of $0.50–$5 commercially viable even for small businesses.</div>
+            <div class="infra-point-title"><span data-en="Economical at micro scale" data-ru="Экономично на микромасштабе">Economical at micro scale</span></div>
+            <div class="infra-point-desc"><span data-en="Thousands of small reward payouts daily at sub-cent cost per transaction, making reward amounts of $0.50–$5 commercially viable even for small businesses." data-ru="Тысячи небольших выплат ежедневно при стоимости транзакции меньше цента — награды в $0.50–$5 становятся коммерчески выгодными даже для малого бизнеса.">Thousands of small reward payouts daily at sub-cent cost per transaction, making reward amounts of $0.50–$5 commercially viable even for small businesses.</span></div>
           </div>
         </div>
         <div class="infra-point reveal reveal-delay-3">
           <div class="ico-wrap ico-muted"><i data-lucide="eye-off"></i></div>
           <div>
-            <div class="infra-point-title">Invisible to end users</div>
-            <div class="infra-point-desc">Users earn rewards and businesses run campaigns without ever needing a crypto wallet. The product is designed for mainstream adoption, not crypto users.</div>
+            <div class="infra-point-title"><span data-en="Invisible to end users" data-ru="Невидимо для конечных пользователей">Invisible to end users</span></div>
+            <div class="infra-point-desc"><span data-en="Users earn rewards and businesses run campaigns without ever needing a crypto wallet. The product is designed for mainstream adoption, not crypto users." data-ru="Пользователи получают награды, бизнес запускает кампании — без крипто-кошелька. Продукт создан для массового использования, а не для крипто-аудитории.">Users earn rewards and businesses run campaigns without ever needing a crypto wallet. The product is designed for mainstream adoption, not crypto users.</span></div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="infra-visual reveal reveal-delay-2" aria-label="Infrastructure layers">
-      <div class="iv-title">Technology stack</div>
+      <div class="iv-title"><span data-en="Technology stack" data-ru="Технологический стек">Technology stack</span></div>
       <div class="iv-layers">
         <div class="iv-layer">
           <div class="iv-layer-dot" style="background:var(--geo)"></div>
-          <div class="iv-layer-label">User interface</div>
+          <div class="iv-layer-label"><span data-en="User interface" data-ru="Пользовательский интерфейс">User interface</span></div>
           <div class="iv-layer-tag">Telegram Mini App</div>
         </div>
         <div class="iv-layer">
           <div class="iv-layer-dot" style="background:var(--info)"></div>
-          <div class="iv-layer-label">Verification engine</div>
-          <div class="iv-layer-tag">GPS + QR + Anti-fraud</div>
+          <div class="iv-layer-label"><span data-en="Verification engine" data-ru="Движок верификации">Verification engine</span></div>
+          <div class="iv-layer-tag"><span data-en="GPS + QR + Anti-fraud" data-ru="GPS + QR + Антифрод">GPS + QR + Anti-fraud</span></div>
         </div>
         <div class="iv-layer">
           <div class="iv-layer-dot" style="background:var(--warning)"></div>
-          <div class="iv-layer-label">Business logic</div>
-          <div class="iv-layer-tag">Campaign · Budget · Rewards</div>
+          <div class="iv-layer-label"><span data-en="Business logic" data-ru="Бизнес-логика">Business logic</span></div>
+          <div class="iv-layer-tag"><span data-en="Campaign · Budget · Rewards" data-ru="Кампании · Бюджет · Награды">Campaign · Budget · Rewards</span></div>
         </div>
         <div class="iv-layer">
           <div class="iv-layer-dot" style="background:var(--success)"></div>
-          <div class="iv-layer-label">Settlement layer</div>
-          <div class="iv-layer-tag">Immutable · Auditable</div>
+          <div class="iv-layer-label"><span data-en="Settlement layer" data-ru="Расчётный слой">Settlement layer</span></div>
+          <div class="iv-layer-tag"><span data-en="Immutable · Auditable" data-ru="Неизменяемо · Проверяемо">Immutable · Auditable</span></div>
         </div>
         <div class="iv-layer">
           <div class="iv-layer-dot" style="background:var(--text-tertiary)"></div>
@@ -1299,40 +1302,40 @@ footer {
   <div class="roadmap-inner">
     <div class="roadmap-header">
       <span class="label-sm">Roadmap</span>
-      <h2 class="title-section reveal reveal-delay-1" id="roadmap-title" style="margin-top:14px">Building in public.</h2>
+      <h2 class="title-section reveal reveal-delay-1" id="roadmap-title" style="margin-top:14px"><span data-en="Building in public." data-ru="Строим открыто.">Building in public.</span></h2>
     </div>
 
     <div class="roadmap-grid">
       <div class="roadmap-card reveal">
         <div class="rm-quarter">Q2 2026</div>
-        <div class="rm-title">Pilot Launch</div>
+        <div class="rm-title"><span data-en="Pilot Launch" data-ru="Запуск пилота">Pilot Launch</span></div>
         <div class="rm-items">
-          <div class="rm-item"><i data-lucide="check-circle" style="color:var(--success)"></i> Core check-in flow</div>
-          <div class="rm-item"><i data-lucide="check-circle" style="color:var(--success)"></i> GPS + QR verification</div>
+          <div class="rm-item"><i data-lucide="check-circle" style="color:var(--success)"></i> <span data-en="Core check-in flow" data-ru="Основной флоу чекина">Core check-in flow</span></div>
+          <div class="rm-item"><i data-lucide="check-circle" style="color:var(--success)"></i> <span data-en="GPS + QR verification" data-ru="Верификация GPS + QR">GPS + QR verification</span></div>
           <div class="rm-item"><i data-lucide="check-circle" style="color:var(--success)"></i> Telegram Mini App</div>
-          <div class="rm-item"><i data-lucide="check-circle" style="color:var(--success)"></i> Payme withdrawal</div>
+          <div class="rm-item"><i data-lucide="check-circle" style="color:var(--success)"></i> <span data-en="Payme withdrawal" data-ru="Вывод через Payme">Payme withdrawal</span></div>
         </div>
-        <span class="pill pill-success" style="align-self:flex-start">In progress</span>
+        <span class="pill pill-success" style="align-self:flex-start"><span data-en="In progress" data-ru="В процессе">In progress</span></span>
       </div>
       <div class="roadmap-card active reveal reveal-delay-1">
         <div class="rm-quarter">Q3 2026</div>
-        <div class="rm-title">Tashkent Rollout</div>
+        <div class="rm-title"><span data-en="Tashkent Rollout" data-ru="Запуск в Ташкенте">Tashkent Rollout</span></div>
         <div class="rm-items">
-          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> 50+ business partners</div>
-          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Anti-fraud v2</div>
-          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Business dashboard</div>
-          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Referral system</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> <span data-en="50+ business partners" data-ru="50+ бизнес-партнёров">50+ business partners</span></div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> <span data-en="Anti-fraud v2" data-ru="Антифрод v2">Anti-fraud v2</span></div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> <span data-en="Business dashboard" data-ru="Панель для бизнеса">Business dashboard</span></div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> <span data-en="Referral system" data-ru="Реферальная система">Referral system</span></div>
         </div>
         <span class="pill pill-geo" style="align-self:flex-start">Next</span>
       </div>
       <div class="roadmap-card reveal reveal-delay-2">
         <div class="rm-quarter">Q4 2026</div>
-        <div class="rm-title">Multi-city</div>
+        <div class="rm-title"><span data-en="Multi-city" data-ru="Несколько городов">Multi-city</span></div>
         <div class="rm-items">
           <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> 3 cities</div>
-          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Analytics dashboard</div>
-          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Dynamic rewards</div>
-          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Gamification</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> <span data-en="Analytics dashboard" data-ru="Аналитическая панель">Analytics dashboard</span></div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> <span data-en="Dynamic rewards" data-ru="Динамические награды">Dynamic rewards</span></div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> <span data-en="Gamification" data-ru="Геймификация">Gamification</span></div>
         </div>
         <span class="pill" style="background:var(--bg-raised);color:var(--text-tertiary);align-self:flex-start">Planned</span>
       </div>
@@ -1340,10 +1343,10 @@ footer {
         <div class="rm-quarter">Q1 2027</div>
         <div class="rm-title">Scale</div>
         <div class="rm-items">
-          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> 10+ cities</div>
-          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> AI optimization</div>
-          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> B2B API access</div>
-          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> Series A</div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> <span data-en="10+ cities" data-ru="10+ городов">10+ cities</span></div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> <span data-en="AI optimization" data-ru="AI-оптимизация">AI optimization</span></div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> <span data-en="B2B API access" data-ru="B2B API доступ">B2B API access</span></div>
+          <div class="rm-item"><i data-lucide="circle" style="color:var(--text-tertiary)"></i> <span data-en="Series A" data-ru="Серия A">Series A</span></div>
         </div>
         <span class="pill" style="background:var(--bg-raised);color:var(--text-tertiary);align-self:flex-start">Future</span>
       </div>
@@ -1357,14 +1360,14 @@ footer {
   <div class="waitlist-inner">
     <div class="waitlist-card reveal">
       <div id="waitlistForm">
-        <div class="waitlist-card-title">Join the waitlist</div>
-        <div class="waitlist-card-sub">Be the first to know when GeoEarn launches in your city. Early access, no spam.</div>
+        <div class="waitlist-card-title"><span data-en="Join the waitlist" data-ru="Присоединиться к листу ожидания">Join the waitlist</span></div>
+        <div class="waitlist-card-sub"><span data-en="Be the first to know when GeoEarn launches in your city. Early access, no spam." data-ru="Узнайте первым, когда GeoEarn запустится в вашем городе. Ранний доступ, без спама.">Be the first to know when GeoEarn launches in your city. Early access, no spam.</span></div>
         <div class="waitlist-form">
           <input
             class="form-input"
             id="waitlistEmail"
             type="email"
-            placeholder="your@email.com"
+            placeholder="your@email.com" data-placeholder-en="your@email.com" data-placeholder-ru="ваш@email.com"
             autocomplete="email"
             aria-label="Email address"
           >
@@ -1372,13 +1375,13 @@ footer {
             Join Waitlist
           </button>
         </div>
-        <div class="waitlist-count">Already <strong id="waitlistCount">800+</strong> people waiting</div>
+        <div class="waitlist-count"><span data-en="Already " data-ru="Уже ">Already </span><strong id="waitlistCount">800+</strong><span data-en=" people waiting" data-ru=" человек ждут"> people waiting</span></div>
       </div>
 
       <div class="waitlist-success" id="waitlistSuccess" role="status">
         <div class="ws-icon"><i data-lucide="check"></i></div>
-        <div class="ws-title">You're on the list!</div>
-        <div class="ws-desc">We'll reach out when your city goes live.</div>
+        <div class="ws-title"><span data-en="You're on the list!" data-ru="Вы в списке!">You're on the list!</span></div>
+        <div class="ws-desc"><span data-en="We'll reach out when your city goes live." data-ru="Мы напишем, когда запустимся в вашем городе.">We'll reach out when your city goes live.</span></div>
       </div>
     </div>
   </div>
@@ -1388,15 +1391,16 @@ footer {
 <section class="cta-section" aria-label="Call to action">
   <div class="cta-inner reveal">
     <div class="cta-left">
-      <div class="cta-title">Turn Foot Traffic Into<br><em>Measurable Revenue.</em></div>
-      <div class="cta-sub">GeoEarn is performance-based customer acquisition for the physical world. Join the early access list — it takes under a minute.</div>
+      <div class="cta-title"><span data-en="Turn Foot Traffic Into" data-ru="Превратите поток посетителей в">Turn Foot Traffic Into</span><br><em><span data-en="Measurable Revenue." data-ru="Измеримую выручку.">Measurable Revenue.</span></em></div>
+      <div class="cta-sub"><span data-en="GeoEarn is performance-based customer acquisition for the physical world. Join the early access list — it takes under a minute." data-ru="GeoEarn — это привлечение клиентов с оплатой за результат для физического мира. Присоединитесь к списку раннего доступа — это займёт меньше минуты.">GeoEarn is performance-based customer acquisition for the physical world. Join the early access list — it takes under a minute.</span></div>
     </div>
     <div class="cta-actions">
-      <a href="#waitlist" class="btn btn-primary">
-        <i data-lucide="arrow-right"></i>
-        Join Early Access
+      <!-- ████ BOT LINK — ВСТАВЬ ССЫЛКУ НА БОТА СЮДА (cta) ████ -->
+      <a href="https://t.me/YOUR_BOT_LINK_HERE" target="_blank" rel="noopener noreferrer" class="btn btn-primary" id="cta-app-btn">
+        <i data-lucide="send"></i>
+        <span data-en="Open App" data-ru="Открыть приложение">Open App</span>
       </a>
-      <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Partner With Us</a>
+      <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="btn btn-secondary"><span data-en="Partner With Us" data-ru="Стать партнёром">Partner With Us</span></a>
     </div>
   </div>
 </section>
@@ -1413,7 +1417,7 @@ footer {
         </div>
         GeoEarn
       </a>
-      <p class="footer-desc">Marketplace for real-world customer acquisition. Businesses pay per verified visit. Users earn for showing up.</p>
+      <p class="footer-desc"><span data-en="Marketplace for real-world customer acquisition. Businesses pay per verified visit. Users earn for showing up." data-ru="Маркетплейс привлечения клиентов в реальном мире. Бизнес платит за подтверждённый визит. Пользователи зарабатывают за визиты.">Marketplace for real-world customer acquisition. Businesses pay per verified visit. Users earn for showing up.</span></p>
       <div class="footer-socials" aria-label="Social links">
         <a href="https://t.me/GeoEarn" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Telegram">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
@@ -1427,51 +1431,43 @@ footer {
     <nav class="footer-nav-col" aria-label="Product links">
       <h4>Product</h4>
       <ul>
-        <li><a href="#how">How It Works</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#market">Market</a></li>
-        <li><a href="#infra">Infrastructure</a></li>
-        <li><a href="#roadmap">Roadmap</a></li>
+        <li><a href="#how"><span data-en="How It Works" data-ru="Как это работает">How It Works</span></a></li>
+        <li><a href="#features"><span data-en="Features" data-ru="Функции">Features</span></a></li>
+        <li><a href="#market"><span data-en="Market" data-ru="Рынок">Market</span></a></li>
+        <li><a href="#infra"><span data-en="Infrastructure" data-ru="Инфраструктура">Infrastructure</span></a></li>
+        <li><a href="#roadmap"><span data-en="Roadmap" data-ru="Дорожная карта">Roadmap</span></a></li>
       </ul>
     </nav>
 
     <nav class="footer-nav-col" aria-label="Company links">
-      <h4>Company</h4>
+      <h4><span data-en="Company" data-ru="Компания">Company</span></h4>
       <ul>
-        <li><a href="#waitlist">Early Access</a></li>
+        <li><a href="#waitlist"><span data-en="Early Access" data-ru="Ранний доступ">Early Access</span></a></li>
         <li><a href="mailto:hello@geoearn.app">hello@geoearn.app</a></li>
-        <li><a href="https://t.me/GeoEarn" target="_blank" rel="noopener">Telegram</a></li>
-        <li><a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener">X (Twitter)</a></li>
-      </ul>
-    </nav>
-
-    <nav class="footer-nav-col" aria-label="Legal links">
-      <h4>Legal</h4>
-      <ul>
-        <li><a href="#">Privacy Policy</a></li>
-        <li><a href="#">Terms of Service</a></li>
-        <li><a href="#">Cookie Policy</a></li>
+        <li><a href="https://t.me/GeoEarn" target="_blank" rel="noopener"><span data-en="Telegram" data-ru="Telegram">Telegram</span></a></li>
+        <li><a href="https://x.com/AvyasovAlexandr" target="_blank" rel="noopener"><span data-en="X (Twitter)" data-ru="X (Twitter)">X (Twitter)</span></a></li>
       </ul>
     </nav>
   </div>
 
   <div class="footer-bottom">
-    <span>© 2026 GeoEarn Labs · All rights reserved</span>
-    <span>Built for the physical world</span>
+    <span><span data-en="© 2026 GeoEarn Labs · All rights reserved" data-ru="© 2026 GeoEarn Labs · Все права защищены">© 2026 GeoEarn Labs · All rights reserved</span></span>
+    <span><span data-en="Built for the physical world" data-ru="Создано для физического мира">Built for the physical world</span></span>
   </div>
 </footer>
 
 <!-- TOAST -->
 <div class="toast" id="toast" role="alert" aria-live="polite">
   <i data-lucide="check-circle" style="color:var(--success)"></i>
-  <span id="toastMsg">Done</span>
+  <span id="toastMsg"><span data-en="Done" data-ru="Готово">Done</span></span>
 </div>
 
 <!-- STICKY CTA -->
 <div class="sticky-cta" id="stickyCta" aria-hidden="true">
-  <a href="#waitlist" class="btn btn-primary">
-    <i data-lucide="arrow-right"></i>
-    Join Waitlist
+  <!-- ████ BOT LINK — ВСТАВЬ ССЫЛКУ НА БОТА СЮДА (sticky) ████ -->
+  <a href="https://t.me/YOUR_BOT_LINK_HERE" target="_blank" rel="noopener noreferrer" class="btn btn-primary" id="sticky-app-btn">
+    <i data-lucide="send"></i>
+    <span data-en="Open App" data-ru="Открыть приложение">Open App</span>
   </a>
 </div>
 
@@ -1535,8 +1531,46 @@ document.querySelectorAll('[data-target]').forEach(el => statIo.observe(el));
 /* ── Lang toggle ── */
 function setLang(lang) {
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll(`.lang-btn`).forEach(b => { if (b.textContent.trim().toLowerCase() === lang) b.classList.add('active'); });
+  document.querySelectorAll('.lang-btn').forEach(b => { if (b.textContent.trim().toLowerCase() === lang) b.classList.add('active'); });
+  
+  // Switch all translated spans
+  document.querySelectorAll('[data-en][data-ru]').forEach(el => {
+    if (lang === 'ru') {
+      el.textContent = el.getAttribute('data-ru');
+    } else {
+      el.textContent = el.getAttribute('data-en');
+    }
+  });
+
+  // Handle spans with inner HTML (strong tags etc) — use a different approach for those
+  // Re-render spans that have innerHTML with strong tags
+  document.querySelectorAll('[data-en-html]').forEach(el => {
+    if (lang === 'ru') {
+      el.innerHTML = el.getAttribute('data-ru-html');
+    } else {
+      el.innerHTML = el.getAttribute('data-en-html');
+    }
+  });
+
+  // Switch placeholders
+  document.querySelectorAll('[data-placeholder-en]').forEach(el => {
+    el.placeholder = lang === 'ru' ? el.getAttribute('data-placeholder-ru') : el.getAttribute('data-placeholder-en');
+  });
+  
+  // Update html lang attr
+  document.documentElement.lang = lang;
+  
+  // Save preference
+  try { localStorage.setItem('geoearn_lang', lang); } catch(e){}
 }
+
+// Auto-apply saved lang on load
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const saved = localStorage.getItem('geoearn_lang');
+    if (saved && saved !== 'en') setLang(saved);
+  } catch(e){}
+});
 
 /* ── Toast ── */
 let toastTimer;
@@ -1572,7 +1606,8 @@ function submitWaitlist() {
   document.getElementById('waitlistForm').style.display = 'none';
   document.getElementById('waitlistSuccess').classList.add('show');
   if (window.lucide) lucide.createIcons();
-  showToast('You\'re on the list!');
+  const isRu = document.documentElement.lang === 'ru';
+  showToast(isRu ? 'Вы в списке!' : "You're on the list!");
 }
 
 /* Enter on waitlist input */
